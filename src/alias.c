@@ -67,7 +67,7 @@ setalias(const char *name, const char *val)
 		ap->flag &= ~ALIASDEAD;
 	} else {
 		/* not found */
-		ap = (alias *)ckmalloc(sizeof (struct alias));
+		ap = (struct alias *)ckmalloc(sizeof (struct alias));
 		ap->name = savestr(name);
 		ap->val = savestr(val);
 		ap->flag = 0;

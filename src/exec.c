@@ -621,8 +621,8 @@ cmdlookup(const char *name, int add)
 		pp = &cmdp->next;
 	}
 	if (add && cmdp == NULL) {
-		cmdp = *pp = (tblentry *)ckmalloc(sizeof (struct tblentry) - ARB
-						  + strlen(name) + 1);
+		cmdp = *pp = (struct tblentry *)ckmalloc(sizeof (struct tblentry) - ARB
+							 + strlen(name) + 1);
 		cmdp->next = NULL;
 		cmdp->cmdtype = CMDUNKNOWN;
 		strcpy(cmdp->cmdname, name);

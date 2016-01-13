@@ -443,7 +443,7 @@ struct redirtab *pushredir(union node *redir)
 	if (!redir)
 		goto out;
 
-	sv = (redirtab *) ckmalloc(sizeof (struct redirtab));
+	sv = (struct redirtab *) ckmalloc(sizeof (struct redirtab));
 	sv->next = q;
 	redirlist = sv;
 	for (i = 0; i < 10; i++)

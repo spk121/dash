@@ -126,7 +126,7 @@ copynodelist(struct nodelist *lp)
 
 	lpp = &start;
 	while (lp) {
-		*lpp = (nodelist *) funcblock;
+		*lpp = (struct nodelist *) funcblock;
 		funcblock = (char *) funcblock +
 		    SHELL_ALIGN(sizeof(struct nodelist));
 		(*lpp)->n = copynode(lp->n);

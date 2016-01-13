@@ -323,7 +323,7 @@ pushstring(char *s, void *ap)
 	INTOFF;
 /*dprintf("*** calling pushstring: %s, %d\n", s, len);*/
 	if (parsefile->strpush) {
-		sp = (strpush *)ckmalloc(sizeof (struct strpush));
+		sp = (struct strpush *)ckmalloc(sizeof (struct strpush));
 		sp->prev = parsefile->strpush;
 		parsefile->strpush = sp;
 	} else

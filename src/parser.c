@@ -180,7 +180,7 @@ list(int nlflag)
 				n2->npipe.backgnd = 1;
 			} else {
 				if (n2->type != NREDIR) {
-					n3 = (node *)stalloc(sizeof(struct nredir));
+					n3 = (struct nredir *)stalloc(sizeof(struct nredir));
 					n3->nredir.n = n2;
 					n3->nredir.redirect = NULL;
 					n2 = n3;

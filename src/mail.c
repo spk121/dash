@@ -60,7 +60,7 @@ static int changed;
 int
 mpathset(void)
 {
-	auto vm_path = (&vmail)[1];
+	struct var vm_path = (&vmail)[1];
 	if (vm_path.flags & VUNSET)
 		return 1;
 	return 0;

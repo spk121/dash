@@ -295,7 +295,7 @@ outfunc(FILE *cfile, int calcsize)
 	if (calcsize)
 		fputs("      funcblocksize += nodesize[n->type];\n", cfile);
 	else {
-		fputs("      _new = (node *)funcblock;\n", cfile);
+		fputs("      _new = (union node *)funcblock;\n", cfile);
 		fputs("      funcblock = (char *) funcblock + nodesize[n->type];\n", cfile);
 	}
 	fputs("      switch (n->type) {\n", cfile);

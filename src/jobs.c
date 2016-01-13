@@ -769,7 +769,7 @@ makejob(union node *node, int nprocs)
 	jp->used = 1;
 	jp->ps = &jp->ps0;
 	if (nprocs > 1) {
-		jp->ps = (procstat *)ckmalloc(nprocs * sizeof (struct procstat));
+		jp->ps = (struct procstat *)ckmalloc(nprocs * sizeof (struct procstat));
 	}
 	TRACE(("makejob(0x%lx, %d) returns %%%d\n", (long)node, nprocs,
 	    jobno(jp)));
@@ -785,7 +785,7 @@ growjobtab(void)
 
 	len = njobs * sizeof(*jp);
 	jq = jobtab;
-	jp = (job *)ckrealloc(jq, len + 4 * sizeof(*jp));
+	jp = (struct job *)ckrealloc(jq, len + 4 * sizeof(*jp));
 
 	offset = (char *)jp - (char *)jq;
 	if (offset) {
@@ -797,7 +797,8 @@ growjobtab(void)
 			l -= sizeof(*jp);
 			jq--;
 #define joff(p) ((struct job *)((char *)(p) + l))
-#define jmove(type, p) (p) = (type)((char *)(p) + offset)
+#define jmove(T, p) (p) = (T)((char *)(p) + offset)
+#define decltype typeof
 			if (likely(joff(jp)->ps == &jq->ps0))
 				jmove(decltype(joff(jp)->ps), joff(jp)->ps );
 			if (joff(jp)->prev_job)

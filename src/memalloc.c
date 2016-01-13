@@ -129,7 +129,7 @@ stalloc(size_t nbytes)
 		if (len < blocksize)
 			sh_error("Out of space");
 		INTOFF;
-		sp = (stack_block *)ckmalloc(len);
+		sp = (struct stack_block *)ckmalloc(len);
 		sp->prev = stackp;
 		stacknxt = sp->space;
 		stacknleft = blocksize;
@@ -221,7 +221,7 @@ growstackblock(void)
 		sp = stackp;
 		prevstackp = sp->prev;
 		grosslen = newlen + sizeof(struct stack_block) - MINSIZE;
-		sp = (stack_block *)ckrealloc((pointer)sp, grosslen);
+		sp = (struct stack_block *)ckrealloc((pointer)sp, grosslen);
 		sp->prev = prevstackp;
 		stackp = sp;
 		stacknxt = sp->space;

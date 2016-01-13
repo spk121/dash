@@ -296,7 +296,7 @@ out_free:
 		if ((flags & (VEXPORT|VREADONLY|VSTRFIXED|VUNSET)) == VUNSET)
 			goto out_free;
 		/* not found */
-		vp = (var *)ckmalloc(sizeof (*vp));
+		vp = (struct var *)ckmalloc(sizeof (*vp));
 		vp->next = *vpp;
 		vp->func = NULL;
 		*vpp = vp;
@@ -496,7 +496,7 @@ void mklocal(char *name)
 	struct var *vp;
 
 	INTOFF;
-	lvp = (localvar *) ckmalloc(sizeof (struct localvar));
+	lvp = (struct localvar *) ckmalloc(sizeof (struct localvar));
 	if (name[0] == '-' && name[1] == '\0') {
 		char *p;
 		p = (char *)ckmalloc(sizeof(optlist));
@@ -597,7 +597,7 @@ struct localvar_list *pushlocalvars(void)
 	struct localvar_list *ll;
 
 	INTOFF;
-	ll = (localvar_list *)ckmalloc(sizeof(*ll));
+	ll = (struct localvar_list *)ckmalloc(sizeof(*ll));
 	ll->lv = NULL;
 	ll->next = localvar_stack;
 	localvar_stack = ll;
