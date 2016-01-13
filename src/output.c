@@ -146,7 +146,7 @@ outmem(const char *p, size_t len, struct output *dest)
 	nleft = dest->end - dest->nextc;
 	if (likely(nleft >= len)) {
 buffered:
-		dest->nextc = mempcpy(dest->nextc, p, len);
+		dest->nextc = (char *)mempcpy(dest->nextc, p, len);
 		return;
 	}
 
@@ -174,7 +174,7 @@ buffered:
 alloc:
 #endif
 		INTOFF;
-		dest->buf = ckrealloc(dest->buf, bufsize);
+		dest->buf = (char *)ckrealloc(dest->buf, bufsize);
 		dest->bufsize = bufsize;
 		dest->end = dest->buf + bufsize;
 		dest->nextc = dest->buf + offset;
@@ -304,7 +304,8 @@ static int xvasprintf(char **sp, size_t size, const char *f, va_list ap)
 	if (len < size)
 		return len;
 
-	s = stalloc((len >= stackblocksize() ? len : stackblocksize()) + 1);
+	s = (char *)stalloc((len >= stackblocksize()
+			     ? len : stackblocksize()) + 1);
 	*sp = s;
 	len = xvsnprintf(s, len + 1, f, ap);
 	return len;
@@ -355,7 +356,7 @@ out:
 int
 xwrite(int fd, const void *p, size_t n)
 {
-	const char *buf = p;
+	const char *buf = (const char *)p;
 
 	while (n) {
 		ssize_t i;

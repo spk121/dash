@@ -129,7 +129,7 @@ stalloc(size_t nbytes)
 		if (len < blocksize)
 			sh_error("Out of space");
 		INTOFF;
-		sp = ckmalloc(len);
+		sp = (stack_block *)ckmalloc(len);
 		sp->prev = stackp;
 		stacknxt = sp->space;
 		stacknleft = blocksize;
@@ -154,7 +154,7 @@ stunalloc(pointer p)
 	}
 #endif
 	stacknleft += stacknxt - (char *)p;
-	stacknxt = p;
+	stacknxt = (char *)p;
 }
 
 
@@ -221,7 +221,7 @@ growstackblock(void)
 		sp = stackp;
 		prevstackp = sp->prev;
 		grosslen = newlen + sizeof(struct stack_block) - MINSIZE;
-		sp = ckrealloc((pointer)sp, grosslen);
+		sp = (char *)ckrealloc((pointer)sp, grosslen);
 		sp->prev = prevstackp;
 		stackp = sp;
 		stacknxt = sp->space;
@@ -231,10 +231,10 @@ growstackblock(void)
 	} else {
 		char *oldspace = stacknxt;
 		int oldlen = stacknleft;
-		char *p = stalloc(newlen);
+		char *p = (char *)stalloc(newlen);
 
 		/* free the space we just allocated */
-		stacknxt = memcpy(p, oldspace, oldlen);
+		stacknxt = (char *)memcpy(p, oldspace, oldlen);
 		stacknleft += newlen;
 	}
 }
@@ -262,7 +262,7 @@ growstackstr(void)
 {
 	size_t len = stackblocksize();
 	growstackblock();
-	return stackblock() + len;
+	return (char *)stackblock() + len;
 }
 
 /*
@@ -284,14 +284,14 @@ makestrspace(size_t newlen, char *p)
 			break;
 		growstackblock();
 	}
-	return stackblock() + len;
+	return (char *)stackblock() + len;
 }
 
 char *
 stnputs(const char *s, size_t n, char *p)
 {
 	p = makestrspace(n, p);
-	p = mempcpy(p, s, n);
+	p = (char *)mempcpy(p, s, n);
 	return p;
 }
 

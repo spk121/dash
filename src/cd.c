@@ -216,7 +216,7 @@ updatepwd(const char *dir)
 		new = stputs(curdir, new);
 	}
 	new = makestrspace(strlen(dir) + 2, new);
-	lim = stackblock() + 1;
+	lim = (const char *)stackblock() + 1;
 	if (*dir != '/') {
 		if (new[-1] != '/')
 			USTPUTC('/', new);
@@ -254,7 +254,7 @@ updatepwd(const char *dir)
 	if (new > lim)
 		STUNPUTC(new);
 	*new = 0;
-	return stackblock();
+	return (const char *) stackblock();
 }
 
 

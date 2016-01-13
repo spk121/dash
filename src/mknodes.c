@@ -441,7 +441,7 @@ savestr(const char *s)
 {
 	char *p;
 
-	if ((p = malloc(strlen(s) + 1)) == NULL)
+	if ((p = (char *)malloc(strlen(s) + 1)) == NULL)
 		error("Out of space");
 	(void) strcpy(p, s);
 	return p;

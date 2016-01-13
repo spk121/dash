@@ -134,7 +134,7 @@ yylex()
 			p = buf;
 			while (buf++, is_in_name(*buf))
 				;
-			yylval.name = stalloc(buf - p + 1);
+			yylval.name = (char *)stalloc(buf - p + 1);
 			*(char *)mempcpy(yylval.name, p, buf - p) = 0;
 			value = ARITH_VAR;
 			goto out;

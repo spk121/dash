@@ -180,7 +180,7 @@ list(int nlflag)
 				n2->npipe.backgnd = 1;
 			} else {
 				if (n2->type != NREDIR) {
-					n3 = stalloc(sizeof(struct nredir));
+					n3 = (node *)stalloc(sizeof(struct nredir));
 					n3->nredir.n = n2;
 					n3->nredir.redirect = NULL;
 					n2 = n3;
@@ -1039,7 +1039,7 @@ endword:
 	}
 	USTPUTC('\0', out);
 	len = out - (char *)stackblock();
-	out = stackblock();
+	out = (char *)stackblock();
 	if (eofmark == NULL) {
 		if ((c == '>' || c == '<')
 		 && quotef == 0
@@ -1105,7 +1105,7 @@ more_heredoc:
 				if (len) {
 					char *str;
 
-					str = alloca(len + 1);
+					str = (char *)alloca(len + 1);
 					*(char *)mempcpy(str, p, len) = 0;
 
 					pushstring(str, NULL);
@@ -1266,7 +1266,7 @@ varname:
 				c = pgetc_eatbnl();
 				/*FALLTHROUGH*/
 			default:
-				p = strchr(types, c);
+				p = (char *)strchr(types, c);
 				if (p == NULL)
 					break;
 				subtype |= p - types + VSNORMAL;
@@ -1318,20 +1318,20 @@ parsebackq: {
 	str = NULL;
 	savelen = out - (char *)stackblock();
 	if (savelen > 0) {
-		str = alloca(savelen);
+		str = (char *)alloca(savelen);
 		memcpy(str, stackblock(), savelen);
 	}
-        if (oldstyle) {
-                /* We must read until the closing backquote, giving special
-                   treatment to some slashes, and then push the string and
-                   reread it as input, interpreting it normally.  */
-                char *pout;
-                int pc;
-                size_t psavelen;
-                char *pstr;
+	if (oldstyle) {
+		/* We must read until the closing backquote, giving special
+		   treatment to some slashes, and then push the string and
+		   reread it as input, interpreting it normally.  */
+		char *pout;
+		int pc;
+		size_t psavelen;
+		char *pstr;
 
 
-                STARTSTACKSTR(pout);
+		STARTSTACKSTR(pout);
 		for (;;) {
 			if (needprompt) {
 				setprompt(2);
@@ -1371,15 +1371,15 @@ parsebackq: {
 				break;
 			}
 			STPUTC(pc, pout);
-                }
+		}
 done:
-                STPUTC('\0', pout);
-                psavelen = pout - (char *)stackblock();
-                if (psavelen > 0) {
-			pstr = grabstackstr(pout);
+		STPUTC('\0', pout);
+		psavelen = pout - (char *)stackblock();
+		if (psavelen > 0) {
+			pstr = (char *)grabstackstr(pout);
 			setinputstring(pstr);
-                }
-        }
+		}
+	}
 	nlpp = &bqlist;
 	while (*nlpp)
 		nlpp = &(*nlpp)->next;

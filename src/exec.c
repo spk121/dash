@@ -197,7 +197,7 @@ padvance(const char **path, const char *name)
 	len = p - start + strlen(name) + 2;	/* "2" is for '/' and '\0' */
 	while (stackblocksize() < len)
 		growstackblock();
-	q = stackblock();
+	q = (char *)stackblock();
 	if (p != start) {
 		memcpy(q, start, p - start);
 		q += p - start;
@@ -213,7 +213,7 @@ padvance(const char **path, const char *name)
 		*path = p + 1;
 	else
 		*path = NULL;
-	return stalloc(len);
+	return (char *)stalloc(len);
 }
 
 

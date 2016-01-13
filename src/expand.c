@@ -463,7 +463,7 @@ expari(int flag)
 	 * efficiency.  Next we scan backwards looking for the
 	 * start of arithmetic.
 	 */
-	start = stackblock();
+	start = (char *)stackblock();
 	p = expdest;
 	pushstackmark(&sm, p - start);
 	*--p = '\0';
@@ -654,7 +654,7 @@ subevalvar(char *p, char *str, int strloc, int subtype, int startloc, int varfla
 			        EXP_QPAT : EXP_CASE) : 0));
 	STPUTC('\0', expdest);
 	argbackq = saveargbackq;
-	startp = stackblock() + startloc;
+	startp = (char *)stackblock() + startloc;
 
 	switch (subtype) {
 	case VSASSIGN:
@@ -675,16 +675,16 @@ subevalvar(char *p, char *str, int strloc, int subtype, int startloc, int varfla
 #endif
 
 	rmesc = startp;
-	rmescend = stackblock() + strloc;
+	rmescend = (char *)stackblock() + strloc;
 	if (quotes) {
 		rmesc = _rmescapes(startp, RMESCAPE_ALLOC | RMESCAPE_GROW);
 		if (rmesc != startp) {
 			rmescend = expdest;
-			startp = stackblock() + startloc;
+			startp = (char *)stackblock() + startloc;
 		}
 	}
 	rmescend--;
-	str = stackblock() + strloc;
+	str = (char *)stackblock() + strloc;
 	preglob(str, 0);
 
 	/* zero = subtype == VSTRIMLEFT || subtype == VSTRIMLEFTMAX */
@@ -1218,7 +1218,7 @@ expandmeta(struct strlist *str, int flag)
 		p = preglob(str->text, RMESCAPE_ALLOC | RMESCAPE_HEAP);
 		{
 			int i = strlen(str->text);
-			expdir = ckmalloc(i < 2048 ? 2048 : i); /* XXX */
+			expdir = (char *)ckmalloc(i < 2048 ? 2048 : i); /* XXX */
 		}
 
 		expmeta(expdir, p);
@@ -1619,13 +1619,13 @@ _rmescapes(char *str, int flag)
 			str = (char *)stackblock() + strloc;
 			p = str + len;
 		} else if (flag & RMESCAPE_HEAP) {
-			r = ckmalloc(fulllen);
+			r = (char *)ckmalloc(fulllen);
 		} else {
-			r = stalloc(fulllen);
+			r = (char *)stalloc(fulllen);
 		}
 		q = r;
 		if (len > 0) {
-			q = mempcpy(q, str, len);
+			q = (char *)mempcpy(q, str, len);
 		}
 	}
 	inquotes = 0;
@@ -1677,7 +1677,7 @@ casematch(union node *pattern, char *val)
 	argstr(pattern->narg.text, EXP_TILDE | EXP_CASE);
 	STACKSTRNUL(expdest);
 	ifsfree();
-	result = patmatch(stackblock(), val);
+	result = patmatch((char *)stackblock(), val);
 	popstackmark(&smark);
 	return result;
 }

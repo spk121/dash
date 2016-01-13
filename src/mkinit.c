@@ -406,7 +406,7 @@ addchar(int c, struct text *text)
 	struct block *bp;
 
 	if (--text->nleft < 0) {
-		bp = ckmalloc(sizeof *bp);
+		bp = (struct block *)ckmalloc(sizeof *bp);
 		if (text->start == NULL)
 			text->start = bp;
 		else
@@ -453,7 +453,7 @@ ckmalloc(int nbytes)
 {
 	char *p;
 
-	if ((p = malloc(nbytes)) == NULL)
+	if ((p = (char *)malloc(nbytes)) == NULL)
 		error("Out of space");
 	return p;
 }
@@ -463,7 +463,7 @@ savestr(char *s)
 {
 	char *p;
 
-	p = ckmalloc(strlen(s) + 1);
+	p = (char *)ckmalloc(strlen(s) + 1);
 	strcpy(p, s);
 	return p;
 }

@@ -323,7 +323,7 @@ pushstring(char *s, void *ap)
 	INTOFF;
 /*dprintf("*** calling pushstring: %s, %d\n", s, len);*/
 	if (parsefile->strpush) {
-		sp = ckmalloc(sizeof (struct strpush));
+		sp = (strpush *)ckmalloc(sizeof (struct strpush));
 		sp->prev = parsefile->strpush;
 		parsefile->strpush = sp;
 	} else
@@ -413,7 +413,7 @@ setinputfd(int fd, int push)
 	}
 	parsefile->fd = fd;
 	if (parsefile->buf == NULL)
-		parsefile->buf = ckmalloc(IBUFSIZ);
+		parsefile->buf = (char *) ckmalloc(IBUFSIZ);
 	parsefile->lleft = parsefile->nleft = 0;
 	plinno = 1;
 }

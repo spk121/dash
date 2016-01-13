@@ -99,14 +99,14 @@ static int print_escape_str(const char *f, int *param, int *array, char *s)
 
 	setstackmark(&smark);
 	done = conv_escape_str(s, &p);
-	q = stackblock();
+	q = (char *)stackblock();
 	len = p - q;
 
 	p = makestrspace(len, p);
 	memset(p, 'X', len - 1);
 	p[len - 1] = 0;
 
-	q = stackblock();
+	q = (char *)stackblock();
 	total = ASPF(&p, f, p);
 
 	len = strchrnul(p, 'X') - p;

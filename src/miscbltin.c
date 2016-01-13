@@ -79,7 +79,7 @@ readcmd_handle_line(char *s, char **ap)
 	char *line;
 
 	/* ifsbreakup will fiddle with stack region... */
-	line = stackblock();
+	line = (char *)stackblock();
 	s = grabstackstr(s);
 
 	/* need a copy, so that delimiters aren't lost

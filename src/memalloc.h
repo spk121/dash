@@ -69,7 +69,7 @@ static inline void grabstackblock(size_t len)
 
 static inline char *_STPUTC(int c, char *p) {
 	if (p == sstrend)
-		p = growstackstr();
+		p = (char *)growstackstr();
 	*p++ = c;
 	return p;
 }

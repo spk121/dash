@@ -202,7 +202,7 @@ single_quote(const char *s) {
 		q = p = makestrspace(len + 3, p);
 
 		*q++ = '\'';
-		q = mempcpy(q, s, len);
+		q = (char *)mempcpy(q, s, len);
 		*q++ = '\'';
 		s += len;
 
@@ -215,7 +215,7 @@ single_quote(const char *s) {
 		q = p = makestrspace(len + 3, p);
 
 		*q++ = '"';
-		q = mempcpy(q, s, len);
+		q = (char *)mempcpy(q, s, len);
 		*q++ = '"';
 		s += len;
 
@@ -235,7 +235,7 @@ char *
 sstrdup(const char *p)
 {
 	size_t len = strlen(p) + 1;
-	return memcpy(stalloc(len), p, len);
+	return (char *)memcpy(stalloc(len), p, len);
 }
 
 /*
@@ -253,5 +253,6 @@ pstrcmp(const void *a, const void *b)
 const char *const *
 findstring(const char *s, const char *const *array, size_t nmemb)
 {
-	return bsearch(&s, array, nmemb, sizeof(const char *), pstrcmp);
+	return (const char * const *)bsearch(&s, array, nmemb,
+					     sizeof(const char *), pstrcmp);
 }

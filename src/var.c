@@ -213,10 +213,11 @@ struct var *setvar(const char *name, const char *val, int flags)
 		vallen = strlen(val);
 	}
 	INTOFF;
-	p = mempcpy(nameeq = ckmalloc(namelen + vallen + 2), name, namelen);
+	p = (char *)mempcpy(nameeq = (char *)ckmalloc(namelen + vallen + 2),
+			    name, namelen);
 	if (val) {
 		*p++ = '=';
-		p = mempcpy(p, val, vallen);
+		p = (char *)mempcpy(p, val, vallen);
 	}
 	*p = '\0';
 	vp = setvareq(nameeq, flags | VNOSAVE);
@@ -295,7 +296,7 @@ out_free:
 		if ((flags & (VEXPORT|VREADONLY|VSTRFIXED|VUNSET)) == VUNSET)
 			goto out_free;
 		/* not found */
-		vp = ckmalloc(sizeof (*vp));
+		vp = (char *)ckmalloc(sizeof (*vp));
 		vp->next = *vpp;
 		vp->func = NULL;
 		*vpp = vp;
@@ -346,7 +347,7 @@ lookupvar(const char *name)
 			fmtstr(linenovar+7, sizeof(linenovar)-7, "%d", lineno);
 		}
 #endif
-		return strchrnul(v->text, '=') + 1;
+		return (char *)strchrnul(v->text, '=') + 1;
 	}
 	return NULL;
 }
@@ -377,12 +378,12 @@ listvars(int on, int off, char ***end)
 		for (vp = *vpp ; vp ; vp = vp->next)
 			if ((vp->flags & mask) == on) {
 				if (ep == stackstrend())
-					ep = growstackstr();
+					ep = (char **)growstackstr();
 				*ep++ = (char *) vp->text;
 			}
 	} while (++vpp < vartab + VTABSIZE);
 	if (ep == stackstrend())
-		ep = growstackstr();
+		ep = (char **)growstackstr();
 	if (end)
 		*end = ep;
 	*ep++ = NULL;
@@ -495,11 +496,11 @@ void mklocal(char *name)
 	struct var *vp;
 
 	INTOFF;
-	lvp = ckmalloc(sizeof (struct localvar));
+	lvp = (localvar *) ckmalloc(sizeof (struct localvar));
 	if (name[0] == '-' && name[1] == '\0') {
 		char *p;
-		p = ckmalloc(sizeof(optlist));
-		lvp->text = memcpy(p, optlist, sizeof(optlist));
+		p = (char *)ckmalloc(sizeof(optlist));
+		lvp->text = (const char *)memcpy(p, optlist, sizeof(optlist));
 		vp = NULL;
 	} else {
 		char *eq;
@@ -596,7 +597,7 @@ struct localvar_list *pushlocalvars(void)
 	struct localvar_list *ll;
 
 	INTOFF;
-	ll = ckmalloc(sizeof(*ll));
+	ll = (localvar_list *)ckmalloc(sizeof(*ll));
 	ll->lv = NULL;
 	ll->next = localvar_stack;
 	localvar_stack = ll;

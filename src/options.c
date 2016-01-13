@@ -307,7 +307,7 @@ setparam(char **argv)
 	int nparam;
 
 	for (nparam = 0 ; argv[nparam] ; nparam++);
-	ap = newparam = ckmalloc((nparam + 1) * sizeof *ap);
+	ap = newparam = (char *)ckmalloc((nparam + 1) * sizeof *ap);
 	while (*argv) {
 		*ap++ = savestr(*argv++);
 	}
