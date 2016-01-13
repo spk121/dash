@@ -77,7 +77,7 @@ copyfunc(union node *n)
 	funcstringsize = 0;
 	calcsize(n);
 	blocksize = funcblocksize;
-	f = ckmalloc(blocksize + funcstringsize);
+	f = (struct funcnode *) ckmalloc(blocksize + funcstringsize);
 	funcblock = (char *) f + offsetof(struct funcnode, n);
 	funcstring = (char *) f + blocksize;
 	copynode(n);
@@ -88,8 +88,7 @@ copyfunc(union node *n)
 
 
 STATIC void
-calcsize(n)
-	union node *n;
+calcsize(union node *n)
 {
 	%CALCSIZE
 }
@@ -97,8 +96,7 @@ calcsize(n)
 
 
 STATIC void
-sizenodelist(lp)
-	struct nodelist *lp;
+sizenodelist(struct nodelist *lp)
 {
 	while (lp) {
 		funcblocksize += SHELL_ALIGN(sizeof(struct nodelist));
@@ -110,26 +108,25 @@ sizenodelist(lp)
 
 
 STATIC union node *
-copynode(n)
-	union node *n;
+copynode(union node *n)
 {
-	union node *new;
+	union node *_new;
 
 	%COPY
-	return new;
+	return _new;
 }
 
 
 STATIC struct nodelist *
-copynodelist(lp)
-	struct nodelist *lp;
+copynodelist(struct nodelist *lp)
+	
 {
 	struct nodelist *start;
 	struct nodelist **lpp;
 
 	lpp = &start;
 	while (lp) {
-		*lpp = funcblock;
+		*lpp = (nodelist *) funcblock;
 		funcblock = (char *) funcblock +
 		    SHELL_ALIGN(sizeof(struct nodelist));
 		(*lpp)->n = copynode(lp->n);
@@ -143,8 +140,7 @@ copynodelist(lp)
 
 
 STATIC char *
-nodesavestr(s)
-	char   *s;
+nodesavestr(char *s)
 {
 	char   *rtn = funcstring;
 
