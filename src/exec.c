@@ -476,7 +476,7 @@ find_builtin(const char *name)
 {
 	struct builtincmd *bp;
 
-	bp = bsearch(
+	bp = (struct builtincmd *)bsearch(
 		&name, builtincmd, NUMBUILTINS, sizeof(struct builtincmd),
 		pstrcmp
 	);
