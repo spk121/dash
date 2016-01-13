@@ -398,9 +398,10 @@ static const struct limits limits[] = {
 	{ (char *) 0,			0,		   0,  '\0' }
 };
 
-enum limtype { SOFT = 0x1, HARD = 0x2 };
+const int SOFT = 0x1;
+const int HARD = 0x2;
 
-static void printlim(enum limtype how, const struct rlimit *limit,
+static void printlim(int how, const struct rlimit *limit,
 		     const struct limits *l)
 {
 	rlim_t val;
@@ -422,7 +423,7 @@ ulimitcmd(int argc, char **argv)
 {
 	int	c;
 	rlim_t val = 0;
-	enum limtype how = SOFT | HARD;
+	int how = SOFT | HARD;
 	const struct limits	*l;
 	int		set, all = 0;
 	int		optc, what;
