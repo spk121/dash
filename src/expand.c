@@ -1453,34 +1453,34 @@ patmatch(char *pattern, const char *string)
 #ifndef HAVE_FNMATCH
 STATIC int ccmatch(const char *p, int chr, const char **r)
 {
-	static const struct class {
+	static const struct klass {
 		char name[10];
 		int (*fn)(int);
 	} classes[] = {
-		{ .name = ":alnum:]", .fn = isalnum },
-		{ .name = ":cntrl:]", .fn = iscntrl },
-		{ .name = ":lower:]", .fn = islower },
-		{ .name = ":space:]", .fn = isspace },
-		{ .name = ":alpha:]", .fn = isalpha },
-		{ .name = ":digit:]", .fn = isdigit },
-		{ .name = ":print:]", .fn = isprint },
-		{ .name = ":upper:]", .fn = isupper },
-		{ .name = ":blank:]", .fn = isblank },
-		{ .name = ":graph:]", .fn = isgraph },
-		{ .name = ":punct:]", .fn = ispunct },
-		{ .name = ":xdigit:]", .fn = isxdigit },
+		{ ":alnum:]",  isalnum },
+		{ ":cntrl:]",  iscntrl },
+		{ ":lower:]",  islower },
+		{ ":space:]",  isspace },
+		{ ":alpha:]",  isalpha },
+		{ ":digit:]",  isdigit },
+		{ ":print:]",  isprint },
+		{ ":upper:]",  isupper },
+		{ ":blank:]",  isblank },
+		{ ":graph:]",  isgraph },
+		{ ":punct:]",  ispunct },
+		{ ":xdigit:]", isxdigit },
 	};
-	const struct class *class, *end;
+	const struct klass *klass, *end;
 
 	end = classes + sizeof(classes) / sizeof(classes[0]);
-	for (class = classes; class < end; class++) {
+	for (klass = classes; klass < end; klass++) {
 		const char *q;
 
-		q = prefix(p, class->name);
+		q = prefix(p, klass->name);
 		if (!q)
 			continue;
 		*r = q;
-		return class->fn(chr);
+		return klass->fn(chr);
 	}
 
 	*r = 0;
