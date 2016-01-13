@@ -38,8 +38,14 @@
  * Most machines require the value returned from malloc to be aligned
  * in some way.  The following macro will get this right on many machines.
  */
+union align_size
+{
+	int i;
+	char *cp;
+	double d;
+};
 
-#define SHELL_SIZE (sizeof(union {int i; char *cp; double d; }) - 1)
+#define SHELL_SIZE (sizeof(align_size) - 1)
 /*
  * It appears that grabstackstr() will barf with such alignments
  * because stalloc() will return a string allocated in a new stackblock.
