@@ -41,13 +41,15 @@
 #define CMDBUILTIN	2	/* command is a shell builtin */
 
 
+union param {
+	int index;
+	const struct builtincmd *cmd;
+	struct funcnode *func;
+} u;
+
 struct cmdentry {
 	int cmdtype;
-	union param {
-		int index;
-		const struct builtincmd *cmd;
-		struct funcnode *func;
-	} u;
+	union param u;
 };
 
 
