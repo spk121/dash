@@ -869,10 +869,7 @@ memtodest(const char *p, size_t len, const char *syntax, int quotes) {
 
 
 STATIC size_t
-strtodest(p, syntax, quotes)
-	const char *p;
-	const char *syntax;
-	int quotes;
+strtodest(const char *p, const char *syntax, int quotes)
 {
 	size_t len = strlen(p);
 	memtodest(p, len, syntax, quotes);
