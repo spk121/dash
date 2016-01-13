@@ -311,7 +311,10 @@ find_command(char *name, struct cmdentry *entry, int act, const char *path)
 		return;
 	}
 
-	updatetbl = (path == pathval());
+	if (path == pathval())
+		updatetbl = 1;
+	else
+		updatetbl = 0;
 	if (!updatetbl) {
 		act |= DO_ALTPATH;
 		if (strstr(path, "%builtin") != NULL)
