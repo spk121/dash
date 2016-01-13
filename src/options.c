@@ -391,8 +391,7 @@ setcmd(int argc, char **argv)
 
 
 void
-getoptsreset(value)
-	const char *value;
+getoptsreset(const char *value)
 {
 	shellparam.optind = number(value) ?: 1;
 	shellparam.optoff = -1;
