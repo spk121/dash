@@ -520,32 +520,32 @@ hashcd(void)
 void
 changepath(const char *newval)
 {
-	const char *old, *new;
+	const char *old_path, *new_path;
 	int idx;
 	int firstchange;
 	int bltin;
 
-	old = pathval();
-	new = newval;
+	old_path = pathval();
+	new_path = newval;
 	firstchange = 9999;	/* assume no change */
 	idx = 0;
 	bltin = -1;
 	for (;;) {
-		if (*old != *new) {
+		if (*old_path != *new_path) {
 			firstchange = idx;
-			if ((*old == '\0' && *new == ':')
-			 || (*old == ':' && *new == '\0'))
+			if ((*old_path == '\0' && *new_path == ':')
+			 || (*old_path == ':' && *new_path == '\0'))
 				firstchange++;
-			old = new;	/* ignore subsequent differences */
+			old_path = new_path;	/* ignore subsequent differences */
 		}
-		if (*new == '\0')
+		if (*new_path == '\0')
 			break;
-		if (*new == '%' && bltin < 0 && prefix(new + 1, "builtin"))
+		if (*new_path == '%' && bltin < 0 && prefix(new_path + 1, "builtin"))
 			bltin = idx;
-		if (*new == ':') {
+		if (*new_path == ':') {
 			idx++;
 		}
-		new++, old++;
+		new_path++, old_path++;
 	}
 	if (builtinloc < 0 && bltin >= 0)
 		builtinloc = bltin;		/* zap builtins */
