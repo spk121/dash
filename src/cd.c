@@ -192,7 +192,7 @@ out:
 STATIC const char *
 updatepwd(const char *dir)
 {
-	char *new;
+	char *cur;
 	char *p;
 	char *cdcomppath;
 	const char *lim;
@@ -209,24 +209,24 @@ updatepwd(const char *dir)
 #endif
 
 	cdcomppath = sstrdup(dir);
-	STARTSTACKSTR(new);
+	cur = (char *)stackblock();
 	if (*dir != '/') {
 		if (curdir == nullstr)
 			return 0;
-		new = stputs(curdir, new);
+		cur = stputs(curdir, cur);
 	}
-	new = makestrspace(strlen(dir) + 2, new);
+	cur = makestrspace(strlen(dir) + 2, cur);
 	lim = (const char *)stackblock() + 1;
 	if (*dir != '/') {
-		if (new[-1] != '/')
-			USTPUTC('/', new);
-		if (new > lim && *lim == '/')
+		if (cur[-1] != '/')
+			USTPUTC('/', cur);
+		if (cur > lim && *lim == '/')
 			lim++;
 	} else {
-		USTPUTC('/', new);
+		USTPUTC('/', cur);
 		cdcomppath++;
 		if (dir[1] == '/' && dir[2] != '/') {
-			USTPUTC('/', new);
+			USTPUTC('/', cur);
 			cdcomppath++;
 			lim++;
 		}
@@ -236,9 +236,9 @@ updatepwd(const char *dir)
 		switch(*p) {
 		case '.':
 			if (p[1] == '.' && p[2] == '\0') {
-				while (new > lim) {
-					STUNPUTC(new);
-					if (new[-1] == '/')
+				while (cur > lim) {
+					STUNPUTC(cur);
+					if (cur[-1] == '/')
 						break;
 				}
 				break;
@@ -246,14 +246,14 @@ updatepwd(const char *dir)
 				break;
 			/* fall through */
 		default:
-			new = stputs(p, new);
-			USTPUTC('/', new);
+			cur = stputs(p, cur);
+			USTPUTC('/', cur);
 		}
 		p = strtok(0, "/");
 	}
-	if (new > lim)
-		STUNPUTC(new);
-	*new = 0;
+	if (cur > lim)
+		STUNPUTC(cur);
+	*cur = 0;
 	return (const char *) stackblock();
 }
 
