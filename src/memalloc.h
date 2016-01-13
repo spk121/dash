@@ -76,7 +76,7 @@ static inline char *_STPUTC(int c, char *p) {
 
 #define stackblock() ((void *)stacknxt)
 #define stackblocksize() stacknleft
-#define STARTSTACKSTR(p) ((p) = stackblock())
+#define STARTSTACKSTR(p) ((p) = (char *) stackblock())
 #define STPUTC(c, p) ((p) = _STPUTC((c), (p)))
 #define CHECKSTRSPACE(n, p) \
 	({ \
@@ -88,12 +88,12 @@ static inline char *_STPUTC(int c, char *p) {
 		0; \
 	})
 #define USTPUTC(c, p)	(*p++ = (c))
-#define STACKSTRNUL(p)	((p) == sstrend? (p = growstackstr(), *p = '\0') : (*p = '\0'))
+#define STACKSTRNUL(p)	((p) == sstrend? (p = (char *)growstackstr(), *p = '\0') : (*p = '\0'))
 #define STUNPUTC(p)	(--p)
 #define STTOPC(p)	p[-1]
 #define STADJUST(amount, p)	(p += (amount))
 
-#define grabstackstr(p)	stalloc((char *)(p) - (char *)stackblock())
+#define grabstackstr(p)	(char *) stalloc((char *)(p) - (char *)stackblock())
 #define ungrabstackstr(s, p) stunalloc((s))
 #define stackstrend() ((void *)sstrend)
 
