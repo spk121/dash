@@ -212,7 +212,7 @@ static intmax_t binop(int token, union yystype *val, int op, int noeval)
 	return binop2(a, op, ARITH_MAX_PREC, noeval);
 }
 
-static intmax_t and(int token, union yystype *val, int op, int noeval)
+static intmax_t arith_and(int token, union yystype *val, int op, int noeval)
 {
 	intmax_t a = binop(token, val, op, noeval);
 	intmax_t b;
@@ -224,14 +224,14 @@ static intmax_t and(int token, union yystype *val, int op, int noeval)
 	token = yylex();
 	*val = yylval;
 
-	b = and(token, val, yylex(), noeval | !a);
+	b = arith_and(token, val, yylex(), noeval | !a);
 
 	return a && b;
 }
 
-static intmax_t or(int token, union yystype *val, int op, int noeval)
+static intmax_t arith_or(int token, union yystype *val, int op, int noeval)
 {
-	intmax_t a = and(token, val, op, noeval);
+	intmax_t a = arith_and(token, val, op, noeval);
 	intmax_t b;
 
 	op = last_token;
@@ -241,14 +241,14 @@ static intmax_t or(int token, union yystype *val, int op, int noeval)
 	token = yylex();
 	*val = yylval;
 
-	b = or(token, val, yylex(), noeval | !!a);
+	b = arith_or(token, val, yylex(), noeval | !!a);
 
 	return a || b;
 }
 
 static intmax_t cond(int token, union yystype *val, int op, int noeval)
 {
-	intmax_t a = or(token, val, op, noeval);
+	intmax_t a = arith_or(token, val, op, noeval);
 	intmax_t b;
 	intmax_t c;
 
