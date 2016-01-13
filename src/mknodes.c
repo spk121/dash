@@ -295,7 +295,7 @@ outfunc(FILE *cfile, int calcsize)
 	if (calcsize)
 		fputs("      funcblocksize += nodesize[n->type];\n", cfile);
 	else {
-		fputs("      new = funcblock;\n", cfile);
+		fputs("      _new = (node *)funcblock;\n", cfile);
 		fputs("      funcblock = (char *) funcblock + nodesize[n->type];\n", cfile);
 	}
 	fputs("      switch (n->type) {\n", cfile);
@@ -314,7 +314,7 @@ outfunc(FILE *cfile, int calcsize)
 						sp->tag, fp->name);
 				} else {
 					indent(12, cfile);
-					fprintf(cfile, "new->%s.%s = copynode(n->%s.%s);\n",
+					fprintf(cfile, "_new->%s.%s = copynode(n->%s.%s);\n",
 						sp->tag, fp->name, sp->tag, fp->name);
 				}
 				break;
@@ -325,7 +325,7 @@ outfunc(FILE *cfile, int calcsize)
 						sp->tag, fp->name);
 				} else {
 					indent(12, cfile);
-					fprintf(cfile, "new->%s.%s = copynodelist(n->%s.%s);\n",
+					fprintf(cfile, "_new->%s.%s = copynodelist(n->%s.%s);\n",
 						sp->tag, fp->name, sp->tag, fp->name);
 				}
 				break;
@@ -336,7 +336,7 @@ outfunc(FILE *cfile, int calcsize)
 						sp->tag, fp->name);
 				} else {
 					indent(12, cfile);
-					fprintf(cfile, "new->%s.%s = nodesavestr(n->%s.%s);\n",
+					fprintf(cfile, "_new->%s.%s = nodesavestr(n->%s.%s);\n",
 						sp->tag, fp->name, sp->tag, fp->name);
 				}
 				break;
@@ -344,7 +344,7 @@ outfunc(FILE *cfile, int calcsize)
 			case T_OTHER:
 				if (! calcsize) {
 					indent(12, cfile);
-					fprintf(cfile, "new->%s.%s = n->%s.%s;\n",
+					fprintf(cfile, "_new->%s.%s = n->%s.%s;\n",
 						sp->tag, fp->name, sp->tag, fp->name);
 				}
 				break;
@@ -355,7 +355,7 @@ outfunc(FILE *cfile, int calcsize)
 	}
 	fputs("      };\n", cfile);
 	if (! calcsize)
-		fputs("      new->type = n->type;\n", cfile);
+		fputs("      _new->type = n->type;\n", cfile);
 }
 
 
