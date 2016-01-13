@@ -130,27 +130,27 @@ RESET {
 
 static int evalcmd(int argc, char **argv, int flags)
 {
-        char *p;
-        char *concat;
-        char **ap;
+	char *p;
+	char *concat;
+	char **ap;
 
-        if (argc > 1) {
-                p = argv[1];
-                if (argc > 2) {
-                        STARTSTACKSTR(concat);
-                        ap = argv + 2;
-                        for (;;) {
-                        	concat = stputs(p, concat);
-                                if ((p = *ap++) == NULL)
-                                        break;
-                                STPUTC(' ', concat);
-                        }
-                        STPUTC('\0', concat);
-                        p = grabstackstr(concat);
-                }
-                return evalstring(p, flags & EV_TESTED);
-        }
-        return 0;
+	if (argc > 1) {
+		p = argv[1];
+		if (argc > 2) {
+			concat = (char *)stackblock();
+			ap = argv + 2;
+			for (;;) {
+				concat = stputs(p, concat);
+				if ((p = *ap++) == NULL)
+					break;
+				STPUTC(' ', concat);
+			}
+			STPUTC('\0', concat);
+			p = (char *)grabstackstr(concat);
+		}
+		return evalstring(p, flags & EV_TESTED);
+	}
+	return 0;
 }
 
 
@@ -937,7 +937,13 @@ evalfun(struct funcnode *func, int argc, char **argv, int flags)
 	int savefuncline;
 	int saveloopnest;
 
-	saveparam = shellparam;
+	{
+		saveparam.nparam = shellparam.nparam;
+		saveparam.malloc = shellparam.malloc;
+		saveparam.p = shellparam.p;
+		saveparam.optind = shellparam.optind;
+		saveparam.optoff = shellparam.optoff;
+	}
 	savefuncline = funcline;
 	saveloopnest = loopnest;
 	savehandler = handler;
@@ -964,7 +970,13 @@ funcdone:
 	funcline = savefuncline;
 	freefunc(func);
 	freeparam(&shellparam);
-	shellparam = saveparam;
+	{
+		shellparam.nparam = saveparam.nparam;
+		shellparam.malloc = saveparam.malloc;
+		shellparam.p = saveparam.p;
+		shellparam.optind = saveparam.optind;
+		shellparam.optoff = saveparam.optoff;
+	}
 	handler = savehandler;
 	INTON;
 	evalskip &= ~(SKIPFUNC | SKIPFUNCDEF);
