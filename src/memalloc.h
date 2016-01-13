@@ -74,7 +74,7 @@ static inline char *_STPUTC(int c, char *p) {
 	return p;
 }
 
-#define stackblock() ((void *)stacknxt)
+#define stackblock() ((char *)stacknxt)
 #define stackblocksize() stacknleft
 #define STARTSTACKSTR(p) ((p) = (char *) stackblock())
 #define STPUTC(c, p) ((p) = _STPUTC((c), (p)))

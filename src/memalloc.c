@@ -221,7 +221,7 @@ growstackblock(void)
 		sp = stackp;
 		prevstackp = sp->prev;
 		grosslen = newlen + sizeof(struct stack_block) - MINSIZE;
-		sp = (char *)ckrealloc((pointer)sp, grosslen);
+		sp = (stack_block *)ckrealloc((pointer)sp, grosslen);
 		sp->prev = prevstackp;
 		stackp = sp;
 		stacknxt = sp->space;
