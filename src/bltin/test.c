@@ -450,7 +450,7 @@ static enum token t_lex(char **tp)
 	if (op && !(op->op_type == UNOP && isoperand(tp)) &&
 	    !(op->op_num == LPAREN && !tp[1])) {
 		t_wp_op = op;
-		return op->op_num;
+		return (token) op->op_num;
 	}
 
 	t_wp_op = (struct t_op *)0;
