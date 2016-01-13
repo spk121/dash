@@ -841,10 +841,9 @@ commandcmd(argc, argv)
 {
 	char *cmd;
 	int c;
-	enum {
-		VERIFY_BRIEF = 1,
-		VERIFY_VERBOSE = 2,
-	} verify = 0;
+	const int VERIFY_BRIEF = 1;
+	const int VERIFY_VERBOSE = 2;
+	int verify = 0;
 	const char *path = NULL;
 
 	while ((c = nextopt("pvV")) != '\0')
