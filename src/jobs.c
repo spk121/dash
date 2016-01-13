@@ -774,7 +774,7 @@ makejob(union node *node, int nprocs)
 	jp->used = 1;
 	jp->ps = &jp->ps0;
 	if (nprocs > 1) {
-		jp->ps = ckmalloc(nprocs * sizeof (struct procstat));
+		jp->ps = (procstat *)ckmalloc(nprocs * sizeof (struct procstat));
 	}
 	TRACE(("makejob(0x%lx, %d) returns %%%d\n", (long)node, nprocs,
 	    jobno(jp)));
@@ -790,7 +790,7 @@ growjobtab(void)
 
 	len = njobs * sizeof(*jp);
 	jq = jobtab;
-	jp = ckrealloc(jq, len + 4 * sizeof(*jp));
+	jp = (job *)ckrealloc(jq, len + 4 * sizeof(*jp));
 
 	offset = (char *)jp - (char *)jq;
 	if (offset) {
@@ -802,14 +802,14 @@ growjobtab(void)
 			l -= sizeof(*jp);
 			jq--;
 #define joff(p) ((struct job *)((char *)(p) + l))
-#define jmove(p) (p) = (void *)((char *)(p) + offset)
+#define jmove(type, p) (p) = (type)((char *)(p) + offset)
 			if (likely(joff(jp)->ps == &jq->ps0))
-				jmove(joff(jp)->ps);
+				jmove(decltype(joff(jp)->ps), joff(jp)->ps );
 			if (joff(jp)->prev_job)
-				jmove(joff(jp)->prev_job);
+				jmove(decltype(joff(jp)->prev_job), joff(jp)->prev_job);
 		}
 		if (curjob)
-			jmove(curjob);
+			jmove(decltype(curjob), curjob);
 #undef joff
 #undef jmove
 	}
@@ -1192,7 +1192,7 @@ commandtext(union node *n)
 
 	STARTSTACKSTR(cmdnextc);
 	cmdtxt(n);
-	name = stackblock();
+	name = (char *) stackblock();
 	TRACE(("commandtext: name %p, end %p\n", name, cmdnextc));
 	return savestr(name);
 }
