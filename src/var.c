@@ -296,7 +296,7 @@ out_free:
 		if ((flags & (VEXPORT|VREADONLY|VSTRFIXED|VUNSET)) == VUNSET)
 			goto out_free;
 		/* not found */
-		vp = (char *)ckmalloc(sizeof (*vp));
+		vp = (var *)ckmalloc(sizeof (*vp));
 		vp->next = *vpp;
 		vp->func = NULL;
 		*vpp = vp;
@@ -371,7 +371,7 @@ listvars(int on, int off, char ***end)
 	char **ep;
 	int mask;
 
-	STARTSTACKSTR(ep);
+	ep = (char **) stackblock ();
 	vpp = vartab;
 	mask = on | off;
 	do {
@@ -387,7 +387,7 @@ listvars(int on, int off, char ***end)
 	if (end)
 		*end = ep;
 	*ep++ = NULL;
-	return grabstackstr(ep);
+	return (char **) grabstackstr(ep);
 }
 
 
