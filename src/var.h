@@ -136,7 +136,7 @@ extern char linenovar[];
 #if ATTY
 #define attyset()	((vatty.flags & VUNSET) == 0)
 #endif
-#define mpathset()	((vmpath.flags & VUNSET) == 0)
+// #define mpathset()	((vmpath.flags & VUNSET) == 0)
 
 void initvar(void);
 struct var *setvar(const char *name, const char *val, int flags);

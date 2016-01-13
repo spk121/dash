@@ -57,7 +57,14 @@ static time_t mailtime[MAXMBOXES];
 /* Set if MAIL or MAILPATH is changed. */
 static int changed;
 
-
+int
+mpathset(void)
+{
+	auto vm_path = (&vmail)[1];
+	if (vm_path.flags & VUNSET)
+		return 1;
+	return 0;
+}
 
 /*
  * Print appropriate message(s) if mail has arrived.  If changed is set,
