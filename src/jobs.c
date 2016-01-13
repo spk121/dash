@@ -661,7 +661,7 @@ getjob(const char *name, int getctl)
 	unsigned num;
 	int c;
 	const char *p;
-	char *(*match)(const char *, const char *);
+	enum {PREFIX, STRSTR} match_type;
 
 	jp = curjob;
 	p = name;
@@ -701,9 +701,9 @@ check:
 		}
 	}
 
-	match = prefix;
+	match_type = PREFIX;
 	if (*p == '?') {
-		match = strstr;
+		match_type = STRSTR;
 		p++;
 	}
 
@@ -711,7 +711,8 @@ check:
 	while (1) {
 		if (!jp)
 			goto err;
-		if (match(jp->ps[0].cmd, p)) {
+		if (((match_type == PREFIX) && prefix(jp->ps[0].cmd, p))
+		    || ((match_type == STRSTR) && strstr(jp->ps[0].cmd, p))) {
 			if (found)
 				goto err;
 			found = jp;
