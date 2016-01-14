@@ -444,7 +444,7 @@ echocmd(int argc, char **argv)
 {
 	int nonl;
 
-	nonl = *++argv ? equal(*argv, "-n") : 0;
+	nonl = *++argv ? strequal(*argv, "-n") : 0;
 	argv += nonl;
 
 	do {

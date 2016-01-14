@@ -899,7 +899,7 @@ readtoken1(int firstc, char const *syntax, char *eofmark, int striptabs)
 	loop: {	/* for each line, until end of word */
 #if ATTY
 		if (c == '\034' && doprompt
-		 && attyset() && ! equal(termval(), "emacs")) {
+		 && attyset() && ! strequal(termval(), "emacs")) {
 			attyline();
 			if (syntax == BASESYNTAX)
 				return readtoken();

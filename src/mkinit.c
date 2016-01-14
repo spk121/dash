@@ -144,7 +144,7 @@ char *savestr(char *);
 static void error(char *);
 int main(int, char **);
 
-#define equal(s1, s2)	(strcmp(s1, s2) == 0)
+#define strequal(s1, s2)	(strcmp(s1, s2) == 0)
 
 int
 main(int argc, char **argv)
@@ -264,7 +264,7 @@ doevent(struct event *ep, FILE *fp, char *fname)
 		linno++;
 		if (fgets(line, sizeof line, fp) == NULL)
 			error("Unexpected EOF");
-		if (equal(line, "}\n"))
+		if (strequal(line, "}\n"))
 			break;
 		indent = 6;
 		for (p = line ; *p == '\t' ; p++)
@@ -305,7 +305,7 @@ doinclude(char *line)
 	*p = '\0';
 
 	/* name now contains the name of the include file */
-	for (pp = header_files ; *pp && ! equal(*pp, name) ; pp++);
+	for (pp = header_files ; *pp && ! strequal(*pp, name) ; pp++);
 	if (*pp == NULL)
 		*pp = savestr(name);
 }

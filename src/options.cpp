@@ -263,7 +263,7 @@ minus_o(char *name, int val)
 		}
 	} else {
 		for (i = 0; i < NOPTS; i++)
-			if (equal(name, optnames[i])) {
+			if (strequal(name, optnames[i])) {
 				optlist[i] = val;
 				return;
 			}

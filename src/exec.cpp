@@ -616,7 +616,7 @@ cmdlookup(const char *name, int add)
 	hashval &= 0x7FFF;
 	pp = &cmdtable[hashval % CMDTABLESIZE];
 	for (cmdp = *pp ; cmdp ; cmdp = cmdp->next) {
-		if (equal(cmdp->cmdname, name))
+		if (strequal(cmdp->cmdname, name))
 			break;
 		pp = &cmdp->next;
 	}

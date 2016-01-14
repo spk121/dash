@@ -35,7 +35,7 @@
 /*
  * String functions.
  *
- *	equal(s1, s2)		Return true if strings are equal.
+ *	strequal(s1, s2)		Return true if strings are equal.
  *	scopy(from, to)		Copy a string.
  *	scopyn(from, to, n)	Like scopy, but checks for overflow.
  *	number(s)		Convert a string of digits to an integer.
@@ -67,7 +67,7 @@ const char illnum[] = "Illegal number: %s";
 const char homestr[] = "HOME";
 
 /*
- * equal - #defined in mystring.h
+ * strequal - #defined in mystring.h
  */
 
 /*
