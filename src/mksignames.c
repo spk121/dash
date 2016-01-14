@@ -390,7 +390,7 @@ main(int argc, char **argv)
 
   if (argc == 1)
     {
-      stream_name = "signames.cpp";
+      stream_name = "signames.c";
     }
   else if (argc == 2)
     {

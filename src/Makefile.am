@@ -28,18 +28,19 @@ dash_CXXFILES += \
 	exec.cpp expand.cpp \
 	input.cpp jobs.cpp
 dash_SOURCES = \
+	signames.c \
 	$(dash_CXXFILES) \
 	alias.h arith_yacc.h bltin/bltin.h cd.h error.h eval.h exec.h \
 	expand.h \
 	init.h input.h jobs.h machdep.h mail.h main.h memalloc.h miscbltin.h \
 	myhistedit.h mystring.h options.h output.h parser.h redir.h shell.h \
 	show.h system.h trap.h var.h
-dash_LDADD = builtins.o init.o nodes.o signames.o syntax.o
+dash_LDADD = builtins.o init.o nodes.o syntax.o
 
 HELPERS = mkinit mksyntax mknodes mksignames
 
 BUILT_SOURCES = builtins.h builtins.cpp init.cpp nodes.h nodes.cpp \
-	signames.cpp \
+	signames.c \
 	syntax.h token.h token_vars.h
 CLEANFILES = \
 	$(BUILT_SOURCES) $(patsubst %.o,%.c,$(dash_LDADD)) \

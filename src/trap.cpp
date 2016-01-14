@@ -50,6 +50,7 @@
 #include "error.h"
 #include "trap.h"
 #include "mystring.h"
+#include "signames.h"
 
 /*
  * Sigmode records the current value of the signal handlers for the various
@@ -76,8 +77,6 @@ static char gotsig[NSIG - 1];
 volatile sig_atomic_t pendingsigs;
 /* received SIGCHLD */
 int gotsigchld;
-
-extern char *signal_names[];
 
 #ifdef mkinit
 INCLUDE "trap.h"

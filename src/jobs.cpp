@@ -68,6 +68,7 @@
 #include "error.h"
 #include "mystring.h"
 #include "system.h"
+#include "signames.h"
 
 /* mode flags for set_curjob */
 #define CUR_DELETE 2
@@ -241,7 +242,6 @@ close:
 int
 killcmd(int argc, char **argv)
 {
-	extern char *signal_names[];
 	int signo = -1;
 	int list = 0;
 	int i;
