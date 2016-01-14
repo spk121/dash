@@ -22,7 +22,7 @@ bin_PROGRAMS = dash
 dash_CXXFILES = \
 	histedit.cpp mail.cpp main.cpp memalloc.cpp miscbltin.cpp \
 	mystring.cpp options.cpp parser.cpp redir.cpp show.cpp trap.cpp output.cpp \
-	bltin/printf.cpp system.cpp bltin/test.cpp bltin/times.cpp var.c
+	bltin/printf.cpp system.cpp bltin/test.cpp bltin/times.cpp var.cpp
 dash_CXXFILES += \
 	alias.cpp arith_yacc.cpp arith_yylex.cpp cd.cpp eval.cpp error.cpp \
 	exec.cpp expand.cpp \
@@ -61,7 +61,7 @@ builtins.def: builtins.def.in $(top_builddir)/config.h
 builtins.cpp builtins.h: mkbuiltins builtins.def
 	sh $^
 
-init.cpp: mkinit $(dash_CFILES) $(dask_CXXFILES)
+init.cpp: mkinit $(dash_CXXFILES)
 	./$^
 
 nodes.cpp nodes.h: mknodes nodetypes nodes.c.pat
@@ -70,7 +70,7 @@ nodes.cpp nodes.h: mknodes nodetypes nodes.c.pat
 syntax.cpp syntax.h: mksyntax
 	./$^
 
-signames.cpp: mksignames
+signames.c: mksignames
 	./$^
 
 mksyntax: token.h
