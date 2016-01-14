@@ -101,9 +101,6 @@ main(int argc, char **argv)
 	dash_errno = __errno_location();
 #endif
 
-#if PROFILE
-	monitor(4, etext, profile_buf, sizeof profile_buf, 50);
-#endif
 	state = 0;
 	if (unlikely(setjmp(jmploc.loc))) {
 		int e;
@@ -176,9 +173,6 @@ state3:
 state4:	/* XXX ??? - why isn't this before the "if" statement */
 		cmdloop(1);
 	}
-#if PROFILE
-	monitor(0);
-#endif
 #if GPROF
 	_mcleanup();
 #endif
