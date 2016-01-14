@@ -35,6 +35,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include "arith_yacc.h"
+#include "arith_yylex.h"
 #include "expand.h"
 #include "shell.h"
 #include "error.h"

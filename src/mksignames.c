@@ -368,7 +368,8 @@ write_signames (FILE *stream)
   fprintf (stream, "/* This file was automatically created by %s.\n",
 	   progname);
   fprintf (stream, "   Do not edit.  Edit support/mksignames.c instead. */\n\n");
-  fprintf (stream, "#include <signal.h>\n\n");
+  fprintf (stream, "#include <signal.h>\n");
+  fprintf (stream, "#include \"signames.h\"\n\n");
   fprintf (stream,
 	   "/* A translation list so we can be polite to our users. */\n");
   fprintf (stream, "const char *const signal_names[NSIG + 1] = {\n");

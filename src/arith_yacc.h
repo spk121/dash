@@ -86,5 +86,3 @@ union yystype {
 
 extern union yystype yylval;
 extern const char *arith_buf;
-
-int yylex(void);

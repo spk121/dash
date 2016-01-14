@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "arith_yacc.h"
+#include "arith_yylex.h"
 #include "expand.h"
 #include "error.h"
 #include "shell.h"

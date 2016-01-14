@@ -181,5 +181,3 @@ static inline char *bltinlookup(const char *name)
 {
 	return lookupvar(name);
 }
-
-
