@@ -34,6 +34,9 @@
  *	@(#)var.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef VAR_H
+#define VAR_H
+
 #include <inttypes.h>
 
 /*
@@ -181,3 +184,5 @@ static inline char *bltinlookup(const char *name)
 {
 	return lookupvar(name);
 }
+
+#endif /* VAR_H */

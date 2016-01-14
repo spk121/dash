@@ -34,6 +34,9 @@
  *	@(#)exec.h	8.3 (Berkeley) 6/8/95
  */
 
+#ifndef EXEC_H
+#define EXEC_H
+
 /* values of cmdtype */
 #define CMDUNKNOWN	-1	/* no entry in table for command */
 #define CMDNORMAL	0	/* command is an executable program */
@@ -77,3 +80,5 @@ void defun(union node *);
 void unsetfunc(const char *);
 int typecmd(int, char **);
 int commandcmd(int, char **);
+
+#endif /* EXEC_H */

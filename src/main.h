@@ -34,6 +34,9 @@
  *	@(#)main.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <errno.h>
 
 /* pid of main shell */
@@ -52,3 +55,5 @@ extern int *dash_errno;
 void readcmdfile(char *);
 int dotcmd(int, char **);
 int exitcmd(int, char **);
+
+#endif /* MAIN_H */

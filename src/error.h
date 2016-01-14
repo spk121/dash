@@ -34,6 +34,9 @@
  *	@(#)error.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef ERROR_H
+#define ERROR_H
+
 #include <setjmp.h>
 #include <signal.h>
 
@@ -126,3 +129,5 @@ void exerror(int, const char *, ...) __attribute__((__noreturn__));
 const char *errmsg(int, int);
 
 void sh_warnx(const char *, ...);
+
+#endif /* ERROR_H */

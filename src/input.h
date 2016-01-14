@@ -36,6 +36,9 @@
 
 /* PEOF (the end of file marker) is defined in syntax.h */
 
+#ifndef INPUT_H
+#define INPUT_H
+
 #include <stdio.h>
 
 enum {
@@ -104,3 +107,5 @@ void setinputstring(char *);
 void popfile(void);
 void popallfiles(void);
 void closescript(void);
+
+#endif /* INPUT_H */

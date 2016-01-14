@@ -34,6 +34,9 @@
  *	@(#)options.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef OPTIONS_H
+#define OPTIONS_H
+
 struct shparam {
 	int nparam;		/* # of positional parameters (without $0) */
 	unsigned char malloc;	/* if parameter list dynamically allocated */
@@ -84,3 +87,5 @@ int setcmd(int, char **);
 int getoptscmd(int, char **);
 int nextopt(const char *);
 void getoptsreset(const char *);
+
+#endif /* OPTIONS_H */

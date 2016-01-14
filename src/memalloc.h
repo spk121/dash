@@ -34,6 +34,9 @@
  *	@(#)memalloc.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef MEMALLOC_H
+#define MEMALLOC_H
+
 #include <stddef.h>
 
 struct stackmark {
@@ -98,3 +101,5 @@ static inline char *_STPUTC(int c, char *p) {
 #define stackstrend() ((void *)sstrend)
 
 #define ckfree(p)	free((pointer)(p))
+
+#endif /* MEMALLOC_H */

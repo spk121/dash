@@ -34,6 +34,9 @@
  *	@(#)expand.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef EXPAND_H
+#define EXPAND_H
+
 #include <inttypes.h>
 
 struct strlist {
@@ -68,7 +71,7 @@ void expari(int);
 char *_rmescapes(char *, int);
 int casematch(union node *, char *);
 void recordregion(int, int, int);
-void removerecordregions(int); 
+void removerecordregions(int);
 void ifsbreakup(char *, struct arglist *);
 void ifsfree(void);
 
@@ -80,4 +83,5 @@ void arith_lex_reset(void);
 #else
 #define arith_lex_reset()
 #endif
-int yylex(void);
+
+#endif /* EXPAND_H */

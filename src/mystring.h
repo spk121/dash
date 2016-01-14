@@ -34,6 +34,9 @@
  *	@(#)mystring.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef MYSTRING_H
+#define MYSTRING_H
+
 #include <inttypes.h>
 #include <string.h>
 
@@ -61,3 +64,5 @@ const char *const *findstring(const char *, const char *const *, size_t);
 
 #define equal(s1, s2)	(strcmp(s1, s2) == 0)
 #define scopy(s1, s2)	((void)strcpy(s2, s1))
+
+#endif /* MYSTRING_H */

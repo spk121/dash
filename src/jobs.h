@@ -34,6 +34,9 @@
  *	@(#)jobs.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef JOBS_H
+#define JOBS_H
+
 #include <inttypes.h>
 #include <sys/types.h>
 
@@ -107,3 +110,5 @@ int stoppedjobs(void);
 #if ! JOBS
 #define setjobctl(on) ((void)(on))	/* do nothing */
 #endif
+
+#endif /* JOBS_H */

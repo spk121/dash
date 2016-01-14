@@ -34,6 +34,9 @@
  *	@(#)machdep.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef MACHDEP_H
+#define MACHDEP_H
+
 /*
  * Most machines require the value returned from malloc to be aligned
  * in some way.  The following macro will get this right on many machines.
@@ -51,3 +54,5 @@ union align_size
  * because stalloc() will return a string allocated in a new stackblock.
  */
 #define SHELL_ALIGN(nbytes) (((nbytes) + SHELL_SIZE) & ~SHELL_SIZE)
+
+#endif /* MACHDEP_H */

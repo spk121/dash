@@ -34,5 +34,8 @@
  *	@(#)mail.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef MAIL_H
+#define MAIL_H
 void chkmail(void);
 void changemail(const char *);
+#endif /* MAIL_H */

@@ -30,6 +30,10 @@
  *
  */
 
+#ifndef CD_H
+#define CD_H
 int	cdcmd(int, char **);
 int	pwdcmd(int, char **);
 void	setpwd(const char *, int);
+#endif /* CD_H */
+

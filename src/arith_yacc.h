@@ -32,6 +32,9 @@
  * SUCH DAMAGE.
  */
 
+#ifndef ARITH_YACC_H
+#define ARITH_YACC_H
+
 #define ARITH_ASS 1
 
 #define ARITH_OR 2
@@ -86,3 +89,5 @@ union yystype {
 
 extern union yystype yylval;
 extern const char *arith_buf;
+
+#endif /* ARITH_YACC_H */

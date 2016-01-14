@@ -34,6 +34,9 @@
  *	@(#)eval.h	8.2 (Berkeley) 5/4/95
  */
 
+#ifndef EVAL_H
+#define EVAL_H
+
 extern char *commandname;	/* currently executing command */
 extern int exitstatus;		/* exit status of last command */
 extern int back_exitstatus;	/* exit status of backquoted command */
@@ -64,3 +67,5 @@ extern int loopnest;
 #define SKIPCONT	(1 << 1)
 #define SKIPFUNC	(1 << 2)
 #define SKIPFUNCDEF	(1 << 3)
+
+#endif /* EVAL_H */

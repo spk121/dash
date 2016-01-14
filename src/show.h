@@ -31,6 +31,9 @@
  *	@(#)show.h	1.1 (Berkeley) 5/4/95
  */
 
+#ifndef SHOW_H
+#define SHOW_H
+
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -45,3 +48,5 @@ void trputc(int);
 void trputs(const char *);
 void opentrace(void);
 #endif
+
+#endif /* SHOW_H */
