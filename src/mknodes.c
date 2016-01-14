@@ -220,8 +220,8 @@ output(char *file)
 		error("Can't open %s", file);
 	if ((hfile = fopen("nodes.h", "w")) == NULL)
 		error("Can't create nodes.h");
-	if ((cfile = fopen("nodes.c", "w")) == NULL)
-		error("Can't create nodes.c");
+	if ((cfile = fopen("nodes.cpp", "w")) == NULL)
+		error("Can't create nodes.cpp");
 	fputs(writer, hfile);
 	for (i = 0 ; i < ntypes ; i++)
 		fprintf(hfile, "#define %s %d\n", nodename[i], i);

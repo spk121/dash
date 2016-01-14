@@ -108,7 +108,7 @@ main(int argc, char **argv)
 	int pos;
 
 	/* Create output files */
-	if ((cfile = fopen("syntax.c", "w")) == NULL) {
+	if ((cfile = fopen("syntax.cpp", "w")) == NULL) {
 		perror("syntax.c");
 		exit(2);
 	}

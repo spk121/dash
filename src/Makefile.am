@@ -19,13 +19,16 @@ COMPILE_FOR_BUILD = \
 
 bin_PROGRAMS = dash
 
-dash_CFILES = \
-	alias.c arith_yacc.c arith_yylex.c cd.c error.c eval.c exec.c expand.c \
-	histedit.c input.c jobs.c mail.c main.c memalloc.c miscbltin.c \
-	mystring.c options.c parser.c redir.c show.c trap.c output.c \
-	bltin/printf.c system.c bltin/test.c bltin/times.c var.c
+dash_CXXFILES = \
+	histedit.cpp mail.cpp main.cpp memalloc.cpp miscbltin.cpp \
+	mystring.cpp options.cpp parser.cpp redir.cpp show.cpp trap.cpp output.cpp \
+	bltin/printf.cpp system.cpp bltin/test.cpp bltin/times.cpp var.c
+dash_CXXFILES += \
+	alias.cpp arith_yacc.cpp arith_yylex.cpp cd.cpp eval.cpp error.cpp \
+	exec.cpp expand.cpp \
+	input.cpp jobs.cpp
 dash_SOURCES = \
-	$(dash_CFILES) \
+	$(dash_CXXFILES) \
 	alias.h arith_yacc.h bltin/bltin.h cd.h error.h eval.h exec.h \
 	expand.h \
 	init.h input.h jobs.h machdep.h mail.h main.h memalloc.h miscbltin.h \
@@ -35,7 +38,9 @@ dash_LDADD = builtins.o init.o nodes.o signames.o syntax.o
 
 HELPERS = mkinit mksyntax mknodes mksignames
 
-BUILT_SOURCES = builtins.h nodes.h syntax.h token.h token_vars.h
+BUILT_SOURCES = builtins.h builtins.cpp init.cpp nodes.h nodes.cpp \
+	signames.cpp \
+	syntax.h token.h token_vars.h
 CLEANFILES = \
 	$(BUILT_SOURCES) $(patsubst %.o,%.c,$(dash_LDADD)) \
 	$(HELPERS) builtins.def
@@ -52,19 +57,19 @@ token.h token_vars.h: mktokens
 builtins.def: builtins.def.in $(top_builddir)/config.h
 	$(COMPILE) -E -x c -o $@ $<
 
-builtins.c builtins.h: mkbuiltins builtins.def
+builtins.cpp builtins.h: mkbuiltins builtins.def
 	sh $^
 
-init.c: mkinit $(dash_CFILES)
+init.cpp: mkinit $(dash_CFILES) $(dask_CXXFILES)
 	./$^
 
-nodes.c nodes.h: mknodes nodetypes nodes.c.pat
+nodes.cpp nodes.h: mknodes nodetypes nodes.c.pat
 	./$^
 
-syntax.c syntax.h: mksyntax
+syntax.cpp syntax.h: mksyntax
 	./$^
 
-signames.c: mksignames
+signames.cpp: mksignames
 	./$^
 
 mksyntax: token.h

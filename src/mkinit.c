@@ -56,8 +56,8 @@
  * to the file OUTTEMP, which is then moved to OUTFILE.
  */
 
-#define OUTFILE "init.c"
-#define OUTTEMP "init.c.new"
+#define OUTFILE "init.cpp"
+#define OUTTEMP "init.cpp.new"
 
 
 /*
