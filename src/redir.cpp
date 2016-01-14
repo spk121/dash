@@ -68,14 +68,7 @@
 #endif
 
 
-MKINIT
-struct redirtab {
-	struct redirtab *next;
-	int renamed[10];
-};
-
-
-MKINIT struct redirtab *redirlist;
+struct redirtab *redirlist;
 
 STATIC int openredirect(union node *);
 #ifdef notyet

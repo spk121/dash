@@ -50,6 +50,7 @@
 #include "output.h"
 #include "mystring.h"
 #include "error.h"
+#include "show.h"
 #ifndef SMALL
 #include "myhistedit.h"
 #include "eval.h"
@@ -64,10 +65,6 @@ int displayhist;
 static FILE *el_in, *el_out;
 
 STATIC const char *fc_replace(const char *, char *, char *);
-
-#ifdef DEBUG
-extern FILE *tracefile;
-#endif
 
 /*
  * Set history and editing status.  Called whenever the status may

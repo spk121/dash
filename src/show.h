@@ -32,9 +32,11 @@
  */
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #ifdef DEBUG
 union node;
+extern FILE *tracefile;
 void showtree(union node *);
 void trace(const char *, ...);
 void tracev(const char *, va_list);

@@ -138,6 +138,16 @@ extern char linenovar[];
 #endif
 // #define mpathset()	((vmpath.flags & VUNSET) == 0)
 
+struct localvar_list {
+	struct localvar_list *next;
+	struct localvar *lv;
+};
+
+
+extern struct localvar_list *localvar_stack;
+extern char defoptindvar[];
+extern char **environ;
+
 void initvar(void);
 struct var *setvar(const char *name, const char *val, int flags);
 intmax_t setvarint(const char *, intmax_t, int);

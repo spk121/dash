@@ -67,7 +67,7 @@
 
 int evalskip;			/* set if we are skipping commands */
 STATIC int skipcount;		/* number of levels to skip */
-MKINIT int loopnest;		/* current loop nesting level */
+int loopnest;			/* current loop nesting level */
 static int funcline;		/* starting line number of current function, or 0 if not in a function */
 
 

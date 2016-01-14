@@ -59,11 +59,10 @@
 #endif
 
 #define EOF_NLEFT -99		/* value of parsenleft when EOF pushed back */
-#define IBUFSIZ (BUFSIZ + 1)
 
 
-MKINIT struct parsefile basepf;	/* top level input file */
-MKINIT char basebuf[IBUFSIZ];	/* buffer for top level input file */
+struct parsefile basepf;	/* top level input file */
+char basebuf[IBUFSIZ];	/* buffer for top level input file */
 struct parsefile *parsefile = &basepf;	/* current input file */
 int whichprompt;		/* 1 == PS1, 2 == PS2 */
 

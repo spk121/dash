@@ -36,6 +36,8 @@
 
 /* PEOF (the end of file marker) is defined in syntax.h */
 
+#include <stdio.h>
+
 enum {
 	INPUT_PUSH_FILE = 1,
 	INPUT_NOFILE_OK = 2,
@@ -81,6 +83,9 @@ struct parsefile {
 };
 
 extern struct parsefile *parsefile;
+extern struct parsefile basepf;	/* top level input file */
+#define IBUFSIZ (BUFSIZ + 1)
+extern char basebuf[IBUFSIZ];	/* buffer for top level input file */
 
 /*
  * The input line number.  Input.c just defines this variable, and saves

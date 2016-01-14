@@ -66,12 +66,7 @@
 #define VTABSIZE 39
 
 
-struct localvar_list {
-	struct localvar_list *next;
-	struct localvar *lv;
-};
-
-MKINIT struct localvar_list *localvar_stack;
+struct localvar_list *localvar_stack;
 
 const char defpathvar[] =
 	"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
@@ -80,7 +75,7 @@ const char defifsvar[] = "IFS= \t\n";
 #else
 const char defifs[] = " \t\n";
 #endif
-MKINIT char defoptindvar[] = "OPTIND=1";
+char defoptindvar[] = "OPTIND=1";
 
 int lineno;
 char linenovar[sizeof("LINENO=")+sizeof(int)*CHAR_BIT/3+1] = "LINENO=";
@@ -128,7 +123,7 @@ INCLUDE <sys/stat.h>
 INCLUDE "cd.h"
 INCLUDE "output.h"
 INCLUDE "var.h"
-MKINIT char **environ;
+char **environ;
 INIT {
 	char **envp;
 	static char ppid[32] = "PPID=";

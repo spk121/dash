@@ -37,6 +37,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#if GPROF
+#include <sys/gmon.h>
+#endif
 
 
 #include "shell.h"
@@ -177,10 +180,7 @@ state4:	/* XXX ??? - why isn't this before the "if" statement */
 	monitor(0);
 #endif
 #if GPROF
-	{
-		extern void _mcleanup(void);
-		_mcleanup();
-	}
+	_mcleanup();
 #endif
 	exitshell();
 	/* NOTREACHED */
