@@ -45,7 +45,7 @@ union param {
 	int index;
 	const struct builtincmd *cmd;
 	struct funcnode *func;
-} u;
+};
 
 struct cmdentry {
 	int cmdtype;
