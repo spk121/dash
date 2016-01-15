@@ -229,10 +229,12 @@ struct var *setvar(const char *name, const char *val, int flags)
 intmax_t setvarint(const char *name, intmax_t val, int flags)
 {
 	int len = max_int_length(sizeof(val));
-	char buf[len];
-
-	fmtstr(buf, len, "%" PRIdMAX, val);
-	setvar(name, buf, flags);
+	char *buf = (char *) malloc (len);
+	if (buf != NULL) {
+		fmtstr(buf, len, "%" PRIdMAX, val);
+		setvar(name, buf, flags);
+	}
+	free (buf);
 	return val;
 }
 
