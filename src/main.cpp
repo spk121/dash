@@ -116,7 +116,7 @@ main(int argc, char **argv)
 
 		if (e == EXINT
 #if ATTY
-		 && (! attyset() || equal(termval(), "emacs"))
+		 && (! attyset() || strequal(termval(), "emacs"))
 #endif
 		 ) {
 			out2c('\n');
