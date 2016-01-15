@@ -99,11 +99,7 @@ STATIC int eprintlist(struct output *, struct strlist *, int);
 STATIC int bltincmd(int, char **);
 
 
-STATIC const struct builtincmd bltin = {
-	name: nullstr,
-	builtin: bltincmd
-};
-
+STATIC const struct builtincmd bltin = {nullstr, bltincmd, 0u};
 
 /*
  * Called to reset things after an exception.
