@@ -798,7 +798,6 @@ growjobtab(void)
 			jq--;
 #define joff(p) ((struct job *)((char *)(p) + l))
 #define jmove(T, p) (p) = (T)((char *)(p) + offset)
-#define decltype typeof
 			if (likely(joff(jp)->ps == &jq->ps0))
 				jmove(decltype(joff(jp)->ps), joff(jp)->ps );
 			if (joff(jp)->prev_job)
