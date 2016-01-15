@@ -218,7 +218,7 @@ __lookupalias(const char *name) {
 	app = &atab[hashval % ATABSIZE];
 
 	for (; *app; app = &(*app)->next) {
-		if (equal(name, (*app)->name)) {
+		if (strequal(name, (*app)->name)) {
 			break;
 		}
 	}
