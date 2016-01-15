@@ -743,7 +743,8 @@ describe_command(struct output *out, char *command, const char *path,
 	struct tblentry *cmdp;
 	const struct alias *ap;
 
-	path = path ?: pathval();
+	if (path == NULL)
+		path = pathval();
 
 	if (verbose) {
 		outstr(command, out);
