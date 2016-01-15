@@ -218,7 +218,7 @@ static int preadbuffer(void)
 	if (unlikely(parsefile->nleft == EOF_NLEFT ||
 		     parsefile->buf == NULL))
 		return PEOF;
-	flushall();
+	flushoutall();
 
 	more = parsefile->lleft;
 	if (more <= 0) {

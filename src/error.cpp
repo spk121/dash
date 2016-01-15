@@ -156,7 +156,7 @@ exverror(int cond, const char *msg, va_list ap)
 #endif
 		exvwarning(-1, msg, ap);
 
-	flushall();
+	flushoutall();
 	exraise(cond);
 	/* NOTREACHED */
 }

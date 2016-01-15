@@ -158,7 +158,7 @@ readcmd(int argc, char **argv)
 	if (prompt && isatty(0)) {
 		out2str(prompt);
 #ifdef FLUSHERR
-		flushall();
+		flushoutall();
 #endif
 	}
 	if (*(ap = argptr) == NULL)

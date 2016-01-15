@@ -226,7 +226,7 @@ outcslow(int c, struct output *dest)
 
 
 void
-flushall(void)
+flushoutall(void)
 {
 	flushout(&output);
 #ifdef FLUSHERR

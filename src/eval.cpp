@@ -916,7 +916,7 @@ evalbltin(const struct builtincmd *cmd, int argc, char **argv, int flags)
 		status = evalcmd(argc, argv, flags);
 	else
 		status = (*cmd->builtin)(argc, argv);
-	flushall();
+	flushoutall();
 	status |= outerr(out1);
 	exitstatus = status;
 cmddone:
