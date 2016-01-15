@@ -52,7 +52,7 @@ const struct builtincmd builtincmd[] = {
 	{ "command", commandcmd, 2 },
 	{ "continue", breakcmd, 3 },
 	{ "echo", echocmd, 0 },
-	{ "eval", NULL, 3 },
+	{ "eval", (char **) NULL, 3 },
 	{ "exec", execcmd, 3 },
 	{ "exit", exitcmd, 3 },
 	{ "export", exportcmd, 7 },
