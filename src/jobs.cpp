@@ -496,7 +496,11 @@ start:
 			break;
 		}
 		if (++ps == psend) {
-			outcslow('\n', out);
+#ifdef USE_GLIBC_STDIO
+		  outc('\n', out);
+#else
+		  outcslow('\n', out);
+#endif
 			break;
 		}
 	} while (1);
@@ -1456,7 +1460,11 @@ showpipe(struct job *jp, struct output *out)
 	spend = jp->ps + jp->nprocs;
 	for (sp = jp->ps + 1; sp < spend; sp++)
 		outfmt(out, " | %s", sp->cmd);
+#ifdef USE_GLIBC_STDIO
+	outc('\n', out);
+#else
 	outcslow('\n', out);
+#endif
 	flushoutall();
 }
 

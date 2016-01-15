@@ -71,11 +71,11 @@
 
 #ifdef USE_GLIBC_STDIO
 struct output output = {
-	stream: 0, nextc: 0, end: 0, buf: 0, bufsize: 0, fd: 1, flags: 0
+	stream: stdout, nextc: 0, end: 0, buf: 0, bufsize: 0, fd: 1, flags: 0
 };
 struct output errout = {
-	stream: 0, nextc: 0, end: 0, buf: 0, bufsize: 0, fd: 2, flags: 0
-}
+	stream: stderr, nextc: 0, end: 0, buf: 0, bufsize: 0, fd: 2, flags: 0
+};
 #else
 struct output output = {
 	nextc: 0, end: 0, buf: 0, bufsize: OUTBUFSIZ, fd: 1, flags: 0
@@ -83,8 +83,8 @@ struct output output = {
 struct output errout = {
 	nextc: 0, end: 0, buf: 0, bufsize: 0, fd: 2, flags: 0
 };
-struct output preverrout;
 #endif
+struct output preverrout;
 struct output *out1 = &output;
 struct output *out2 = &errout;
 
@@ -99,7 +99,7 @@ INCLUDE "memalloc.h"
 
 INIT {
 #ifdef USE_GLIBC_STDIO
-	initstreams();
+	//initstreams();
 #endif
 }
 

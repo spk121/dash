@@ -107,7 +107,11 @@ static inline void outc(int ch, struct output *file)
 }
 #endif
 #define out1c(c)	outc((c), out1)
+#ifdef USE_GLIBC_STDIO
+#define out2c(c)	outc((c), out2)
+#else
 #define out2c(c)	outcslow((c), out2)
+#endif
 #define out1mem(s, l)	outmem((s), (l), out1)
 #define out1str(s)	outstr((s), out1)
 #define out2str(s)	outstr((s), out2)

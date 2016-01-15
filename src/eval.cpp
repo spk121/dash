@@ -758,7 +758,11 @@ evalcommand(union node *cmd, int flags)
 		sep = 0;
 		sep = eprintlist(out, varlist.list, sep);
 		eprintlist(out, arglist.list, sep);
+#ifdef USE_GLIBC_STDIO
+		outc('\n', out);
+#else
 		outcslow('\n', out);
+#endif
 #ifdef FLUSHERR
 		flushout(out);
 #endif
