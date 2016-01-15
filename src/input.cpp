@@ -70,7 +70,7 @@ int whichprompt;		/* 1 == PS1, 2 == PS2 */
 EditLine *el;			/* cookie for editline package */
 #endif
 
-STATIC void pushfile(void);
+static void pushfile(void);
 static int preadfd(void);
 static void setinputfd(int fd, int push);
 static int preadbuffer(void);
@@ -441,7 +441,7 @@ setinputstring(char *string)
  * adds a new entry to the stack and popfile restores the previous level.
  */
 
-STATIC void
+static void
 pushfile(void)
 {
 	struct parsefile *pf;

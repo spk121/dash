@@ -106,11 +106,11 @@ struct var varinit[] = {
 #endif
 };
 
-STATIC struct var *vartab[VTABSIZE];
+static struct var *vartab[VTABSIZE];
 
-STATIC struct var **hashvar(const char *);
-STATIC int vpcmp(const void *, const void *);
-STATIC struct var **findvar(struct var **, const char *);
+static struct var **hashvar(const char *);
+static int vpcmp(const void *, const void *);
+static struct var **findvar(struct var **, const char *);
 
 /*
  * Initialize the varable symbol tables and import the environment
@@ -655,7 +655,7 @@ void unsetvar(const char *s)
  * Find the appropriate entry in the hash table from the name.
  */
 
-STATIC struct var **
+static struct var **
 hashvar(const char *p)
 {
 	unsigned int hashval;
@@ -693,13 +693,13 @@ out:
 	return c - d;
 }
 
-STATIC int
+static int
 vpcmp(const void *a, const void *b)
 {
 	return varcmp(*(const char **)a, *(const char **)b);
 }
 
-STATIC struct var **
+static struct var **
 findvar(struct var **vpp, const char *name)
 {
 	for (; *vpp; vpp = &(*vpp)->next) {

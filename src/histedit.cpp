@@ -64,7 +64,7 @@ EditLine *el;	/* editline cookie */
 int displayhist;
 static FILE *el_in, *el_out;
 
-STATIC const char *fc_replace(const char *, char *, char *);
+static const char *fc_replace(const char *, char *, char *);
 
 /*
  * Set history and editing status.  Called whenever the status may
@@ -407,7 +407,7 @@ histcmd(int argc, char **argv)
 	return 0;
 }
 
-STATIC const char *
+static const char *
 fc_replace(const char *s, char *p, char *r)
 {
 	char *dest;
