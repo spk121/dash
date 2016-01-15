@@ -87,11 +87,7 @@ STATIC void evalcase(union node *, int);
 STATIC void evalsubshell(union node *, int);
 STATIC void expredir(union node *);
 STATIC void evalpipe(union node *, int);
-#ifdef notyet
-STATIC void evalcommand(union node *, int, struct backcmd *);
-#else
 STATIC void evalcommand(union node *, int);
-#endif
 STATIC int evalbltin(const struct builtincmd *, int, char **, int);
 STATIC int evalfun(struct funcnode *, int, char **, int);
 STATIC void prehash(union node *);
@@ -234,18 +230,11 @@ evaltree(union node *n, int flags)
 			popredir(0);
 		goto setstatus;
 	case NCMD:
-#ifdef notyet
-		if (eflag && !(flags & EV_TESTED))
-			checkexit = ~0;
-		evalcommand(n, flags, (struct backcmd *)NULL);
-		break;
-#else
 		evalfn = evalcommand;
 checkexit:
 		if (eflag && !(flags & EV_TESTED))
 			checkexit = ~0;
 		goto calleval;
-#endif
 	case NFOR:
 		evalfn = evalfor;
 		goto calleval;
@@ -675,11 +664,7 @@ parse_command_args(char **argv, const char **path)
  */
 
 STATIC void
-#ifdef notyet
-evalcommand(union node *cmd, int flags, struct backcmd *backcmd)
-#else
 evalcommand(union node *cmd, int flags)
-#endif
 {
 	struct localvar_list *localvar_stop;
 	struct redirtab *redir_stop;
@@ -690,9 +675,6 @@ evalcommand(union node *cmd, int flags)
 	char **argv;
 	int argc;
 	struct strlist *sp;
-#ifdef notyet
-	int pip[2];
-#endif
 	struct cmdentry cmdentry;
 	struct job *jp;
 	char *lastarg;

@@ -58,9 +58,6 @@ struct output {
 extern struct output output;
 extern struct output errout;
 extern struct output preverrout;
-#ifdef notyet
-extern struct output memout;
-#endif
 extern struct output *out1;
 extern struct output *out2;
 
@@ -82,13 +79,6 @@ int xasprintf(char **, const char *, ...);
 void doformat(struct output *, const char *, va_list);
 #endif
 int xwrite(int, const void *, size_t);
-#ifdef notyet
-#ifdef USE_GLIBC_STDIO
-void initstreams(void);
-void openmemout(void);
-int __closememout(void);
-#endif
-#endif
 
 static inline void
 freestdout()
