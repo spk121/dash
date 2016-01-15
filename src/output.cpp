@@ -98,9 +98,6 @@ INCLUDE "output.h"
 INCLUDE "memalloc.h"
 
 INIT {
-#ifdef USE_GLIBC_STDIO
-	//initstreams();
-#endif
 }
 
 RESET {
