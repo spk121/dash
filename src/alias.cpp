@@ -60,18 +60,14 @@ setalias(const char *name, const char *val)
 	ap = *app;
 	INTOFF;
 	if (ap) {
-		if (!(ap->flag & ALIASINUSE)) {
+		if (!ap->in_use()) {
 			ckfree(ap->val);
 		}
 		ap->val	= savestr(val);
-		ap->flag &= ~ALIASDEAD;
+		ap->set_not_dead();
 	} else {
 		/* not found */
-		ap = (struct alias *)ckmalloc(sizeof (struct alias));
-		ap->name = savestr(name);
-		ap->val = savestr(val);
-		ap->flag = 0;
-		ap->next = 0;
+		ap = new alias {savestr(name), savestr(val)};
 		*app = ap;
 	}
 	INTON;
@@ -118,7 +114,7 @@ lookupalias(const char *name, int check)
 {
 	struct alias *ap = *__lookupalias(name);
 
-	if (check && ap && (ap->flag & ALIASINUSE))
+	if (check && ap && ap->in_use())
 		return (NULL);
 	return (ap);
 }
@@ -183,8 +179,8 @@ static struct alias *
 freealias(struct alias *ap) {
 	struct alias *next;
 
-	if (ap->flag & ALIASINUSE) {
-		ap->flag |= ALIASDEAD;
+	if (ap->in_use()) {
+		ap->set_dead();
 		return ap;
 	}
 

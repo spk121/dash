@@ -40,11 +40,22 @@
 #define ALIASINUSE	1
 #define ALIASDEAD	2
 
-struct alias {
-	struct alias *next;
+class alias {
+ private:
+	int flag;
+ public:
+	alias *next;
 	char *name;
 	char *val;
-	int flag;
+
+	alias(char *_name, char *_val)
+		: flag{0}, next{nullptr}, name{_name}, val{_val} {};
+	int in_use() { return flag & ALIASINUSE; }
+	void set_in_use() { flag |= ALIASINUSE; }
+	void set_not_in_use() { flag &= ~ALIASINUSE; }
+	int is_dead() {return flag & ALIASDEAD; }
+	void set_not_dead() { flag &= ~ALIASDEAD; }
+	void set_dead() { flag |= ALIASDEAD; }
 };
 
 struct alias *lookupalias(const char *, int);
@@ -53,5 +64,6 @@ int unaliascmd(int, char **);
 void rmaliases(void);
 int unalias(const char *);
 void printalias(const struct alias *);
+
 
 #endif /* ALIAS_H */

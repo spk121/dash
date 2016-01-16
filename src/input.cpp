@@ -331,9 +331,9 @@ pushstring(char *s, void *ap)
 	sp->prevnleft = parsefile->nleft;
 	sp->unget = parsefile->unget;
 	memcpy(sp->lastc, parsefile->lastc, sizeof(sp->lastc));
-	sp->ap = (struct alias *)ap;
+	sp->ap = ap;
 	if (ap) {
-		((struct alias *)ap)->flag |= ALIASINUSE;
+		ap->set_in_use();
 		sp->string = s;
 	}
 	parsefile->nextc = s;
@@ -356,8 +356,8 @@ popstring(void)
 		if (sp->string != sp->ap->val) {
 			ckfree(sp->string);
 		}
-		sp->ap->flag &= ~ALIASINUSE;
-		if (sp->ap->flag & ALIASDEAD) {
+		sp->ap->set_not_in_use ();
+		if (sp->ap->is_dead()) {
 			unalias(sp->ap->name);
 		}
 	}
