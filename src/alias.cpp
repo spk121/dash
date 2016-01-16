@@ -32,6 +32,10 @@
  * SUCH DAMAGE.
  */
 
+#include <map>
+#include <string>
+using namespace std;
+
 #include <stdlib.h>
 #include "shell.h"
 #include "input.h"
@@ -44,7 +48,8 @@
 
 #define ATABSIZE 39
 
-struct alias *atab[ATABSIZE];
+static map<string, alias> atab {};
+// static struct alias *atab[ATABSIZE];
 
 static void setalias(const char *, const char *);
 static struct alias *freealias(struct alias *);
@@ -54,21 +59,25 @@ static
 void
 setalias(const char *name, const char *val)
 {
-	struct alias *ap, **app;
+	string nstr {name};
 
-	app = __lookupalias(name);
-	ap = *app;
 	INTOFF;
-	if (ap) {
-		if (!ap->in_use()) {
-			ckfree(ap->val);
+	if (atab.count(nstr) == 1) {
+		auto& ap = atab[nstr];
+		if (!ap.in_use()) {
+			ckfree(ap.val);
 		}
-		ap->val	= savestr(val);
-		ap->set_not_dead();
+		ap.val	= savestr(val);
+		ap.set_not_dead();
 	} else {
 		/* not found */
-		ap = new alias {savestr(name), savestr(val)};
-		*app = ap;
+		auto& ap = atab[nstr];
+		ap = alias {(char *)name, (char *)val};
+		// ap.name = savestr(name);
+		// ap.val = savestr(val);
+		// ap.next = nullptr;
+		// ap.set_not_dead();
+		// ap.set_not_in_use();
 	}
 	INTON;
 }
@@ -76,47 +85,37 @@ setalias(const char *name, const char *val)
 int
 unalias(const char *name)
 {
-	struct alias **app;
+	string nstr {name};
 
-	app = __lookupalias(name);
-
-	if (*app) {
+	if (atab.count(nstr) == 1) {
 		INTOFF;
-		*app = freealias(*app);
+		atab.erase(nstr);
 		INTON;
-		return (0);
+		return 0;
 	}
-
-	return (1);
+	return 1;
 }
 
 void
 rmaliases(void)
 {
-	struct alias *ap, **app;
-	int i;
-
 	INTOFF;
-	for (i = 0; i < ATABSIZE; i++) {
-		app = &atab[i];
-		for (ap = *app; ap; ap = *app) {
-			*app = freealias(*app);
-			if (ap == *app) {
-				app = &ap->next;
-			}
-		}
-	}
+	atab.clear();
 	INTON;
 }
 
 struct alias *
 lookupalias(const char *name, int check)
 {
-	struct alias *ap = *__lookupalias(name);
-
-	if (check && ap && ap->in_use())
-		return (NULL);
-	return (ap);
+	string nstr {name};
+	if (atab.count(nstr) == 1) {
+		alias ap = atab.at(nstr);
+		if (check && ap.in_use())
+			return nullptr;
+		alias* a2 = new alias{ap};
+		return a2;
+	}
+	return nullptr;
 }
 
 /*
@@ -130,21 +129,17 @@ aliascmd(int argc, char **argv)
 	struct alias *ap;
 
 	if (argc == 1) {
-		int i;
-
-		for (i = 0; i < ATABSIZE; i++)
-			for (ap = atab[i]; ap; ap = ap->next) {
-				printalias(ap);
-			}
+		for(auto &key_value : atab)
+			printalias(&(key_value.second));
 		return (0);
 	}
 	while ((n = *++argv) != NULL) {
 		if ((v = strchr(n+1, '=')) == NULL) { /* n+1: funny ksh stuff */
-			if ((ap = *__lookupalias(n)) == NULL) {
+			if (atab.count(string{n}) == 0) {
 				outfmt(out2, "%s: %s not found\n", "alias", n);
 				ret = 1;
 			} else
-				printalias(ap);
+				printalias(&atab[string{n}]);
 		} else {
 			*v++ = '\0';
 			setalias(n, v);
@@ -196,6 +191,7 @@ printalias(const struct alias *ap) {
 	out1fmt("%s=%s\n", ap->name, single_quote(ap->val));
 }
 
+#if 0
 static struct alias **
 __lookupalias(const char *name) {
 	unsigned int hashval;
@@ -221,3 +217,5 @@ __lookupalias(const char *name) {
 
 	return app;
 }
+
+#endif

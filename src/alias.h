@@ -48,14 +48,24 @@ class alias {
 	char *name;
 	char *val;
 
+	alias()
+		: flag{0}, next{nullptr}, name{nullptr}, val{nullptr} {};
 	alias(char *_name, char *_val)
 		: flag{0}, next{nullptr}, name{_name}, val{_val} {};
+	// ~alias() { free(name); free(val); }
 	int in_use() { return flag & ALIASINUSE; }
 	void set_in_use() { flag |= ALIASINUSE; }
 	void set_not_in_use() { flag &= ~ALIASINUSE; }
 	int is_dead() {return flag & ALIASDEAD; }
 	void set_not_dead() { flag &= ~ALIASDEAD; }
 	void set_dead() { flag |= ALIASDEAD; }
+
+	void copy(alias& in) {
+		next = in.next;
+		name = strdup(in.name);
+		val = strdup(in.val);
+		flag = in.flag;
+	};
 };
 
 struct alias *lookupalias(const char *, int);
