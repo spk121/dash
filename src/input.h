@@ -100,7 +100,7 @@ extern char basebuf[IBUFSIZ];	/* buffer for top level input file */
 int pgetc(void);
 int pgetc2(void);
 void pungetc(void);
-void pushstring(char *, void *);
+void pushstring(char *, alias *);
 void popstring(void);
 int setinputfile(const char *, int);
 void setinputstring(char *);

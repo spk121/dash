@@ -313,7 +313,7 @@ pungetc(void)
  * We handle aliases this way.
  */
 void
-pushstring(char *s, void *ap)
+pushstring(char *s, alias *ap)
 {
 	struct strpush *sp;
 	size_t len;
