@@ -103,18 +103,18 @@ main(int argc, char **argv)
 
 	state = 0;
 	if (unlikely(setjmp(jmploc.loc))) {
-		int e;
+		EX e;
 		int s;
 
 		reset();
 
-		e = exception;
+		e = exception_type;
 
 		s = state;
-		if (e == EXEXIT || s == 0 || iflag == 0 || shlvl)
+		if (e == EX::EXIT || s == 0 || iflag == 0 || shlvl)
 			exitshell();
 
-		if (e == EXINT
+		if (e == EX::INT
 #if ATTY
 		 && (! attyset() || strequal(termval(), "emacs"))
 #endif
@@ -338,6 +338,6 @@ exitcmd(int argc, char **argv)
 			savestatus = status;
 	}
 
-	exraise(EXEXIT);
+	exraise(EX::EXIT);
 	/* NOTREACHED */
 }

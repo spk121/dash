@@ -305,7 +305,7 @@ out:
 
 	if (flags & EV_EXIT) {
 exexit:
-		exraise(EXEXIT);
+		exraise(EX::EXIT);
 	}
 }
 
@@ -817,7 +817,7 @@ bail:
 
 		/* We have a redirection error. */
 		if (spclbltin > 0)
-			exraise(EXERROR);
+			exraise(EX::ERROR);
 
 		goto out;
 	}
@@ -847,7 +847,7 @@ bail:
 				listsetvar(varlist.list, VEXPORT);
 		}
 		if (evalbltin(cmdentry.u.cmd, argc, argv, flags)) {
-			if (exception == EXERROR && spclbltin <= 0) {
+			if (exception_type == EX::ERROR && spclbltin <= 0) {
 				FORCEINTON;
 				break;
 			}

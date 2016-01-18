@@ -59,13 +59,13 @@
  */
 
 struct jmploc *handler;
-int exception;
+EX exception_type;
 int suppressint;
 volatile sig_atomic_t intpending;
 int errlinno;
 
 
-static void exverror(int, const char *, va_list)
+static void exverror(EX, const char *, va_list)
     __attribute__((__noreturn__));
 
 /*
@@ -75,7 +75,7 @@ static void exverror(int, const char *, va_list)
  */
 
 void
-exraise(int e)
+exraise(EX e)
 {
 #ifdef DEBUG
 	if (handler == NULL)
@@ -83,7 +83,7 @@ exraise(int e)
 #endif
 	INTOFF;
 
-	exception = e;
+	exception_type = e;
 	longjmp(handler->loc, 1);
 }
 
@@ -106,7 +106,7 @@ onint(void) {
 		raise(SIGINT);
 	}
 	exitstatus = SIGINT + 128;
-	exraise(EXINT);
+	exraise(EX::INT);
 	/* NOTREACHED */
 }
 
@@ -144,7 +144,7 @@ exvwarning2(const char *msg, va_list ap)
  * formatting.  It then raises the error exception.
  */
 static void
-exverror(int cond, const char *msg, va_list ap)
+exverror(EX cond, const char *msg, va_list ap)
 {
 #ifdef DEBUG
 	if (msg) {
@@ -174,14 +174,14 @@ sh_error(const char *msg, ...)
 	exitstatus = 2;
 
 	va_start(ap, msg);
-	exverror(EXERROR, msg, ap);
+	exverror(EX::ERROR, msg, ap);
 	/* NOTREACHED */
 	va_end(ap);
 }
 
 
 void
-exerror(int cond, const char *msg, ...)
+exerror(EX cond, const char *msg, ...)
 {
 	va_list ap;
 

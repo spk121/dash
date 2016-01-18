@@ -387,7 +387,7 @@ setinputfile(const char *fname, int flags)
 		if (flags & INPUT_NOFILE_OK)
 			goto out;
 		exitstatus = 127;
-		exerror(EXERROR, "Can't open %s", fname);
+		exerror(EX::ERROR, "Can't open %s", fname);
 	}
 	if (fd < 10)
 		fd = savefd(fd, fd);

@@ -64,13 +64,13 @@ struct jmploc {
 };
 
 extern struct jmploc *handler;
-extern int exception;
 
-/* exceptions */
-#define EXINT 0		/* SIGINT received */
-#define EXERROR 1	/* a generic error */
-#define EXEXIT 4	/* exit the shell */
-
+enum class EX {
+	INT, 			// SIGINT received
+	ERROR,			// a generic error
+	EXIT			// exit the shell
+};
+extern EX exception_type;
 
 /*
  * These macros allow the user to suspend the handling of interrupt signals
@@ -117,7 +117,7 @@ void __inton(void);
 #define CLEAR_PENDING_INT intpending = 0
 #define int_pending() intpending
 
-void exraise(int) __attribute__((__noreturn__));
+void exraise(EX) __attribute__((__noreturn__));
 #ifdef USE_NORETURN
 void onint(void) __attribute__((__noreturn__));
 #else
@@ -125,7 +125,7 @@ void onint(void);
 #endif
 extern int errlinno;
 void sh_error(const char *, ...) __attribute__((__noreturn__));
-void exerror(int, const char *, ...) __attribute__((__noreturn__));
+void exerror(EX, const char *, ...) __attribute__((__noreturn__));
 const char *errmsg(int, int);
 
 void sh_warnx(const char *, ...);
