@@ -1,0 +1,38 @@
+TITLE: My C++ Dash-like shell
+
+* Fix libedit support
+
+* Source Files
+** DONE Use a cpp suffix for code files and an h for interface files
+** DONE An .h file may not contain object definitions or non-inline function definitions
+	Nothing to do!
+** DONE Use .h files for all declarations used in multiple sourcefiles
+** TODO Include .h files before other declarations in .h and .cpp files
+*** TODO Cleanup var.cpp's header inclusion
+** TODO A .cpp file must include the .h file that defines its interface
+*** TODO when libedit support is being fixed, do something with histedit.h
+** TODO Use #include guards for all .h files
+*** TODO builtins.h
+*** TODO init.h
+*** TODO nodes.h
+*** TODO syntax.h
+*** TODO token.h
+*** TODO token_vars.h
+
+* Standard Library
+** Make the alias list a std::map
+   Aliases are looked up.
+   Aliases key/val are printed
+** TODO Prefer using STL array or vector over C arrays
+
+* The big refactor
+** TODO Startup and options 
+   The options flags and options parsing can be grouped as a class.
+   optletters and optnames are the short and long command-line
+   options.  optlist is the storage of the state of those flags.  The
+   primary parsing of argc/argv into options happens in options(),
+   minus_o(), and setoptions().  You can pull the center guts out of
+   options(), where a subfunction parses the short options.
+
+*** Make optlist class that incorporates options(), minus_o() and setoptions() as methods
+
