@@ -70,7 +70,7 @@ int whichprompt;		/* 1 == PS1, 2 == PS2 */
 EditLine *el;			/* cookie for editline package */
 #endif
 
-STATIC void pushfile(void);
+static void pushfile(void);
 static int preadfd(void);
 static void setinputfd(int fd, int push);
 static int preadbuffer(void);
@@ -313,7 +313,7 @@ pungetc(void)
  * We handle aliases this way.
  */
 void
-pushstring(char *s, void *ap)
+pushstring(char *s, alias *ap)
 {
 	struct strpush *sp;
 	size_t len;
@@ -331,9 +331,9 @@ pushstring(char *s, void *ap)
 	sp->prevnleft = parsefile->nleft;
 	sp->unget = parsefile->unget;
 	memcpy(sp->lastc, parsefile->lastc, sizeof(sp->lastc));
-	sp->ap = (struct alias *)ap;
+	sp->ap = ap;
 	if (ap) {
-		((struct alias *)ap)->flag |= ALIASINUSE;
+		ap->set_in_use();
 		sp->string = s;
 	}
 	parsefile->nextc = s;
@@ -356,8 +356,8 @@ popstring(void)
 		if (sp->string != sp->ap->val) {
 			ckfree(sp->string);
 		}
-		sp->ap->flag &= ~ALIASINUSE;
-		if (sp->ap->flag & ALIASDEAD) {
+		sp->ap->set_not_in_use ();
+		if (sp->ap->is_dead()) {
 			unalias(sp->ap->name);
 		}
 	}
@@ -441,7 +441,7 @@ setinputstring(char *string)
  * adds a new entry to the stack and popfile restores the previous level.
  */
 
-STATIC void
+static void
 pushfile(void)
 {
 	struct parsefile *pf;

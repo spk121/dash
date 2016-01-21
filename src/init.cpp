@@ -89,6 +89,8 @@
 #define isxdigit _isxdigit
 #undef  VTABSIZE
 #define VTABSIZE 39
+#undef  ATABSIZE
+#define ATABSIZE 39
 #undef  ARITH_MAX_PREC
 #define ARITH_MAX_PREC 8
 #undef  CD_PHYSICAL
@@ -145,9 +147,6 @@ init() {
 
       /* from output.cpp: */
       {
-#ifdef USE_GLIBC_STDIO
-	      initstreams();
-#endif
       }
 
       /* from var.cpp: */
@@ -205,18 +204,6 @@ reset() {
 
       /* from output.cpp: */
       {
-#ifdef notyet
-	      out1 = &output;
-	      out2 = &errout;
-#ifdef USE_GLIBC_STDIO
-	      if (memout.stream != NULL)
-		      __closememout();
-#endif
-	      if (memout.buf != NULL) {
-		      ckfree(memout.buf);
-		      memout.buf = NULL;
-	      }
-#endif
       }
 
       /* from var.cpp: */

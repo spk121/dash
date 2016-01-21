@@ -109,34 +109,34 @@ static struct ifsregion *ifslastp;
 /* holds expanded arg list */
 static struct arglist exparg;
 
-STATIC void argstr(char *, int);
-STATIC char *exptilde(char *, char *, int);
-STATIC void expbackq(union node *, int);
-STATIC const char *subevalvar(char *, char *, int, int, int, int, int);
-STATIC char *evalvar(char *, int);
-STATIC size_t strtodest(const char *, const char *, int);
-STATIC void memtodest(const char *, size_t, const char *, int);
-STATIC ssize_t varvalue(char *, int, int, int *);
-STATIC void expandmeta(struct strlist *, int);
+static void argstr(char *, int);
+static char *exptilde(char *, char *, int);
+static void expbackq(union node *, int);
+static const char *subevalvar(char *, char *, int, int, int, int, int);
+static char *evalvar(char *, int);
+static size_t strtodest(const char *, const char *, int);
+static void memtodest(const char *, size_t, const char *, int);
+static ssize_t varvalue(char *, int, int, int *);
+static void expandmeta(struct strlist *, int);
 #ifdef HAVE_GLOB
-STATIC void addglob(const glob_t *);
+static void addglob(const glob_t *);
 #else
-STATIC void expmeta(char *, char *);
-STATIC struct strlist *expsort(struct strlist *);
-STATIC struct strlist *msort(struct strlist *, int);
+static void expmeta(char *, char *);
+static struct strlist *expsort(struct strlist *);
+static struct strlist *msort(struct strlist *, int);
 #endif
-STATIC void addfname(char *);
-STATIC int patmatch(char *, const char *);
+static void addfname(char *);
+static int patmatch(char *, const char *);
 #ifndef HAVE_FNMATCH
-STATIC int pmatch(const char *, const char *);
+static int pmatch(const char *, const char *);
 #else
 #define pmatch(a, b) !fnmatch((a), (b), 0)
 #endif
-STATIC int cvtnum(intmax_t);
-STATIC size_t esclen(const char *, const char *);
-STATIC char *scanleft(char *, char *, char *, char *, int, int);
-STATIC char *scanright(char *, char *, char *, char *, int, int);
-STATIC void varunset(const char *, const char *, const char *, int)
+static int cvtnum(intmax_t);
+static size_t esclen(const char *, const char *);
+static char *scanleft(char *, char *, char *, char *, int, int);
+static char *scanright(char *, char *, char *, char *, int, int);
+static void varunset(const char *, const char *, const char *, int)
 	__attribute__((__noreturn__));
 
 
@@ -146,14 +146,14 @@ STATIC void varunset(const char *, const char *, const char *, int)
  * Returns an stalloced string.
  */
 
-STATIC inline char *
+static inline char *
 preglob(const char *pattern, int flag) {
 	flag |= RMESCAPE_GLOB;
 	return _rmescapes((char *)pattern, flag);
 }
 
 
-STATIC size_t
+static size_t
 esclen(const char *start, const char *p) {
 	size_t esc = 0;
 
@@ -231,7 +231,7 @@ out:
  * $@ like $* since no splitting will be performed.
  */
 
-STATIC void
+static void
 argstr(char *p, int flag)
 {
 	static const char spclchars[] = {
@@ -360,7 +360,7 @@ breakloop:
 	;
 }
 
-STATIC char *
+static char *
 exptilde(char *startp, char *p, int flag)
 {
 	signed char c;
@@ -511,7 +511,7 @@ expari(int flag)
  * Expand stuff in backwards quotes.
  */
 
-STATIC void
+static void
 expbackq(union node *cmd, int flag)
 {
 	struct backcmd in;
@@ -570,7 +570,7 @@ read:
 }
 
 
-STATIC char *
+static char *
 scanleft(
 	char *startp, char *rmesc, char *rmescend, char *str, int quotes,
 	int zero
@@ -602,7 +602,7 @@ scanleft(
 }
 
 
-STATIC char *
+static char *
 scanright(
 	char *startp, char *rmesc, char *rmescend, char *str, int quotes,
 	int zero
@@ -637,7 +637,7 @@ scanright(
 	return 0;
 }
 
-STATIC const char *
+static const char *
 subevalvar(char *p, char *str, int strloc, int subtype, int startloc, int varflags, int flag)
 {
 	int quotes = flag & QUOTES_ESC;
@@ -710,7 +710,7 @@ subevalvar(char *p, char *str, int strloc, int subtype, int startloc, int varfla
  * Expand a variable, and return a pointer to the next character in the
  * input string.
  */
-STATIC char *
+static char *
 evalvar(char *p, int flag)
 {
 	int subtype;
@@ -842,7 +842,7 @@ end:
  * Put a string on the stack.
  */
 
-STATIC void
+static void
 memtodest(const char *p, size_t len, const char *syntax, int quotes) {
 	char *q;
 
@@ -868,7 +868,7 @@ memtodest(const char *p, size_t len, const char *syntax, int quotes) {
 }
 
 
-STATIC size_t
+static size_t
 strtodest(const char *p, const char *syntax, int quotes)
 {
 	size_t len = strlen(p);
@@ -882,7 +882,7 @@ strtodest(const char *p, const char *syntax, int quotes)
  * Add the value of a specialized variable to the stack string.
  */
 
-STATIC ssize_t
+static ssize_t
 varvalue(char *name, int varflags, int flags, int *quotedp)
 {
 	int num;
@@ -1128,7 +1128,7 @@ out:
  */
 
 #ifdef HAVE_GLOB
-STATIC void
+static void
 expandmeta(str, flag)
 	struct strlist *str;
 	int flag;
@@ -1176,7 +1176,7 @@ nometa:
  * Add the result of glob(3) to the list.
  */
 
-STATIC void
+static void
 addglob(pglob)
 	const glob_t *pglob;
 {
@@ -1189,10 +1189,10 @@ addglob(pglob)
 
 
 #else	/* HAVE_GLOB */
-STATIC char *expdir;
+static char *expdir;
 
 
-STATIC void
+static void
 expandmeta(struct strlist *str, int flag)
 {
 	static const char metachars[] = {
@@ -1247,7 +1247,7 @@ nometa:
  * Do metacharacter (i.e. *, ?, [...]) expansion.
  */
 
-STATIC void
+static void
 expmeta(char *enddir, char *name)
 {
 	char *p;
@@ -1365,7 +1365,7 @@ expmeta(char *enddir, char *name)
  * Add a file name to the list.
  */
 
-STATIC void
+static void
 addfname(char *name)
 {
 	struct strlist *sp;
@@ -1384,7 +1384,7 @@ addfname(char *name)
  * work.
  */
 
-STATIC struct strlist *
+static struct strlist *
 expsort(struct strlist *str)
 {
 	int len;
@@ -1397,7 +1397,7 @@ expsort(struct strlist *str)
 }
 
 
-STATIC struct strlist *
+static struct strlist *
 msort(struct strlist *list, int len)
 {
 	struct strlist *p, *q = NULL;
@@ -1443,7 +1443,7 @@ msort(struct strlist *list, int len)
  * Returns true if the pattern matches the string.
  */
 
-STATIC inline int
+static inline int
 patmatch(char *pattern, const char *string)
 {
 	return pmatch(preglob(pattern, 0), string);
@@ -1451,7 +1451,7 @@ patmatch(char *pattern, const char *string)
 
 
 #ifndef HAVE_FNMATCH
-STATIC int ccmatch(const char *p, int chr, const char **r)
+static int ccmatch(const char *p, int chr, const char **r)
 {
 	static const struct klass {
 		char name[10];
@@ -1487,7 +1487,7 @@ STATIC int ccmatch(const char *p, int chr, const char **r)
 	return 0;
 }
 
-STATIC int
+static int
 pmatch(const char *pattern, const char *string)
 {
 	const char *p, *q;
@@ -1683,7 +1683,7 @@ casematch(union node *pattern, char *val)
  * Our own itoa().
  */
 
-STATIC int
+static int
 cvtnum(intmax_t num)
 {
 	int len = max_int_length(sizeof(num));
@@ -1694,7 +1694,7 @@ cvtnum(intmax_t num)
 	return len;
 }
 
-STATIC void
+static void
 varunset(const char *end, const char *var, const char *umsg, int varflags)
 {
 	const char *msg;

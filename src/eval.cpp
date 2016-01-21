@@ -66,7 +66,7 @@
 
 
 int evalskip;			/* set if we are skipping commands */
-STATIC int skipcount;		/* number of levels to skip */
+static int skipcount;		/* number of levels to skip */
 int loopnest;			/* current loop nesting level */
 static int funcline;		/* starting line number of current function, or 0 if not in a function */
 
@@ -78,32 +78,24 @@ int savestatus = -1;		/* exit status of last command outside traps */
 
 
 #if !defined(__alpha__) || (defined(__GNUC__) && __GNUC__ >= 3)
-STATIC
+static
 #endif
 void evaltreenr(union node *, int) __attribute__ ((__noreturn__));
-STATIC void evalloop(union node *, int);
-STATIC void evalfor(union node *, int);
-STATIC void evalcase(union node *, int);
-STATIC void evalsubshell(union node *, int);
-STATIC void expredir(union node *);
-STATIC void evalpipe(union node *, int);
-#ifdef notyet
-STATIC void evalcommand(union node *, int, struct backcmd *);
-#else
-STATIC void evalcommand(union node *, int);
-#endif
-STATIC int evalbltin(const struct builtincmd *, int, char **, int);
-STATIC int evalfun(struct funcnode *, int, char **, int);
-STATIC void prehash(union node *);
-STATIC int eprintlist(struct output *, struct strlist *, int);
-STATIC int bltincmd(int, char **);
+static void evalloop(union node *, int);
+static void evalfor(union node *, int);
+static void evalcase(union node *, int);
+static void evalsubshell(union node *, int);
+static void expredir(union node *);
+static void evalpipe(union node *, int);
+static void evalcommand(union node *, int);
+static int evalbltin(const struct builtincmd *, int, char **, int);
+static int evalfun(struct funcnode *, int, char **, int);
+static void prehash(union node *);
+static int eprintlist(struct output *, struct strlist *, int);
+static int bltincmd(int, char **);
 
 
-STATIC const struct builtincmd bltin = {
-	name: nullstr,
-	builtin: bltincmd
-};
-
+static const struct builtincmd bltin = {nullstr, bltincmd, 0u};
 
 /*
  * Called to reset things after an exception.
@@ -238,18 +230,11 @@ evaltree(union node *n, int flags)
 			popredir(0);
 		goto setstatus;
 	case NCMD:
-#ifdef notyet
-		if (eflag && !(flags & EV_TESTED))
-			checkexit = ~0;
-		evalcommand(n, flags, (struct backcmd *)NULL);
-		break;
-#else
 		evalfn = evalcommand;
 checkexit:
 		if (eflag && !(flags & EV_TESTED))
 			checkexit = ~0;
 		goto calleval;
-#endif
 	case NFOR:
 		evalfn = evalfor;
 		goto calleval;
@@ -326,7 +311,7 @@ exexit:
 
 
 #if !defined(__alpha__) || (defined(__GNUC__) && __GNUC__ >= 3)
-STATIC
+static
 #endif
 void evaltreenr(union node *n, int flags)
 #ifdef HAVE_ATTRIBUTE_ALIAS
@@ -362,7 +347,7 @@ static int skiploop(void)
 }
 
 
-STATIC void
+static void
 evalloop(union node *n, int flags)
 {
 	int skip;
@@ -394,7 +379,7 @@ evalloop(union node *n, int flags)
 
 
 
-STATIC void
+static void
 evalfor(union node *n, int flags)
 {
 	struct arglist arglist;
@@ -428,7 +413,7 @@ evalfor(union node *n, int flags)
 
 
 
-STATIC void
+static void
 evalcase(union node *n, int flags)
 {
 	union node *cp;
@@ -464,7 +449,7 @@ out:
  * Kick off a subshell to evaluate a tree.
  */
 
-STATIC void
+static void
 evalsubshell(union node *n, int flags)
 {
 	struct job *jp;
@@ -503,7 +488,7 @@ nofork:
  * Compute the names of the files in a redirection list.
  */
 
-STATIC void
+static void
 expredir(union node *n)
 {
 	union node *redir;
@@ -540,7 +525,7 @@ expredir(union node *n)
  * of all the rest.)
  */
 
-STATIC void
+static void
 evalpipe(union node *n, int flags)
 {
 	struct job *jp;
@@ -678,12 +663,8 @@ parse_command_args(char **argv, const char **path)
  * Execute a simple command.
  */
 
-STATIC void
-#ifdef notyet
-evalcommand(union node *cmd, int flags, struct backcmd *backcmd)
-#else
+static void
 evalcommand(union node *cmd, int flags)
-#endif
 {
 	struct localvar_list *localvar_stop;
 	struct redirtab *redir_stop;
@@ -694,9 +675,6 @@ evalcommand(union node *cmd, int flags)
 	char **argv;
 	int argc;
 	struct strlist *sp;
-#ifdef notyet
-	int pip[2];
-#endif
 	struct cmdentry cmdentry;
 	struct job *jp;
 	char *lastarg;
@@ -780,7 +758,11 @@ evalcommand(union node *cmd, int flags)
 		sep = 0;
 		sep = eprintlist(out, varlist.list, sep);
 		eprintlist(out, arglist.list, sep);
+#ifdef USE_GLIBC_STDIO
+		outc('\n', out);
+#else
 		outcslow('\n', out);
+#endif
 #ifdef FLUSHERR
 		flushout(out);
 #endif
@@ -895,7 +877,7 @@ out:
 	popstackmark(&smark);
 }
 
-STATIC int
+static int
 evalbltin(const struct builtincmd *cmd, int argc, char **argv, int flags)
 {
 	char *volatile savecmdname;
@@ -927,7 +909,7 @@ cmddone:
 	return i;
 }
 
-STATIC int
+static int
 evalfun(struct funcnode *func, int argc, char **argv, int flags)
 {
 	volatile struct shparam saveparam;
@@ -991,7 +973,7 @@ funcdone:
  * check that the name will not be subject to expansion.
  */
 
-STATIC void
+static void
 prehash(union node *n)
 {
 	struct cmdentry entry;
@@ -1013,7 +995,7 @@ prehash(union node *n)
  * No command given.
  */
 
-STATIC int
+static int
 bltincmd(int argc, char **argv)
 {
 	/*
@@ -1106,7 +1088,7 @@ execcmd(int argc, char **argv)
 }
 
 
-STATIC int
+static int
 eprintlist(struct output *out, struct strlist *sp, int sep)
 {
 	while (sp) {

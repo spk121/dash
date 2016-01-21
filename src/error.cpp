@@ -128,7 +128,11 @@ exvwarning2(const char *msg, va_list ap)
 #if FLUSHERR
 	outc('\n', errs);
 #else
+#ifdef USE_GLIBC_STDIO
+	outc('\n', errs);
+#else
 	outcslow('\n', errs);
+#endif
 #endif
 }
 

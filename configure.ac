@@ -87,7 +87,7 @@ AC_CHECK_DECL([PRIdMAX],,
 dnl Checks for library functions.
 AC_CHECK_FUNCS(bsearch faccessat getpwnam getrlimit isalpha killpg \
 	       mempcpy \
-	       sigsetmask stpcpy strchrnul strsignal strtod strtoimax \
+	       stpcpy strchrnul strsignal strtod strtoimax \
 	       strtoumax sysconf)
 
 dnl Check whether it's worth working around FreeBSD PR kern/125009.

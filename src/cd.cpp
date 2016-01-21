@@ -64,15 +64,15 @@
 #define CD_PHYSICAL 1
 #define CD_PRINT 2
 
-STATIC int docd(const char *, int);
-STATIC const char *updatepwd(const char *);
-STATIC char *getpwd(void);
-STATIC int cdopt(void);
+static int docd(const char *, int);
+static const char *updatepwd(const char *);
+static char *getpwd(void);
+static int cdopt(void);
 
-STATIC char *curdir = nullstr;		/* current working directory */
-STATIC char *physdir = nullstr;		/* physical working directory */
+static char *curdir = nullstr;		/* current working directory */
+static char *physdir = nullstr;		/* physical working directory */
 
-STATIC int
+static int
 cdopt()
 {
 	int flags = 0;
@@ -159,7 +159,7 @@ out:
  * know that the current directory has changed.
  */
 
-STATIC int
+static int
 docd(const char *dest, int flags)
 {
 	const char *dir = 0;
@@ -189,7 +189,7 @@ out:
  * cd command.
  */
 
-STATIC const char *
+static const char *
 updatepwd(const char *dir)
 {
 	char *cur;
@@ -263,7 +263,7 @@ updatepwd(const char *dir)
  * directory, this routine returns immediately.
  */
 inline
-STATIC char *
+static char *
 getpwd()
 {
 #ifdef __GLIBC__

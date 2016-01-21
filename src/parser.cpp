@@ -95,21 +95,21 @@ struct heredoc *heredoc;
 int quoteflag;			/* set if (part of) last token was quoted */
 
 
-STATIC union node *list(int);
-STATIC union node *andor(void);
-STATIC union node *pipeline(void);
-STATIC union node *command(void);
-STATIC union node *simplecmd(void);
-STATIC union node *makename(void);
-STATIC void parsefname(void);
-STATIC void parseheredoc(void);
-STATIC int peektoken(void);
-STATIC int readtoken(void);
-STATIC int xxreadtoken(void);
-STATIC int readtoken1(int, char const *, char *, int);
-STATIC void synexpect(int) __attribute__((__noreturn__));
-STATIC void synerror(const char *) __attribute__((__noreturn__));
-STATIC void setprompt(int);
+static union node *list(int);
+static union node *andor(void);
+static union node *pipeline(void);
+static union node *command(void);
+static union node *simplecmd(void);
+static union node *makename(void);
+static void parsefname(void);
+static void parseheredoc(void);
+static int peektoken(void);
+static int readtoken(void);
+static int xxreadtoken(void);
+static int readtoken1(int, char const *, char *, int);
+static void synexpect(int) __attribute__((__noreturn__));
+static void synerror(const char *) __attribute__((__noreturn__));
+static void setprompt(int);
 
 
 static inline int
@@ -146,7 +146,7 @@ parsecmd(int interact)
 }
 
 
-STATIC union node *
+static union node *
 list(int nlflag)
 {
 	union node *n1, *n2, *n3;
@@ -217,7 +217,7 @@ list(int nlflag)
 
 
 
-STATIC union node *
+static union node *
 andor(void)
 {
 	union node *n1, *n2, *n3;
@@ -245,7 +245,7 @@ andor(void)
 
 
 
-STATIC union node *
+static union node *
 pipeline(void)
 {
 	union node *n1, *n2, *pipenode;
@@ -289,7 +289,7 @@ pipeline(void)
 
 
 
-STATIC union node *
+static union node *
 command(void)
 {
 	union node *n1, *n2;
@@ -488,7 +488,7 @@ redir:
 }
 
 
-STATIC union node *
+static union node *
 simplecmd(void) {
 	union node *args, **app;
 	union node *n = NULL;
@@ -573,7 +573,7 @@ out:
 	return n;
 }
 
-STATIC union node *
+static union node *
 makename(void)
 {
 	union node *n;
@@ -606,7 +606,7 @@ void fixredir(union node *n, const char *text, int err)
 }
 
 
-STATIC void
+static void
 parsefname(void)
 {
 	union node *n = redirnode;
@@ -643,7 +643,7 @@ parsefname(void)
  * Input any here documents.
  */
 
-STATIC void
+static void
 parseheredoc(void)
 {
 	struct heredoc *here;
@@ -668,7 +668,7 @@ parseheredoc(void)
 	}
 }
 
-STATIC int
+static int
 peektoken(void)
 {
 	int t;
@@ -678,7 +678,7 @@ peektoken(void)
 	return (t);
 }
 
-STATIC int
+static int
 readtoken(void)
 {
 	int t;
@@ -769,7 +769,7 @@ static void nlnoprompt(void)
 
 #define RETURN(token)	return lasttoken = token
 
-STATIC int
+static int
 xxreadtoken(void)
 {
 	int c;
@@ -868,7 +868,7 @@ static int pgetc_eatbnl(void)
 #define PARSEBACKQNEW()	{oldstyle = 0; goto parsebackq; parsebackq_newreturn:;}
 #define	PARSEARITH()	{goto parsearith; parsearith_return:;}
 
-STATIC int
+static int
 readtoken1(int firstc, char const *syntax, char *eofmark, int striptabs)
 {
 	int c = firstc;
@@ -1472,7 +1472,7 @@ endofname(const char *name)
  * occur at this point.
  */
 
-STATIC void
+static void
 synexpect(int token)
 {
 	char msg[64];
@@ -1488,7 +1488,7 @@ synexpect(int token)
 }
 
 
-STATIC void
+static void
 synerror(const char *msg)
 {
 	errlinno = plinno;
@@ -1496,7 +1496,7 @@ synerror(const char *msg)
 	/* NOTREACHED */
 }
 
-STATIC void
+static void
 setprompt(int which)
 {
 	struct stackmark smark;
