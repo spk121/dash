@@ -191,7 +191,7 @@ freealias(struct alias *ap) {
 	next = ap->next;
 	ckfree(ap->name);
 	ckfree(ap->val);
-	ckfree(ap);
+	ckfree((char *)ap);
 	return next;
 }
 

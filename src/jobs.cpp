@@ -578,7 +578,7 @@ freejob(struct job *jp)
 			ckfree(ps->cmd);
 	}
 	if (jp->ps != &jp->ps0)
-		ckfree(jp->ps);
+		ckfree((char *)(jp->ps));
 	jp->used = 0;
 	set_curjob(jp, CUR_DELETE);
 	inton();
@@ -1189,7 +1189,7 @@ commandtext(union node *n)
 {
 	char *name;
 
-	STARTSTACKSTR(cmdnextc);
+	startstackstr(&cmdnextc);
 	cmdtxt(n);
 	name = (char *) stackblock();
 	TRACE(("commandtext: name %p, end %p\n", name, cmdnextc));
@@ -1434,17 +1434,17 @@ cmdputs(const char *s)
 		default:
 			break;
 		}
-		USTPUTC(c, nextc);
+		ustputc(c, &nextc);
 checkstr:
 		if (!str)
 			continue;
 dostr:
 		while ((c = *str++)) {
-			USTPUTC(c, nextc);
+			ustputc(c, &nextc);
 		}
 	}
 	if (quoted & 1) {
-		USTPUTC('"', nextc);
+		ustputc('"', &nextc);
 	}
 	*nextc = 0;
 	cmdnextc = nextc;

@@ -191,7 +191,7 @@ char *
 single_quote(const char *s) {
 	char *p;
 
-	STARTSTACKSTR(p);
+	startstackstr(&p);
 
 	do {
 		char *q;
@@ -206,7 +206,7 @@ single_quote(const char *s) {
 		*q++ = '\'';
 		s += len;
 
-		STADJUST(q - p, p);
+		stadjust(q - p, &p);
 
 		len = strspn(s, "'");
 		if (!len)
@@ -219,10 +219,10 @@ single_quote(const char *s) {
 		*q++ = '"';
 		s += len;
 
-		STADJUST(q - p, p);
+		stadjust(q - p, &p);
 	} while (*s);
 
-	USTPUTC(0, p);
+	ustputc(0, &p);
 
 	return stackblock();
 }

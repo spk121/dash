@@ -182,7 +182,7 @@ popstackmark(struct stackmark *mark)
 	while (stackp != mark->stackp) {
 		sp = stackp;
 		stackp = sp->prev;
-		ckfree(sp);
+		ckfree((char *)sp);
 	}
 	stacknxt = mark->stacknxt;
 	stacknleft = mark->stacknleft;
@@ -242,9 +242,9 @@ growstackblock(void)
 /*
  * The following routines are somewhat easier to use than the above.
  * The user declares a variable of type STACKSTR, which may be declared
- * to be a register.  The macro STARTSTACKSTR initializes things.  Then
- * the user uses the macro STPUTC to add characters to the string.  In
- * effect, STPUTC(c, p) is the same as *p++ = c except that the stack is
+ * to be a register.  The procedure startstackstr()initializes things.  Then
+ * the user uses the procedure stputc() to add characters to the string.  In
+ * effect, stputc(c, &p) is the same as *p++ = c except that the stack is
  * grown as necessary.  When the user is done, she can just leave the
  * string there and refer to it using stackblock().  Or she can allocate
  * the space for it using grabstackstr().  If it is necessary to allow
@@ -252,8 +252,8 @@ growstackblock(void)
  * the string, the user should use grabstack to allocate the space, and
  * then call ungrabstr(p) to return to the previous mode of operation.
  *
- * USTPUTC is like STPUTC except that it doesn't check for overflow.
- * CHECKSTACKSPACE can be called before USTPUTC to ensure that there
+ * ustputc() is like stputc() except that it doesn't check for overflow.
+ * CHECKSTACKSPACE can be called before ustputc() to ensure that there
  * is space for at least one character.
  */
 

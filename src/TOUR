@@ -94,7 +94,7 @@ to free up the memory in use at the time of the exception is to
 restore the stack pointer.  The stack is implemented using a
 linked list of blocks.
 
-STPUTC:  If the stack were contiguous, it would be easy to store
+stputc():  If the stack were contiguous, it would be easy to store
 strings on the stack without knowing in advance how long the
 string was going to be:
         p = stackptr;
@@ -102,8 +102,8 @@ string was going to be:
         stackptr = p;
 The folloing three macros (defined in memalloc.h) perform these
 operations, but grow the stack if you run off the end:
-        STARTSTACKSTR(p);
-        STPUTC(c, p);   /* repeated as many times as needed */
+        startstackstr(&p);
+        stputc(c, &p);   /* repeated as many times as needed */
         grabstackstr(p);
 
 We now start a top-down look at the code:

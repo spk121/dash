@@ -368,7 +368,7 @@ popstring(void)
 /*dprintf("*** calling popstring: restoring to '%s'\n", parsenextc);*/
 	parsefile->strpush = sp->prev;
 	if (sp != &(parsefile->basestrpush))
-		ckfree(sp);
+		ckfree((char *)sp);
 	inton();
 }
 
@@ -469,7 +469,7 @@ popfile(void)
 	while (pf->strpush)
 		popstring();
 	parsefile = pf->prev;
-	ckfree(pf);
+	ckfree((char *)pf);
 	inton();
 }
 

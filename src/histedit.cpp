@@ -413,17 +413,17 @@ fc_replace(const char *s, char *p, char *r)
 	char *dest;
 	int plen = strlen(p);
 
-	STARTSTACKSTR(dest);
+	startstackstr(&dest);
 	while (*s) {
 		if (*s == *p && strncmp(s, p, plen) == 0) {
 			while (*r)
-				STPUTC(*r++, dest);
+				stputc(*r++, &dest);
 			s += plen;
 			*p = '\0';	/* so no more matches */
 		} else
-			STPUTC(*s++, dest);
+			stputc(*s++, &dest);
 	}
-	STACKSTRNUL(dest);
+	stackstrnull(&dest);
 	dest = grabstackstr(dest);
 
 	return (dest);

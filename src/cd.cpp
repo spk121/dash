@@ -219,14 +219,14 @@ updatepwd(const char *dir)
 	lim = (const char *)stackblock() + 1;
 	if (*dir != '/') {
 		if (cur[-1] != '/')
-			USTPUTC('/', cur);
+			ustputc('/', &cur);
 		if (cur > lim && *lim == '/')
 			lim++;
 	} else {
-		USTPUTC('/', cur);
+		ustputc('/', &cur);
 		cdcomppath++;
 		if (dir[1] == '/' && dir[2] != '/') {
-			USTPUTC('/', cur);
+			ustputc('/', &cur);
 			cdcomppath++;
 			lim++;
 		}
@@ -237,7 +237,7 @@ updatepwd(const char *dir)
 		case '.':
 			if (p[1] == '.' && p[2] == '\0') {
 				while (cur > lim) {
-					STUNPUTC(cur);
+					stunputc(&cur);
 					if (cur[-1] == '/')
 						break;
 				}
@@ -247,12 +247,12 @@ updatepwd(const char *dir)
 			/* fall through */
 		default:
 			cur = stputs(p, cur);
-			USTPUTC('/', cur);
+			ustputc('/', &cur);
 		}
 		p = strtok(0, "/");
 	}
 	if (cur > lim)
-		STUNPUTC(cur);
+		stunputc(&cur);
 	*cur = 0;
 	return (const char *) stackblock();
 }

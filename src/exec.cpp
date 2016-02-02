@@ -577,7 +577,7 @@ clearcmdentry(int firstchange)
 			 || (cmdp->cmdtype == CMDBUILTIN &&
 			     builtinloc >= firstchange)) {
 				*pp = cmdp->next;
-				ckfree(cmdp);
+				ckfree((char *)cmdp);
 			} else {
 				pp = &cmdp->next;
 			}
@@ -645,7 +645,7 @@ delete_cmd_entry(void)
 	*lastcmdentry = cmdp->next;
 	if (cmdp->cmdtype == CMDFUNCTION)
 		freefunc(cmdp->param.func);
-	ckfree(cmdp);
+	ckfree((char *)cmdp);
 	inton();
 }
 

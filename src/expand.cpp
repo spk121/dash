@@ -189,7 +189,7 @@ expandarg(union node *arg, struct arglist *arglist, int flag)
 	char *p;
 
 	argbackq = arg->narg.backquote;
-	STARTSTACKSTR(expdest);
+	startstackstr(&expdest);
 	argstr(arg->narg.text, flag);
 	p = _STPUTC('\0', expdest);
 	expdest = p - 1;
@@ -414,7 +414,7 @@ removerecordregions(int endoff)
 			struct ifsregion *ifsp;
 			intoff();
 			ifsp = ifsfirst.next->next;
-			ckfree(ifsfirst.next);
+			ckfree((char *)(ifsfirst.next));
 			ifsfirst.next = ifsp;
 			inton();
 		}
@@ -434,7 +434,7 @@ removerecordregions(int endoff)
 		struct ifsregion *ifsp;
 		intoff();
 		ifsp = ifslastp->next->next;
-		ckfree(ifslastp->next);
+		ckfree((char *)(ifslastp->next));
 		ifslastp->next = ifsp;
 		inton();
 	}
@@ -558,7 +558,7 @@ read:
 	/* Eat all trailing newlines */
 	dest = expdest;
 	for (; dest > (char *)stackblock() && dest[-1] == '\n';)
-		STUNPUTC(dest);
+		stunputc(&dest);
 	expdest = dest;
 
 	if (!(flag & EXP_QUOTED))
@@ -652,7 +652,7 @@ subevalvar(char *p, char *str, int strloc, int subtype, int startloc, int varfla
 	argstr(p, EXP_TILDE | (subtype != VSASSIGN && subtype != VSQUESTION ?
 			       (flag & (EXP_QUOTED | EXP_QPAT) ?
 			        EXP_QPAT : EXP_CASE) : 0));
-	STPUTC('\0', expdest);
+	stputc('\0', &expdest);
 	argbackq = saveargbackq;
 	startp = (char *)stackblock() + startloc;
 
@@ -660,7 +660,7 @@ subevalvar(char *p, char *str, int strloc, int subtype, int startloc, int varfla
 	case VSASSIGN:
 		setvar(str, startp, 0);
 		amount = startp - expdest;
-		STADJUST(amount, expdest);
+		stadjust(amount, &expdest);
 		return startp;
 
 	case VSQUESTION:
@@ -700,7 +700,7 @@ subevalvar(char *p, char *str, int strloc, int subtype, int startloc, int varfla
 		}
 		*loc = '\0';
 		amount = loc - expdest;
-		STADJUST(amount, expdest);
+		stadjust(amount, &expdest);
 	}
 	return loc;
 }
@@ -802,14 +802,14 @@ record:
 		 * Terminate the string and start recording the pattern
 		 * right after it
 		 */
-		STPUTC('\0', expdest);
+		stputc('\0', &expdest);
 		patloc = expdest - (char *)stackblock();
 		if (subevalvar(p, NULL, patloc, subtype,
 			       startloc, varflags, flag) == 0) {
 			int amount = expdest - (
 				(char *)stackblock() + patloc - 1
 			);
-			STADJUST(-amount, expdest);
+			stadjust(-amount, &expdest);
 		}
 		/* Remove any recorded regions beyond start of variable */
 		removerecordregions(startloc);
@@ -858,10 +858,10 @@ memtodest(const char *p, size_t len, const char *syntax, int quotes) {
 			    ((syntax[c] == CCTL) ||
 			     (((quotes & EXP_FULL) || syntax != BASESYNTAX) &&
 			      syntax[c] == CBACK)))
-				USTPUTC(CTLESC, q);
+				ustputc(CTLESC, &q);
 		} else if (!(quotes & QUOTES_KEEPNUL))
 			continue;
-		USTPUTC(c, q);
+		ustputc(c, &q);
 	} while (--len);
 
 	expdest = q;
@@ -922,7 +922,7 @@ numvar:
 		p = makestrspace(NOPTS, expdest);
 		for (i = NOPTS - 1; i >= 0; i--) {
 			if (optlist[i]) {
-				USTPUTC(optletters[i], p);
+				ustputc(optletters[i], &p);
 				len++;
 			}
 		}
@@ -976,7 +976,7 @@ value:
 	}
 
 	if (discard)
-		STADJUST(-len, expdest);
+		stadjust(-len, &expdest);
 	return len;
 }
 
@@ -1110,7 +1110,7 @@ void ifsfree(void)
 	do {
 		struct ifsregion *ifsp;
 		ifsp = p->next;
-		ckfree(p);
+		ckfree((char *)p);
 		p = ifsp;
 	} while (p);
 	ifsfirst.next = NULL;
@@ -1651,7 +1651,7 @@ copy:
 	*q = '\0';
 	if (flag & RMESCAPE_GROW) {
 		expdest = r;
-		STADJUST(q - r + 1, expdest);
+		stadjust(q - r + 1, &expdest);
 	}
 	return r;
 }
@@ -1670,9 +1670,9 @@ casematch(union node *pattern, char *val)
 
 	setstackmark(&smark);
 	argbackq = pattern->narg.backquote;
-	STARTSTACKSTR(expdest);
+	startstackstr(&expdest);
 	argstr(pattern->narg.text, EXP_TILDE | EXP_CASE);
-	STACKSTRNUL(expdest);
+	stackstrnull(&expdest);
 	ifsfree();
 	result = patmatch((char *)stackblock(), val);
 	popstackmark(&smark);
@@ -1690,7 +1690,7 @@ cvtnum(intmax_t num)
 
 	expdest = makestrspace(len, expdest);
 	len = fmtstr(expdest, len, "%" PRIdMAX, num);
-	STADJUST(len, expdest);
+	stadjust(len, &expdest);
 	return len;
 }
 

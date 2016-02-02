@@ -265,7 +265,7 @@ conv_escape_str(char *str, char **sp)
 	char *cp;
 
 	/* convert string into a temporary buffer... */
-	STARTSTACKSTR(cp);
+	startstackstr(&cp);
 
 	do {
 		c = ch = *str++;
@@ -289,7 +289,7 @@ conv_escape_str(char *str, char **sp)
 
 		/* Finally test for sequences valid in the format string */
 		str = conv_escape(str - 1, &c);
-	} while (STPUTC(c, cp), (char)ch);
+	} while (stputc(c, &cp), (char)ch);
 
 	*sp = cp;
 
@@ -354,7 +354,7 @@ mklong(const char *str, const char *ch)
 	size_t len;	
 
 	len = ch - str + sizeof(PRIdMAX);
-	STARTSTACKSTR(copy);
+	startstackstr(&copy);
 	copy = makestrspace(len, copy);
 	memcpy(copy, str, len - sizeof(PRIdMAX));
 	memcpy(copy + len - sizeof(PRIdMAX), PRIdMAX, sizeof(PRIdMAX));

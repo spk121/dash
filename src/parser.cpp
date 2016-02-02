@@ -895,33 +895,33 @@ readtoken1(int firstc, char const *syntax, char *eofmark, int striptabs)
 	parenlevel = 0;
 	dqvarnest = 0;
 
-	STARTSTACKSTR(out);
+	startstackstr(&out);
 	loop: {	/* for each line, until end of word */
 		CHECKEND();	/* set c to PEOF if at end of here document */
 		for (;;) {	/* until end of line or end of word */
-			CHECKSTRSPACE(4, out);	/* permit 4 calls to USTPUTC */
+			checkstrspace(4, &out);	/* permit 4 calls to USTPUTC */
 			switch(syntax[c]) {
 			case CNL:	/* '\n' */
 				if (syntax == BASESYNTAX)
 					goto endword;	/* exit outer loop */
-				USTPUTC(c, out);
+				ustputc(c, &out);
 				nlprompt();
 				c = pgetc();
 				goto loop;		/* continue outer loop */
 			case CWORD:
-				USTPUTC(c, out);
+				ustputc(c, &out);
 				break;
 			case CCTL:
 				if (eofmark == NULL || dblquote)
-					USTPUTC(CTLESC, out);
-				USTPUTC(c, out);
+					ustputc(CTLESC, &out);
+				ustputc(c, &out);
 				break;
 			/* backslash */
 			case CBACK:
 				c = pgetc2();
 				if (c == PEOF) {
-					USTPUTC(CTLESC, out);
-					USTPUTC('\\', out);
+					ustputc(CTLESC, &out);
+					ustputc('\\', &out);
 					pungetc();
 				} else if (c == '\n') {
 					nlprompt();
@@ -934,10 +934,10 @@ readtoken1(int firstc, char const *syntax, char *eofmark, int striptabs)
 							eofmark != NULL
 						)
 					) {
-						USTPUTC('\\', out);
+						ustputc('\\', &out);
 					}
-					USTPUTC(CTLESC, out);
-					USTPUTC(c, out);
+					ustputc(CTLESC, &out);
+					ustputc(c, &out);
 					quotef++;
 				}
 				break;
@@ -945,7 +945,7 @@ readtoken1(int firstc, char const *syntax, char *eofmark, int striptabs)
 				syntax = SQSYNTAX;
 quotemark:
 				if (eofmark == NULL) {
-					USTPUTC(CTLQUOTEMARK, out);
+					ustputc(CTLQUOTEMARK, &out);
 				}
 				break;
 			case CDQUOTE:
@@ -954,7 +954,7 @@ quotemark:
 				goto quotemark;
 			case CENDQUOTE:
 				if (eofmark && !varnest)
-					USTPUTC(c, out);
+					ustputc(c, &out);
 				else {
 					if (dqvarnest == 0) {
 						syntax = BASESYNTAX;
@@ -973,22 +973,22 @@ quotemark:
 					if (dqvarnest > 0) {
 						dqvarnest--;
 					}
-					USTPUTC(CTLENDVAR, out);
+					ustputc(CTLENDVAR, &out);
 				} else {
-					USTPUTC(c, out);
+					ustputc(c, &out);
 				}
 				break;
 			case CLP:	/* '(' in arithmetic */
 				parenlevel++;
-				USTPUTC(c, out);
+				ustputc(c, &out);
 				break;
 			case CRP:	/* ')' in arithmetic */
 				if (parenlevel > 0) {
-					USTPUTC(c, out);
+					ustputc(c, &out);
 					--parenlevel;
 				} else {
 					if (pgetc() == ')') {
-						USTPUTC(CTLENDARI, out);
+						ustputc(CTLENDARI, &out);
 						if (!--arinest)
 							syntax = prevsyntax;
 					} else {
@@ -997,7 +997,7 @@ quotemark:
 						 *  (don't 2nd guess - no error)
 						 */
 						pungetc();
-						USTPUTC(')', out);
+						ustputc(')', &out);
 					}
 				}
 				break;
@@ -1012,7 +1012,7 @@ quotemark:
 				if (varnest == 0)
 					goto endword;	/* exit outer loop */
 				if (c != PEOA) {
-					USTPUTC(c, out);
+					ustputc(c, &out);
 				}
 			}
 			c = pgetc();
@@ -1027,7 +1027,7 @@ endword:
 		/* { */
 		synerror("Missing '}'");
 	}
-	USTPUTC('\0', out);
+	ustputc('\0', &out);
 	len = out - (char *)stackblock();
 	out = (char *)stackblock();
 	if (eofmark == NULL) {
@@ -1071,7 +1071,7 @@ checkend: {
 		}
 
 		markloc = out - (char *)stackblock();
-		for (p = eofmark; STPUTC(c, out), *p; p++) {
+		for (p = eofmark; stputc(c, &out), *p; p++) {
 			if (c != *p)
 				goto more_heredoc;
 
@@ -1103,7 +1103,7 @@ more_heredoc:
 			}
 		}
 
-		STADJUST((char *)stackblock() + markloc - out, out);
+		stadjust((char *)stackblock() + markloc - out, &out);
 	}
 	goto checkend_return;
 }
@@ -1190,7 +1190,7 @@ parsesub: {
 		c <= PEOA  ||
 		(c != '(' && c != '{' && !is_name(c) && !is_special(c))
 	) {
-		USTPUTC('$', out);
+		ustputc('$', &out);
 		pungetc();
 	} else if (c == '(') {	/* $(command) or $((arith)) */
 		if (pgetc_eatbnl() == '(') {
@@ -1200,9 +1200,9 @@ parsesub: {
 			PARSEBACKQNEW();
 		}
 	} else {
-		USTPUTC(CTLVAR, out);
+		ustputc(CTLVAR, &out);
 		typeloc = out - (char *)stackblock();
-		STADJUST(1, out);
+		stadjust(1, &out);
 		subtype = VSNORMAL;
 		if (likely(c == '{')) {
 			c = pgetc_eatbnl();
@@ -1211,12 +1211,12 @@ parsesub: {
 varname:
 		if (is_name(c)) {
 			do {
-				STPUTC(c, out);
+				stputc(c, &out);
 				c = pgetc_eatbnl();
 			} while (is_in_name(c));
 		} else if (is_digit(c)) {
 			do {
-				STPUTC(c, out);
+				stputc(c, &out);
 				c = pgetc_eatbnl();
 			} while (is_digit(c));
 		} else {
@@ -1246,7 +1246,7 @@ varname:
 				goto badsub;
 			}
 
-			USTPUTC(cc, out);
+			ustputc(cc, &out);
 		}
 
 		if (subtype == 0) {
@@ -1285,7 +1285,7 @@ badsub:
 			if (dblquote)
 				dqvarnest++;
 		}
-		STPUTC('=', out);
+		stputc('=', &out);
 	}
 	goto parsesub_return;
 }
@@ -1321,7 +1321,7 @@ parsebackq: {
 		char *pstr;
 
 
-		STARTSTACKSTR(pout);
+		startstackstr(&pout);
 		for (;;) {
 			if (needprompt) {
 				setprompt(2);
@@ -1336,14 +1336,14 @@ parsebackq: {
 					/*
 					 * If eating a newline, avoid putting
 					 * the newline into the new character
-					 * stream (via the STPUTC after the
+					 * stream (via the stputc() after the
 					 * switch).
 					 */
 					continue;
 				}
                                 if (pc != '\\' && pc != '`' && pc != '$'
                                     && (!dblquote || pc != '"'))
-                                        STPUTC('\\', pout);
+                                        stputc('\\', &pout);
 				if (pc > PEOA) {
 					break;
 				}
@@ -1360,10 +1360,10 @@ parsebackq: {
 			default:
 				break;
 			}
-			STPUTC(pc, pout);
+			stputc(pc, &pout);
 		}
 done:
-		STPUTC('\0', pout);
+		stputc('\0', &pout);
 		psavelen = pout - (char *)stackblock();
 		if (psavelen > 0) {
 			pstr = (char *)grabstackstr(pout);
@@ -1401,12 +1401,12 @@ done:
 	}
 	while (stackblocksize() <= savelen)
 		growstackblock();
-	STARTSTACKSTR(out);
+	startstackstr(&out);
 	if (str) {
 		memcpy(out, str, savelen);
-		STADJUST(savelen, out);
+		stadjust(savelen, &out);
 	}
-	USTPUTC(CTLBACKQ, out);
+	ustputc(CTLBACKQ, &out);
 	if (oldstyle)
 		goto parsebackq_oldreturn;
 	else
@@ -1422,7 +1422,7 @@ parsearith: {
 		prevsyntax = syntax;
 		syntax = ARISYNTAX;
 	}
-	USTPUTC(CTLARI, out);
+	ustputc(CTLARI, &out);
 	goto parsearith_return;
 }
 

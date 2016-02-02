@@ -271,12 +271,12 @@ struct var *setvareq(char *s, int flags)
 			(*vp->func)(strchrnul(s, '=') + 1);
 
 		if ((vp->flags & (VTEXTFIXED|VSTACK)) == 0)
-			ckfree(vp->text);
+			ckfree((char *)(vp->text));
 
 		if (((flags & (VEXPORT|VREADONLY|VSTRFIXED|VUNSET)) |
 		     (vp->flags & VSTRFIXED)) == VUNSET) {
 			*vpp = vp->next;
-			ckfree(vp);
+			ckfree((char *)vp);
 out_free:
 			if ((flags & (VTEXTFIXED|VSTACK|VNOSAVE)) == VNOSAVE)
 				ckfree(s);
@@ -381,7 +381,7 @@ listvars(int on, int off, char ***end)
 	if (end)
 		*end = ep;
 	*ep++ = NULL;
-	return (char **) grabstackstr(ep);
+	return (char **) grabstackstr((char *)ep);
 }
 
 
@@ -540,7 +540,7 @@ poplocalvars(int keep)
 	localvar_stack = ll->next;
 
 	next = ll->lv;
-	ckfree(ll);
+	ckfree((char *)ll);
 
 	while ((lvp = next) != NULL) {
 		next = lvp->next;
@@ -553,7 +553,7 @@ poplocalvars(int keep)
 				if (vp->text == lvp->text)
 					bits |= VTEXTFIXED;
 				else if (!(lvp->flags & (VTEXTFIXED|VSTACK)))
-					ckfree(lvp->text);
+					ckfree((char *)(lvp->text));
 			}
 
 			vp->flags &= ~bits;
@@ -564,7 +564,7 @@ poplocalvars(int keep)
 				unsetvar(vp->text);
 		} else if (vp == NULL) {	/* $- saved */
 			memcpy(optlist, lvp->text, sizeof(optlist));
-			ckfree(lvp->text);
+			ckfree((char *)(lvp->text));
 			optschanged();
 		} else if (lvp->flags == VUNSET) {
 			vp->flags &= ~(VSTRFIXED|VREADONLY);
@@ -573,11 +573,11 @@ poplocalvars(int keep)
 			if (vp->func)
 				(*vp->func)(strchrnul(lvp->text, '=') + 1);
 			if ((vp->flags & (VTEXTFIXED|VSTACK)) == 0)
-				ckfree(vp->text);
+				ckfree((char *)(vp->text));
 			vp->flags = lvp->flags;
 			vp->text = lvp->text;
 		}
-		ckfree(lvp);
+		ckfree((char *)lvp);
 	}
 	inton();
 }

@@ -165,7 +165,7 @@ readcmd(int argc, char **argv)
 		sh_error("arg count");
 
 	status = 0;
-	STARTSTACKSTR(p);
+	startstackstr(&p);
 
 	goto start;
 
@@ -195,10 +195,10 @@ readcmd(int argc, char **argv)
 		if (c == '\n')
 			break;
 put:
-		CHECKSTRSPACE(2, p);
+		checkstrspace(2, &p);
 		if (strchr(qchars, c))
-			USTPUTC(CTLESC, p);
-		USTPUTC(c, p);
+			ustputc(CTLESC, &p);
+		ustputc(c, &p);
 
 		if (newloc >= startloc) {
 resetbs:
@@ -210,7 +210,7 @@ start:
 	}
 out:
 	recordregion(startloc, p - (char *)stackblock(), 0);
-	STACKSTRNUL(p);
+	stackstrnull(&p);
 	readcmd_handle_line(p + 1, ap);
 	return status;
 }

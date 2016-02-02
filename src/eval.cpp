@@ -135,9 +135,9 @@ static int evalcmd(int argc, char **argv, int flags)
 				concat = stputs(p, concat);
 				if ((p = *ap++) == NULL)
 					break;
-				STPUTC(' ', concat);
+				stputc(' ', &concat);
 			}
-			STPUTC('\0', concat);
+			stputc('\0', &concat);
 			p = (char *)grabstackstr(concat);
 		}
 		return evalstring(p, flags & EV_TESTED);

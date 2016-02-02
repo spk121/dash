@@ -333,7 +333,7 @@ freeparam(volatile struct shparam *param)
 	if (param->malloc) {
 		for (ap = param->p ; *ap ; ap++)
 			ckfree(*ap);
-		ckfree(param->p);
+		ckfree((char*)(param->p));
 	}
 }
 

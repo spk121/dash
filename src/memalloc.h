@@ -38,6 +38,7 @@
 #define MEMALLOC_H
 
 #include <stddef.h>
+#include <stdlib.h>
 
 struct stackmark {
 	struct stack_block *stackp;
@@ -77,29 +78,76 @@ static inline char *_STPUTC(int c, char *p) {
 	return p;
 }
 
-#define stackblock() ((char *)stacknxt)
-#define stackblocksize() stacknleft
-#define STARTSTACKSTR(p) ((p) = (char *) stackblock())
-#define STPUTC(c, p) ((p) = _STPUTC((c), (p)))
-#define CHECKSTRSPACE(n, p) \
-	({ \
-		char *q = (p); \
-		size_t l = (n); \
-		size_t m = sstrend - q; \
-		if (l > m) \
-			(p) = makestrspace(l, q); \
-		0; \
-	})
-#define USTPUTC(c, p)	(*p++ = (c))
-#define STACKSTRNUL(p)	((p) == sstrend? (p = (char *)growstackstr(), *p = '\0') : (*p = '\0'))
-#define STUNPUTC(p)	(--p)
-#define STTOPC(p)	p[-1]
-#define STADJUST(amount, p)	(p += (amount))
+static inline char* stackblock()
+{
+    return stacknxt;
+}
 
-#define grabstackstr(p)	(char *) stalloc((char *)(p) - (char *)stackblock())
-#define ungrabstackstr(s, p) stunalloc((s))
-#define stackstrend() ((void *)sstrend)
+static inline size_t stackblocksize()
+{
+    return stacknleft;
+}
 
-#define ckfree(p)	free((pointer)(p))
+static inline void startstackstr(char **p)
+{
+*p = stackblock();
+}
+
+static inline void stputc(int c, char **p)
+{
+    *p = _STPUTC(c, *p);
+}
+
+static inline void checkstrspace(size_t n, char **p)
+{
+    char *q = *p;
+    size_t l = n;
+    size_t m = sstrend - q;
+    if (l > m)
+        *p = makestrspace(l, q);
+}
+
+static inline void ustputc(int c, char **p)
+{
+    **p = c;
+    *p += 1;
+}
+
+static inline void stackstrnull(char **p)
+{
+    if (*p == sstrend) {
+        *p = (char *)growstackstr();
+        **p = '\0';
+    }
+    else {
+        **p = '\0';
+    }
+}
+
+static inline void stunputc(char **p)
+{
+    *p = *p - 1;
+}
+
+static inline void stadjust(int amount, char **p)
+{
+    *p += amount;
+}
+
+static inline char* grabstackstr(char *p)
+{
+    return (char *) stalloc(p - (char *)stackblock());
+}
+
+static inline void* stackstrend()
+{
+    return (void *) sstrend;
+}
+
+static inline void ckfree(char *p)
+{
+    free(p);
+}
+
 
 #endif /* MEMALLOC_H */

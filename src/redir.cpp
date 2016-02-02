@@ -318,7 +318,7 @@ popredir(int drop)
 		}
 	}
 	redirlist = rp->next;
-	ckfree(rp);
+	ckfree((char *)rp);
 	inton();
 }
 
