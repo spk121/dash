@@ -95,16 +95,12 @@ static inline void intoff()
 	barrier();
 }
 
-#ifdef REALLY_SMALL
-static inline void inton() {}
-#else
 static inline void inton()
 {
 	barrier();
 	if (--suppressint == 0 && intpending)
 		onint();
 }
-#endif
 
 static inline void forceinton()
 {

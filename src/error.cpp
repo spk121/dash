@@ -225,13 +225,3 @@ errmsg(int e, int action)
 	else
 		return "not found";
 }
-
-
-#ifdef REALLY_SMALL
-void
-__inton() {
-	if (--suppressint == 0 && intpending) {
-		onint();
-	}
-}
-#endif
