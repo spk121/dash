@@ -432,11 +432,11 @@ loop:
 			entry->u.index = idx;
 			return;
 		}
-		INTOFF;
+		intoff();
 		cmdp = cmdlookup(name, 1);
 		cmdp->cmdtype = CMDNORMAL;
 		cmdp->param.index = idx;
-		INTON;
+		inton();
 		goto success;
 	}
 
@@ -454,11 +454,11 @@ builtin_success:
 		entry->u.cmd = bcmd;
 		return;
 	}
-	INTOFF;
+	intoff();
 	cmdp = cmdlookup(name, 1);
 	cmdp->cmdtype = CMDBUILTIN;
 	cmdp->param.cmd = bcmd;
-	INTON;
+	inton();
 success:
 	cmdp->rehash = 0;
 	entry->cmdtype = cmdp->cmdtype;
@@ -568,7 +568,7 @@ clearcmdentry(int firstchange)
 	struct tblentry **pp;
 	struct tblentry *cmdp;
 
-	INTOFF;
+	intoff();
 	for (tblp = cmdtable ; tblp < &cmdtable[CMDTABLESIZE] ; tblp++) {
 		pp = tblp;
 		while ((cmdp = *pp) != NULL) {
@@ -583,7 +583,7 @@ clearcmdentry(int firstchange)
 			}
 		}
 	}
-	INTON;
+	inton();
 }
 
 
@@ -640,13 +640,13 @@ delete_cmd_entry(void)
 {
 	struct tblentry *cmdp;
 
-	INTOFF;
+	intoff();
 	cmdp = *lastcmdentry;
 	*lastcmdentry = cmdp->next;
 	if (cmdp->cmdtype == CMDFUNCTION)
 		freefunc(cmdp->param.func);
 	ckfree(cmdp);
-	INTON;
+	inton();
 }
 
 
@@ -697,11 +697,11 @@ defun(union node *func)
 {
 	struct cmdentry entry;
 
-	INTOFF;
+	intoff();
 	entry.cmdtype = CMDFUNCTION;
 	entry.u.func = copyfunc(func);
 	addcmdentry(func->ndefun.text, &entry);
-	INTON;
+	inton();
 }
 
 

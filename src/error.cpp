@@ -81,7 +81,7 @@ exraise(int e)
 	if (handler == NULL)
 		abort();
 #endif
-	INTOFF;
+	intoff();
 
 	exception = e;
 	longjmp(handler->loc, 1);
@@ -89,11 +89,11 @@ exraise(int e)
 
 
 /*
- * Called from trap.c when a SIGINT is received.  (If the user specifies
- * that SIGINT is to be trapped or ignored using the trap builtin, then
- * this routine is not called.)  Suppressint is nonzero when interrupts
- * are held using the INTOFF macro.  (The test for iflag is just
- * defensive programming.)
+ * Called from trap.c when a SIGINT is received.  (If the user
+ * specifies that SIGINT is to be trapped or ignored using the trap
+ * builtin, then this routine is not called.)  Suppressint is nonzero
+ * when interrupts are held using the static inline intoff procedure.
+ * (The test for iflag is just defensive programming.)
  */
 
 void

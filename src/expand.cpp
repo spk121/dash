@@ -412,11 +412,11 @@ removerecordregions(int endoff)
 	if (ifsfirst.endoff > endoff) {
 		while (ifsfirst.next != NULL) {
 			struct ifsregion *ifsp;
-			INTOFF;
+			intoff();
 			ifsp = ifsfirst.next->next;
 			ckfree(ifsfirst.next);
 			ifsfirst.next = ifsp;
-			INTON;
+			inton();
 		}
 		if (ifsfirst.begoff > endoff)
 			ifslastp = NULL;
@@ -432,11 +432,11 @@ removerecordregions(int endoff)
 		ifslastp=ifslastp->next;
 	while (ifslastp->next != NULL) {
 		struct ifsregion *ifsp;
-		INTOFF;
+		intoff();
 		ifsp = ifslastp->next->next;
 		ckfree(ifslastp->next);
 		ifslastp->next = ifsp;
-		INTON;
+		inton();
 	}
 	if (ifslastp->endoff > endoff)
 		ifslastp->endoff = endoff;
@@ -523,7 +523,7 @@ expbackq(union node *cmd, int flag)
 	char const *syntax = flag & EXP_QUOTED ? DQSYNTAX : BASESYNTAX;
 	struct stackmark smark;
 
-	INTOFF;
+	intoff();
 	startloc = expdest - (char *)stackblock();
 	pushstackmark(&smark, startloc);
 	evalbackcmd(cmd, (struct backcmd *) &in);
@@ -553,7 +553,7 @@ read:
 		close(in.fd);
 		back_exitstatus = waitforjob(in.jp);
 	}
-	INTON;
+	inton();
 
 	/* Eat all trailing newlines */
 	dest = expdest;
@@ -995,11 +995,11 @@ recordregion(int start, int end, int nulonly)
 	if (ifslastp == NULL) {
 		ifsp = &ifsfirst;
 	} else {
-		INTOFF;
+		intoff();
 		ifsp = (struct ifsregion *)ckmalloc(sizeof (struct ifsregion));
 		ifsp->next = NULL;
 		ifslastp->next = ifsp;
-		INTON;
+		inton();
 	}
 	ifslastp = ifsp;
 	ifslastp->begoff = start;
@@ -1106,7 +1106,7 @@ void ifsfree(void)
 	if (!p)
 		goto out;
 
-	INTOFF;
+	intoff();
 	do {
 		struct ifsregion *ifsp;
 		ifsp = p->next;
@@ -1114,7 +1114,7 @@ void ifsfree(void)
 		p = ifsp;
 	} while (p);
 	ifsfirst.next = NULL;
-	INTON;
+	inton();
 
 out:
 	ifslastp = NULL;
@@ -1142,7 +1142,7 @@ expandmeta(str, flag)
 
 		if (fflag)
 			goto nometa;
-		INTOFF;
+		intoff();
 		p = preglob(str->text, RMESCAPE_ALLOC | RMESCAPE_HEAP);
 		i = glob(p, GLOB_NOMAGIC, 0, &pglob);
 		if (p != str->text)
@@ -1153,12 +1153,12 @@ expandmeta(str, flag)
 				goto nometa2;
 			addglob(&pglob);
 			globfree(&pglob);
-			INTON;
+			inton();
 			break;
 		case GLOB_NOMATCH:
 nometa2:
 			globfree(&pglob);
-			INTON;
+			inton();
 nometa:
 			*exparg.lastp = str;
 			rmescapes(str->text);
@@ -1211,7 +1211,7 @@ expandmeta(struct strlist *str, int flag)
 			goto nometa;
 		savelastp = exparg.lastp;
 
-		INTOFF;
+		intoff();
 		p = preglob(str->text, RMESCAPE_ALLOC | RMESCAPE_HEAP);
 		{
 			int i = strlen(str->text);
@@ -1222,7 +1222,7 @@ expandmeta(struct strlist *str, int flag)
 		ckfree(expdir);
 		if (p != str->text)
 			ckfree(p);
-		INTON;
+		inton();
 		if (exparg.lastp == savelastp) {
 			/*
 			 * no matches

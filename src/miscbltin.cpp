@@ -238,10 +238,10 @@ umaskcmd(int argc, char **argv)
 		symbolic_mode = 1;
 	}
 
-	INTOFF;
+	intoff();
 	mask = umask(0);
 	umask(mask);
-	INTON;
+	inton();
 
 	if ((ap = *argptr) == NULL) {
 		if (symbolic_mode) {

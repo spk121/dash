@@ -167,7 +167,7 @@ docd(const char *dest, int flags)
 
 	TRACE(("docd(\"%s\", %d) called\n", dest, flags));
 
-	INTOFF;
+	intoff();
 	if (!(flags & CD_PHYSICAL)) {
 		dir = updatepwd(dest);
 		if (dir)
@@ -179,7 +179,7 @@ docd(const char *dest, int flags)
 	setpwd(dir, 1);
 	hashcd();
 out:
-	INTON;
+	inton();
 	return err;
 }
 
@@ -308,7 +308,7 @@ setpwd(const char *val, int setold)
 	if (setold) {
 		setvar("OLDPWD", oldcur, VEXPORT);
 	}
-	INTOFF;
+	intoff();
 	if (physdir != nullstr) {
 		if (physdir != oldcur)
 			free(physdir);
@@ -325,6 +325,6 @@ setpwd(const char *val, int setold)
 		free(oldcur);
 	}
 	curdir = dir;
-	INTON;
+	inton();
 	setvar("PWD", dir, VEXPORT);
 }

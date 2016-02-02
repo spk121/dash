@@ -128,14 +128,14 @@ stalloc(size_t nbytes)
 		len = sizeof(struct stack_block) - MINSIZE + blocksize;
 		if (len < blocksize)
 			sh_error("Out of space");
-		INTOFF;
+		intoff();
 		sp = (struct stack_block *)ckmalloc(len);
 		sp->prev = stackp;
 		stacknxt = sp->space;
 		stacknleft = blocksize;
 		sstrend = stacknxt + blocksize;
 		stackp = sp;
-		INTON;
+		inton();
 	}
 	p = stacknxt;
 	stacknxt += aligned;
@@ -178,7 +178,7 @@ popstackmark(struct stackmark *mark)
 {
 	struct stack_block *sp;
 
-	INTOFF;
+	intoff();
 	while (stackp != mark->stackp) {
 		sp = stackp;
 		stackp = sp->prev;
@@ -187,7 +187,7 @@ popstackmark(struct stackmark *mark)
 	stacknxt = mark->stacknxt;
 	stacknleft = mark->stacknleft;
 	sstrend = mark->stacknxt + mark->stacknleft;
-	INTON;
+	inton();
 }
 
 
@@ -217,7 +217,7 @@ growstackblock(void)
 		struct stack_block *prevstackp;
 		size_t grosslen;
 
-		INTOFF;
+		intoff();
 		sp = stackp;
 		prevstackp = sp->prev;
 		grosslen = newlen + sizeof(struct stack_block) - MINSIZE;
@@ -227,7 +227,7 @@ growstackblock(void)
 		stacknxt = sp->space;
 		stacknleft = newlen;
 		sstrend = sp->space + newlen;
-		INTON;
+		inton();
 	} else {
 		char *oldspace = stacknxt;
 		int oldlen = stacknleft;

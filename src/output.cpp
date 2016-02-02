@@ -110,9 +110,9 @@ void
 outmem(const char *p, size_t len, struct output *dest)
 {
 #ifdef USE_GLIBC_STDIO
-	INTOFF;
+	intoff();
 	fwrite(p, 1, len, dest->stream);
-	INTON;
+	inton();
 #else
 	size_t bufsize;
 	size_t offset;
@@ -130,12 +130,12 @@ buffered:
 		;
 	} else if (dest->buf == NULL) {
 		offset = 0;
-		INTOFF;
+		intoff();
 		dest->buf = (char *)ckrealloc(dest->buf, bufsize);
 		dest->bufsize = bufsize;
 		dest->end = dest->buf + bufsize;
 		dest->nextc = dest->buf + offset;
-		INTON;
+		inton();
 	} else {
 		flushout(dest);
 	}
@@ -155,9 +155,9 @@ void
 outstr(const char *p, struct output *file)
 {
 #ifdef USE_GLIBC_STDIO
-	INTOFF;
+	intoff();
 	fputs(p, file->stream);
-	INTON;
+	inton();
 #else
 	size_t len;
 
@@ -193,9 +193,9 @@ void
 flushout(struct output *dest)
 {
 #ifdef USE_GLIBC_STDIO
-	INTOFF;
+	intoff();
 	fflush(dest->stream);
-	INTON;
+	inton();
 #else
 	size_t len;
 
@@ -350,8 +350,8 @@ xvsnprintf(char *outbuf, size_t length, const char *fmt, va_list ap)
 	}
 #endif
 
-	INTOFF;
+	intoff();
 	ret = vsnprintf(outbuf, length, fmt, ap);
-	INTON;
+	inton();
 	return ret;
 }

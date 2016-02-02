@@ -354,7 +354,7 @@ shiftcmd(int argc, char **argv)
 		n = number(argv[1]);
 	if (n > shellparam.nparam)
 		sh_error("can't shift that many");
-	INTOFF;
+	intoff();
 	shellparam.nparam -= n;
 	for (ap1 = shellparam.p ; --n >= 0 ; ap1++) {
 		if (shellparam.malloc)
@@ -364,7 +364,7 @@ shiftcmd(int argc, char **argv)
 	while ((*ap2++ = *ap1++) != NULL);
 	shellparam.optind = 1;
 	shellparam.optoff = -1;
-	INTON;
+	inton();
 	return 0;
 }
 
@@ -379,13 +379,13 @@ setcmd(int argc, char **argv)
 {
 	if (argc == 1)
 		return showvars(nullstr, 0, VUNSET);
-	INTOFF;
+	intoff();
 	options(0);
 	optschanged();
 	if (*argptr != NULL) {
 		setparam(argptr);
 	}
-	INTON;
+	inton();
 	return 0;
 }
 

@@ -125,7 +125,7 @@ main(int argc, char **argv)
 #endif
 		}
 		popstackmark(&smark);
-		FORCEINTON;				/* enable interrupts */
+		forceinton();				/* enable interrupts */
 		if (s == 1)
 			goto state1;
 		else if (s == 2)

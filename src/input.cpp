@@ -278,10 +278,10 @@ again:
 #ifndef SMALL
 	if (parsefile->fd == 0 && hist && something) {
 		HistEvent he;
-		INTOFF;
+		intoff();
 		history(hist, &he, whichprompt == 1? H_ENTER : H_APPEND,
 			parsefile->nextc);
-		INTON;
+		inton();
 	}
 #endif
 
@@ -319,7 +319,7 @@ pushstring(char *s, void *ap)
 	size_t len;
 
 	len = strlen(s);
-	INTOFF;
+	intoff();
 /*dprintf("*** calling pushstring: %s, %d\n", s, len);*/
 	if (parsefile->strpush) {
 		sp = (struct strpush *)ckmalloc(sizeof (struct strpush));
@@ -339,7 +339,7 @@ pushstring(char *s, void *ap)
 	parsefile->nextc = s;
 	parsefile->nleft = len;
 	parsefile->unget = 0;
-	INTON;
+	inton();
 }
 
 void
@@ -347,7 +347,7 @@ popstring(void)
 {
 	struct strpush *sp = parsefile->strpush;
 
-	INTOFF;
+	intoff();
 	if (sp->ap) {
 		if (parsefile->nextc[-1] == ' ' ||
 		    parsefile->nextc[-1] == '\t') {
@@ -369,7 +369,7 @@ popstring(void)
 	parsefile->strpush = sp->prev;
 	if (sp != &(parsefile->basestrpush))
 		ckfree(sp);
-	INTON;
+	inton();
 }
 
 /*
@@ -382,7 +382,7 @@ setinputfile(const char *fname, int flags)
 {
 	int fd;
 
-	INTOFF;
+	intoff();
 	if ((fd = open(fname, O_RDONLY)) < 0) {
 		if (flags & INPUT_NOFILE_OK)
 			goto out;
@@ -393,7 +393,7 @@ setinputfile(const char *fname, int flags)
 		fd = savefd(fd, fd);
 	setinputfd(fd, flags & INPUT_PUSH_FILE);
 out:
-	INTON;
+	inton();
 	return fd;
 }
 
@@ -425,13 +425,13 @@ setinputfd(int fd, int push)
 void
 setinputstring(char *string)
 {
-	INTOFF;
+	intoff();
 	pushfile();
 	parsefile->nextc = string;
 	parsefile->nleft = strlen(string);
 	parsefile->buf = NULL;
 	plinno = 1;
-	INTON;
+	inton();
 }
 
 
@@ -461,7 +461,7 @@ popfile(void)
 {
 	struct parsefile *pf = parsefile;
 
-	INTOFF;
+	intoff();
 	if (pf->fd >= 0)
 		close(pf->fd);
 	if (pf->buf)
@@ -470,7 +470,7 @@ popfile(void)
 		popstring();
 	parsefile = pf->prev;
 	ckfree(pf);
-	INTON;
+	inton();
 }
 
 

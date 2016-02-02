@@ -377,7 +377,7 @@ restartjob(struct job *jp, int mode)
 	int status;
 	pid_t pgid;
 
-	INTOFF;
+	intoff();
 	if (jp->state == JOBDONE)
 		goto out;
 	jp->state = JOBRUNNING;
@@ -394,7 +394,7 @@ restartjob(struct job *jp, int mode)
 	} while (ps++, --i);
 out:
 	status = (mode == FORK_FG) ? waitforjob(jp) : 0;
-	INTON;
+	inton();
 	return status;
 }
 #endif
@@ -572,7 +572,7 @@ freejob(struct job *jp)
 	struct procstat *ps;
 	int i;
 
-	INTOFF;
+	intoff();
 	for (i = jp->nprocs, ps = jp->ps ; --i >= 0 ; ps++) {
 		if (ps->cmd != nullstr)
 			ckfree(ps->cmd);
@@ -581,7 +581,7 @@ freejob(struct job *jp)
 		ckfree(jp->ps);
 	jp->used = 0;
 	set_curjob(jp, CUR_DELETE);
-	INTON;
+	inton();
 }
 
 
@@ -1010,7 +1010,7 @@ dowait(int block, struct job *job)
 	struct job *thisjob = NULL;
 	int state;
 
-	INTOFF;
+	intoff();
 	TRACE(("dowait(%d) called\n", block));
 	pid = waitproc(block, &status);
 	TRACE(("wait returns pid %d, status=%d\n", pid, status));
@@ -1065,7 +1065,7 @@ gotjob:
 	}
 
 out:
-	INTON;
+	inton();
 
 	if (thisjob && thisjob == job) {
 		char s[48 + 1];

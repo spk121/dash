@@ -82,43 +82,56 @@ extern int exception;
 extern int suppressint;
 extern volatile sig_atomic_t intpending;
 
-#define barrier() ({ __asm__ __volatile__ ("": : :"memory"); })
-#define INTOFF \
-	({ \
-		suppressint++; \
-		barrier(); \
-		0; \
-	})
+void onint(void);
+
+static inline void barrier()
+{
+	__asm__ __volatile__ ("": : :"memory");
+}
+
+static inline void intoff()
+{
+	suppressint ++;
+	barrier();
+}
+
 #ifdef REALLY_SMALL
-void __inton(void);
-#define INTON __inton()
+static inline void inton() {}
 #else
-#define INTON \
-	({ \
-		barrier(); \
-		if (--suppressint == 0 && intpending) onint(); \
-		0; \
-	})
+static inline void inton()
+{
+	barrier();
+	if (--suppressint == 0 && intpending)
+		onint();
+}
 #endif
-#define FORCEINTON \
-	({ \
-		barrier(); \
-		suppressint = 0; \
-		if (intpending) onint(); \
-		0; \
-	})
-#define SAVEINT(v) ((v) = suppressint)
-#define RESTOREINT(v) \
-	({ \
-		barrier(); \
-		if ((suppressint = (v)) == 0 && intpending) onint(); \
-		0; \
-	})
-#define CLEAR_PENDING_INT intpending = 0
-#define int_pending() intpending
+
+static inline void forceinton()
+{
+	barrier();
+	suppressint = 0;
+	if (intpending)
+		onint();
+}
+
+static inline int getint()
+{
+	return suppressint;
+}
+
+static inline void restoreint (int v)
+{
+	barrier();
+	if ((suppressint = v) == 0 && intpending)
+		onint();
+}
+
+static inline sig_atomic_t int_pending()
+{
+	return intpending;
+}
 
 void exraise(int) __attribute__((__noreturn__));
-void onint(void);
 extern int errlinno;
 void sh_error(const char *, ...) __attribute__((__noreturn__));
 void exerror(int, const char *, ...) __attribute__((__noreturn__));

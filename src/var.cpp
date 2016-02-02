@@ -207,7 +207,7 @@ struct var *setvar(const char *name, const char *val, int flags)
 	} else {
 		vallen = strlen(val);
 	}
-	INTOFF;
+	intoff();
 	p = (char *)mempcpy(nameeq = (char *)ckmalloc(namelen + vallen + 2),
 			    name, namelen);
 	if (val) {
@@ -216,7 +216,7 @@ struct var *setvar(const char *name, const char *val, int flags)
 	}
 	*p = '\0';
 	vp = setvareq(nameeq, flags | VNOSAVE);
-	INTON;
+	inton();
 
 	return vp;
 }
@@ -321,11 +321,11 @@ listsetvar(struct strlist *list, int flags)
 	lp = list;
 	if (!lp)
 		return;
-	INTOFF;
+	intoff();
 	do {
 		setvareq(lp->text, flags);
 	} while ((lp = lp->next));
-	INTON;
+	inton();
 }
 
 
@@ -492,7 +492,7 @@ void mklocal(char *name)
 	struct var **vpp;
 	struct var *vp;
 
-	INTOFF;
+	intoff();
 	lvp = (struct localvar *) ckmalloc(sizeof (struct localvar));
 	if (name[0] == '-' && name[1] == '\0') {
 		char *p;
@@ -522,7 +522,7 @@ void mklocal(char *name)
 	lvp->vp = vp;
 	lvp->next = localvar_stack->lv;
 	localvar_stack->lv = lvp;
-	INTON;
+	inton();
 }
 
 
@@ -538,7 +538,7 @@ poplocalvars(int keep)
 	struct localvar *lvp, *next;
 	struct var *vp;
 
-	INTOFF;
+	intoff();
 	ll = localvar_stack;
 	localvar_stack = ll->next;
 
@@ -582,7 +582,7 @@ poplocalvars(int keep)
 		}
 		ckfree(lvp);
 	}
-	INTON;
+	inton();
 }
 
 
@@ -593,12 +593,12 @@ struct localvar_list *pushlocalvars(void)
 {
 	struct localvar_list *ll;
 
-	INTOFF;
+	intoff();
 	ll = (struct localvar_list *)ckmalloc(sizeof(*ll));
 	ll->lv = NULL;
 	ll->next = localvar_stack;
 	localvar_stack = ll;
-	INTON;
+	inton();
 
 	return ll->next;
 }

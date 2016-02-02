@@ -58,7 +58,7 @@ setalias(const char *name, const char *val)
 
 	app = __lookupalias(name);
 	ap = *app;
-	INTOFF;
+	intoff();
 	if (ap) {
 		if (!(ap->flag & ALIASINUSE)) {
 			ckfree(ap->val);
@@ -74,7 +74,7 @@ setalias(const char *name, const char *val)
 		ap->next = 0;
 		*app = ap;
 	}
-	INTON;
+	inton();
 }
 
 int
@@ -85,9 +85,9 @@ unalias(const char *name)
 	app = __lookupalias(name);
 
 	if (*app) {
-		INTOFF;
+		intoff();
 		*app = freealias(*app);
-		INTON;
+		inton();
 		return (0);
 	}
 
@@ -100,7 +100,7 @@ rmaliases(void)
 	struct alias *ap, **app;
 	int i;
 
-	INTOFF;
+	intoff();
 	for (i = 0; i < ATABSIZE; i++) {
 		app = &atab[i];
 		for (ap = *app; ap; ap = *app) {
@@ -110,7 +110,7 @@ rmaliases(void)
 			}
 		}
 	}
-	INTON;
+	inton();
 }
 
 struct alias *

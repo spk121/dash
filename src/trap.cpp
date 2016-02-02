@@ -120,7 +120,7 @@ trapcmd(int argc, char **argv)
 			outfmt(out2, "trap: %s: bad trap\n", *ap);
 			return 1;
 		}
-		INTOFF;
+		intoff();
 		if (action) {
 			if (action[0] == '-' && action[1] == '\0')
 				action = NULL;
@@ -138,7 +138,7 @@ trapcmd(int argc, char **argv)
 		trap[signo] = action;
 		if (signo != 0)
 			setsignal(signo);
-		INTON;
+		inton();
 		ap++;
 	}
 	return 0;
@@ -155,7 +155,7 @@ clear_traps(void)
 {
 	char **tp;
 
-	INTOFF;
+	intoff();
 	for (tp = trap ; tp < &trap[NSIG] ; tp++) {
 		if (*tp && **tp) {	/* trap not NULL or SIG_IGN */
 			ckfree(*tp);
@@ -165,7 +165,7 @@ clear_traps(void)
 		}
 	}
 	trapcnt = 0;
-	INTON;
+	inton();
 }
 
 

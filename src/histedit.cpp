@@ -82,9 +82,9 @@ histedit(void)
 			/*
 			 * turn history on
 			 */
-			INTOFF;
+			intoff();
 			hist = history_init();
-			INTON;
+			inton();
 
 			if (hist != NULL)
 				sethistsize(histsizeval());
@@ -95,7 +95,7 @@ histedit(void)
 			/*
 			 * turn editing on
 			 */
-			INTOFF;
+			intoff();
 			if (el_in == NULL)
 				el_in = fdopen(0, "r");
 			if (el_out == NULL)
@@ -116,12 +116,12 @@ histedit(void)
 bad:
 				out2str("sh: can't initialize editing\n");
 			}
-			INTON;
+			inton();
 		} else if (!editing && el) {
-			INTOFF;
+			intoff();
 			el_end(el);
 			el = NULL;
-			INTON;
+			inton();
 		}
 		if (el) {
 			if (Vflag)
@@ -131,7 +131,7 @@ bad:
 			el_source(el, NULL);
 		}
 	} else {
-		INTOFF;
+		intoff();
 		if (el) {	/* no editing if not interactive */
 			el_end(el);
 			el = NULL;
@@ -140,7 +140,7 @@ bad:
 			history_end(hist);
 			hist = NULL;
 		}
-		INTON;
+		inton();
 	}
 }
 
@@ -335,7 +335,7 @@ histcmd(int argc, char **argv)
 	 */
 	if (editor) {
 		int fd;
-		INTOFF;		/* easier */
+		intoff();		/* easier */
 		sprintf(editfile, "%s_shXXXXXX", _PATH_TMP);
 		if ((fd = mkstemp(editfile)) < 0)
 			sh_error("can't create temporary file %s", editfile);
@@ -395,7 +395,7 @@ histcmd(int argc, char **argv)
 		sprintf(editcmd, "%s %s", editor, editfile);
 		/* XXX - should use no JC command */
 		evalstring(editcmd, 0);
-		INTON;
+		inton();
 		readcmdfile(editfile);	/* XXX - should read back - quick tst */
 		unlink(editfile);
 	}

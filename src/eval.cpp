@@ -463,10 +463,10 @@ evalsubshell(union node *n, int flags)
 	expredir(n->nredir.redirect);
 	if (!backgnd && flags & EV_EXIT && !have_traps())
 		goto nofork;
-	INTOFF;
+	intoff();
 	jp = makejob(n, 1);
 	if (forkshell(jp, n, backgnd) == 0) {
-		INTON;
+		inton();
 		flags |= EV_EXIT;
 		if (backgnd)
 			flags &=~ EV_TESTED;
@@ -479,7 +479,7 @@ nofork:
 	if (! backgnd)
 		status = waitforjob(jp);
 	exitstatus = status;
-	INTON;
+	inton();
 }
 
 
@@ -539,7 +539,7 @@ evalpipe(union node *n, int flags)
 	for (lp = n->npipe.cmdlist ; lp ; lp = lp->next)
 		pipelen++;
 	flags |= EV_EXIT;
-	INTOFF;
+	intoff();
 	jp = makejob(n, pipelen);
 	prevfd = -1;
 	for (lp = n->npipe.cmdlist ; lp ; lp = lp->next) {
@@ -552,7 +552,7 @@ evalpipe(union node *n, int flags)
 			}
 		}
 		if (forkshell(jp, lp->n, n->npipe.backgnd) == 0) {
-			INTON;
+			inton();
 			if (pip[1] >= 0) {
 				close(pip[0]);
 			}
@@ -576,7 +576,7 @@ evalpipe(union node *n, int flags)
 		exitstatus = waitforjob(jp);
 		TRACE(("evalpipe:  job done exit status %d\n", exitstatus));
 	}
-	INTON;
+	inton();
 }
 
 
@@ -606,7 +606,7 @@ evalbackcmd(union node *n, struct backcmd *result)
 		sh_error("Pipe call failed");
 	jp = makejob(n, 1);
 	if (forkshell(jp, n, FORK_NOJOB) == 0) {
-		FORCEINTON;
+		forceinton();
 		close(pip[0]);
 		if (pip[1] != 1) {
 			dup2(pip[1], 1);
@@ -827,14 +827,14 @@ bail:
 	default:
 		/* Fork off a child process if necessary. */
 		if (!(flags & EV_EXIT) || have_traps()) {
-			INTOFF;
+			intoff();
 			jp = makejob(cmd, 1);
 			if (forkshell(jp, cmd, FORK_FG) != 0) {
 				exitstatus = waitforjob(jp);
-				INTON;
+				inton();
 				break;
 			}
-			FORCEINTON;
+			forceinton();
 		}
 		listsetvar(varlist.list, VEXPORT|VSTACK);
 		shellexec(argv, path, cmdentry.u.index);
@@ -848,7 +848,7 @@ bail:
 		}
 		if (evalbltin(cmdentry.u.cmd, argc, argv, flags)) {
 			if (exception == EXERROR && spclbltin <= 0) {
-				FORCEINTON;
+				forceinton();
 				break;
 			}
 raise:
@@ -932,13 +932,13 @@ evalfun(struct funcnode *func, int argc, char **argv, int flags)
 	if ((e = setjmp(jmploc.loc))) {
 		goto funcdone;
 	}
-	INTOFF;
+	intoff();
 	handler = &jmploc;
 	shellparam.malloc = 0;
 	func->count++;
 	funcline = func->n.ndefun.linno;
 	loopnest = 0;
-	INTON;
+	inton();
 	shellparam.nparam = argc - 1;
 	shellparam.p = argv + 1;
 	shellparam.optind = 1;
@@ -947,7 +947,7 @@ evalfun(struct funcnode *func, int argc, char **argv, int flags)
 	evaltree(func->n.ndefun.body, flags & EV_TESTED);
 	poplocalvars(0);
 funcdone:
-	INTOFF;
+	intoff();
 	loopnest = saveloopnest;
 	funcline = savefuncline;
 	freefunc(func);
@@ -960,7 +960,7 @@ funcdone:
 		shellparam.optoff = saveparam.optoff;
 	}
 	handler = savehandler;
-	INTON;
+	inton();
 	evalskip &= ~(SKIPFUNC | SKIPFUNCDEF);
 	return e;
 }

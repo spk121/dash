@@ -96,7 +96,7 @@ redirect(union node *redir, int flags)
 	if (!redir)
 		return;
 	sv = NULL;
-	INTOFF;
+	intoff();
 	if (likely(flags & REDIR_PUSH))
 		sv = redirlist;
 	n = redir;
@@ -131,7 +131,7 @@ redirect(union node *redir, int flags)
 
 		dupredirect(n, newfd);
 	} while ((n = n->nfile.next));
-	INTON;
+	inton();
 	if (flags & REDIR_SAVEFD2 && sv->renamed[2] >= 0)
 		preverrout.fd = sv->renamed[2];
 }
@@ -299,7 +299,7 @@ popredir(int drop)
 	struct redirtab *rp;
 	int i;
 
-	INTOFF;
+	intoff();
 	rp = redirlist;
 	for (i = 0 ; i < 10 ; i++) {
 		switch (rp->renamed[i]) {
@@ -319,7 +319,7 @@ popredir(int drop)
 	}
 	redirlist = rp->next;
 	ckfree(rp);
-	INTON;
+	inton();
 }
 
 /*
@@ -374,7 +374,7 @@ redirectsafe(union node *redir, int flags)
 	struct jmploc *volatile savehandler = handler;
 	struct jmploc jmploc;
 
-	SAVEINT(saveint);
+	saveint = getint();
 	if (!(err = setjmp(jmploc.loc) * 2)) {
 		handler = &jmploc;
 		redirect(redir, flags);
@@ -382,7 +382,7 @@ redirectsafe(union node *redir, int flags)
 	handler = savehandler;
 	if (err && exception != EXERROR)
 		longjmp(handler->loc, 1);
-	RESTOREINT(saveint);
+	restoreint(saveint);
 	return err;
 }
 
