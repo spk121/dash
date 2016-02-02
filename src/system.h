@@ -80,11 +80,6 @@ static inline double strtod(const char *nptr, char **endptr)
 #define strtoumax strtoull
 #endif
 
-#ifndef HAVE_BSEARCH
-void *bsearch(const void *, const void *, size_t, size_t,
-	      int (*)(const void *, const void *));
-#endif
-
 #ifndef HAVE_KILLPG
 static inline int killpg(pid_t pid, int signal)
 {
