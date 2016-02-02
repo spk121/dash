@@ -58,7 +58,6 @@
 #include "show.h"
 #include "memalloc.h"
 #include "error.h"
-#include "init.h"
 #include "mystring.h"
 #include "exec.h"
 #include "cd.h"
