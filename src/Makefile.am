@@ -33,7 +33,7 @@ dash_SOURCES = \
 	$(dash_CXXFILES) \
 	alias.h arith_yacc.h bltin/bltin.h cd.h error.h eval.h exec.h \
 	expand.h \
-	init.h input.h jobs.h machdep.h mail.h main.h memalloc.h miscbltin.h \
+	input.h jobs.h machdep.h mail.h main.h memalloc.h miscbltin.h \
 	myhistedit.h mystring.h options.h output.h parser.h redir.h shell.h \
 	show.h system.h trap.h var.h
 dash_LDADD = builtins.o init.o nodes.o syntax.o
