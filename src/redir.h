@@ -54,5 +54,5 @@ int savefd(int, int);
 int redirectsafe(union node *, int);
 void unwindredir(struct redirtab *stop);
 struct redirtab *pushredir(union node *redir);
-
+void redir_reset(void);
 #endif /* REDIR_H */

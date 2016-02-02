@@ -107,5 +107,6 @@ void setinputstring(char *);
 void popfile(void);
 void popallfiles(void);
 void closescript(void);
-
+void input_init(void);
+void input_reset(void);
 #endif /* INPUT_H */

@@ -75,22 +75,19 @@ static int preadfd(void);
 static void setinputfd(int fd, int push);
 static int preadbuffer(void);
 
-#ifdef mkinit
-INCLUDE <stdio.h>
-INCLUDE "input.h"
-INCLUDE "error.h"
-
-INIT {
+void
+input_init()
+{
 	basepf.nextc = basepf.buf = basebuf;
 	basepf.linno = 1;
 }
 
-RESET {
+void input_reset()
+{
 	/* clear input buffer */
 	basepf.lleft = basepf.nleft = 0;
 	popallfiles();
 }
-#endif
 
 
 /*

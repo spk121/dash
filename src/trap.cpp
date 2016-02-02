@@ -78,13 +78,12 @@ volatile sig_atomic_t pendingsigs;
 /* received SIGCHLD */
 int gotsigchld;
 
-#ifdef mkinit
-INCLUDE "trap.h"
-INIT {
+void
+trap_init()
+{
 	sigmode[SIGCHLD - 1] = S_DFL;
 	setsignal(SIGCHLD);
 }
-#endif
 
 /*
  * The trap builtin.

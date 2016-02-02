@@ -84,4 +84,6 @@ void arith_lex_reset(void);
 #define arith_lex_reset()
 #endif
 
+void expand_reset(void);
+
 #endif /* EXPAND_H */

@@ -38,9 +38,9 @@ dash_SOURCES = \
 	show.h system.h trap.h var.h
 dash_LDADD = builtins.o init.o nodes.o syntax.o
 
-HELPERS = mkinit mksyntax mknodes mksignames
+HELPERS = mksyntax mknodes mksignames
 
-BUILT_SOURCES = builtins.h builtins.cpp init.cpp nodes.h nodes.cpp \
+BUILT_SOURCES = builtins.h builtins.cpp nodes.h nodes.cpp \
 	signames.c \
 	syntax.h token.h token_vars.h
 CLEANFILES = \
@@ -50,7 +50,7 @@ CLEANFILES = \
 man_MANS = dash.1
 EXTRA_DIST = \
 	$(man_MANS) \
-	mktokens mkbuiltins builtins.def.in mkinit.c \
+	mktokens mkbuiltins builtins.def.in \
 	mknodes.c nodetypes nodes.c.pat mksyntax.c mksignames.c
 
 token.h token_vars.h: mktokens
@@ -61,9 +61,6 @@ builtins.def: builtins.def.in $(top_builddir)/config.h
 
 builtins.cpp builtins.h: mkbuiltins builtins.def
 	sh $^
-
-init.cpp: mkinit $(dash_CXXFILES)
-	./$^
 
 nodes.cpp nodes.h: mknodes nodetypes nodes.c.pat
 	./$^

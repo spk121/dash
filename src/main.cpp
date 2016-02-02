@@ -62,6 +62,7 @@
 #include "mystring.h"
 #include "exec.h"
 #include "cd.h"
+#include "redir.h"
 
 #define PROFILE 0
 
@@ -106,7 +107,12 @@ main(int argc, char **argv)
 		int e;
 		int s;
 
-		reset();
+		/* Module reset */
+		eval_reset();
+		expand_reset();
+		input_reset();
+		redir_reset();
+		var_reset();
 
 		e = exception;
 
@@ -137,7 +143,12 @@ main(int argc, char **argv)
 	trputs("Shell args:  ");  trargs(argv);
 #endif
 	rootpid = getpid();
-	init();
+
+	/* Module initialization */
+	input_init();
+	trap_init();
+	var_init();
+
 	setstackmark(&smark);
 	login = procargs(argc, argv);
 	if (login) {

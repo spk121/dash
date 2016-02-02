@@ -326,19 +326,14 @@ popredir(int drop)
  * Undo all redirections.  Called on error or interrupt.
  */
 
-#ifdef mkinit
-
-INCLUDE "redir.h"
-
-RESET {
+void
+redir_reset()
+{
 	/*
 	 * Discard all saved file descriptors.
 	 */
 	unwindredir(0);
 }
-
-#endif
-
 
 
 /*

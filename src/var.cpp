@@ -38,6 +38,8 @@
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif
+#include <sys/types.h>
+#include <sys/stat.h>
 
 /*
  * Shell variables.
@@ -61,6 +63,7 @@
 #include "myhistedit.h"
 #endif
 #include "system.h"
+#include "cd.h"
 
 
 #define VTABSIZE 39
@@ -113,15 +116,9 @@ static struct var **findvar(struct var **, const char *);
  * Initialize the varable symbol tables and import the environment
  */
 
-#ifdef mkinit
-INCLUDE <unistd.h>
-INCLUDE <sys/types.h>
-INCLUDE <sys/stat.h>
-INCLUDE "cd.h"
-INCLUDE "output.h"
-INCLUDE "var.h"
-char **environ;
-INIT {
+void
+var_init()
+{
 	char **envp;
 	static char ppid[32] = "PPID=";
 	const char *p;
@@ -148,10 +145,11 @@ INIT {
 	setpwd(p, 0);
 }
 
-RESET {
+void
+var_reset()
+{
 	unwindlocalvars(0);
 }
-#endif
 
 
 /*

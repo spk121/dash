@@ -68,4 +68,6 @@ extern int loopnest;
 #define SKIPFUNC	(1 << 2)
 #define SKIPFUNCDEF	(1 << 3)
 
+void eval_reset(void);
+
 #endif /* EVAL_H */

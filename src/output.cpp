@@ -91,21 +91,6 @@ struct output *out2 = &errout;
 
 static int xvsnprintf(char *, size_t, const char *, va_list);
 
-
-#ifdef mkinit
-
-INCLUDE "output.h"
-INCLUDE "memalloc.h"
-
-INIT {
-}
-
-RESET {
-}
-
-#endif
-
-
 void
 outmem(const char *p, size_t len, struct output *dest)
 {

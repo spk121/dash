@@ -59,4 +59,5 @@ static inline int have_traps(void)
 	return trapcnt;
 }
 
+void trap_init(void);
 #endif /* TRAP_H */

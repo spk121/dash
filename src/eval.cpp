@@ -101,10 +101,9 @@ static const struct builtincmd bltin = {nullstr, bltincmd, 0u};
  * Called to reset things after an exception.
  */
 
-#ifdef mkinit
-INCLUDE "eval.h"
-
-RESET {
+void
+eval_reset()
+{
 	evalskip = 0;
 	loopnest = 0;
 	if (savestatus >= 0) {
@@ -112,9 +111,6 @@ RESET {
 		savestatus = -1;
 	}
 }
-#endif
-
-
 
 /*
  * The eval commmand.

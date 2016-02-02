@@ -177,4 +177,7 @@ static inline char *bltinlookup(const char *name)
 	return lookupvar(name);
 }
 
+void var_init(void);
+void var_reset(void);
+
 #endif /* VAR_H */
