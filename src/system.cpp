@@ -64,7 +64,7 @@
 #ifndef HAVE_MEMPCPY
 void *mempcpy(void *dest, const void *src, size_t n)
 {
-	return memcpy(dest, src, n) + n;
+	return (void *) ((char *)memcpy(dest, src, n) + n);
 }
 #endif
 
@@ -80,7 +80,7 @@ char *stpcpy(char *dest, const char *src)
 #ifndef HAVE_STRCHRNUL
 char *strchrnul(const char *s, int c)
 {
-	char *p = strchr(s, c);
+	const char *p = strchr(s, c);
 	if (!p)
 		p = (char *)s + strlen(s);
 	return p;
@@ -105,14 +105,14 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 {
 	while (nmemb) {
 		size_t mididx = nmemb / 2;
-		const void *midobj = base + mididx * size;
+		const void *midobj = (void *)((char *)base + mididx * size);
 		int diff = cmp(key, midobj);
 
 		if (diff == 0)
 			return (void *)midobj;
 
 		if (diff > 0) {
-			base = midobj + size;
+			base = (void *)((char *)midobj + size);
 			nmemb -= mididx + 1;
 		} else
 			nmemb = mididx;
