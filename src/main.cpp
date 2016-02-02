@@ -37,10 +37,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
-#if GPROF
-#include <sys/gmon.h>
-#endif
-
 
 #include "shell.h"
 #include "main.h"
@@ -63,16 +59,10 @@
 #include "cd.h"
 #include "redir.h"
 
-#define PROFILE 0
-
 int rootpid;
 int shlvl;
 #ifdef __GLIBC__
 int *dash_errno;
-#endif
-#if PROFILE
-short profile_buf[16384];
-extern int etext();
 #endif
 
 static void read_profile(const char *);
@@ -179,9 +169,6 @@ state3:
 state4:	/* XXX ??? - why isn't this before the "if" statement */
 		cmdloop(1);
 	}
-#if GPROF
-	_mcleanup();
-#endif
 	exitshell();
 	/* NOTREACHED */
 }
