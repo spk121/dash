@@ -79,13 +79,13 @@ extern struct localvar *localvars;
 extern struct var varinit[];
 
 #define vifs varinit[0]
-#define vmail (&vifs)[1]
-#define vmpath (&vmail)[1]
-#define vpath (&vmpath)[1]
-#define vps1 (&vpath)[1]
-#define vps2 (&vps1)[1]
-#define vps4 (&vps2)[1]
-#define voptind (&vps4)[1]
+#define vmail varinit[1]
+#define vmpath varinit[2]
+#define vpath varinit[3]
+#define vps1 varinit[4]
+#define vps2 varinit[5]
+#define vps4 varinit[6]
+#define voptind varinit[7]
 #ifdef WITH_LINENO
 #define vlineno (&voptind)[1]
 #endif
