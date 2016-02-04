@@ -55,6 +55,7 @@
 #include "show.h"
 #include "builtins.h"
 #include "system.h"
+#define SMALL
 #ifndef SMALL
 #include "myhistedit.h"
 #endif
@@ -107,8 +108,8 @@ static int peektoken(void);
 static int readtoken(void);
 static int xxreadtoken(void);
 static int readtoken1(int, char const *, char *, int);
-static void synexpect(int) __attribute__((__noreturn__));
-static void synerror(const char *) __attribute__((__noreturn__));
+static void synexpect(int);
+static void synerror(const char *);
 static void setprompt(int);
 
 
@@ -883,7 +884,7 @@ readtoken1(int firstc, char const *syntax, char *eofmark, int striptabs)
 	int dqvarnest;	/* levels of variables expansion within double quotes */
 	int oldstyle;
 	/* syntax before arithmetic */
-	char const *uninitialized_var(prevsyntax);
+	char const *prevsyntax;
 
 	dblquote = 0;
 	if (syntax == DQSYNTAX)
@@ -1303,7 +1304,7 @@ parsebackq: {
 	union node *n;
 	char *str;
 	size_t savelen;
-	int uninitialized_var(saveprompt);
+	int saveprompt;
 
 	str = NULL;
 	savelen = out - (char *)stackblock();

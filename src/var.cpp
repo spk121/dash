@@ -32,7 +32,8 @@
  * SUCH DAMAGE.
  */
 
-#include <unistd.h>
+//#include <unistd.h>
+#define SMALL 1
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_PATHS_H
@@ -346,7 +347,8 @@ lookupvar(const char *name)
 
 intmax_t lookupvarint(const char *name)
 {
-	return atomax(lookupvar(name) ?: nullstr, 0);
+	char *val = lookupvar(name);
+	return atomax(val ? val : nullstr, 0);
 }
 
 

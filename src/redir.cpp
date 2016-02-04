@@ -32,19 +32,19 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/param.h>	/* PIPE_BUF */
+#include <sys/stat.h>
+// #include <sys/param.h>	/* PIPE_BUF */
 #include <signal.h>
 #include <string.h>
 #include <fcntl.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <stdlib.h>
 
 /*
  * Code for dealing with input/output redirection.
  */
-
+#include "system.h"
 #include "main.h"
 #include "shell.h"
 #include "nodes.h"
@@ -273,12 +273,12 @@ openhere(union node *redir)
 	if (forkshell((struct job *)NULL, (union node *)NULL, FORK_NOJOB) == 0) {
 		close(pip[0]);
 		signal(SIGINT, SIG_IGN);
+#ifndef _MSC_VER
 		signal(SIGQUIT, SIG_IGN);
 		signal(SIGHUP, SIG_IGN);
-#ifdef SIGTSTP
 		signal(SIGTSTP, SIG_IGN);
-#endif
 		signal(SIGPIPE, SIG_DFL);
+#endif
 		xwrite(pip[1], p, len);
 		_exit(0);
 	}
@@ -347,14 +347,14 @@ savefd(int from, int ofd)
 	int newfd;
 	int err;
 
-	newfd = fcntl(from, F_DUPFD, 10);
+	newfd = fcntl_dupfd(from, 10);
 	err = newfd < 0 ? errno : 0;
 	if (err != EBADF) {
 		close(ofd);
 		if (err)
 			sh_error("%d: %s", from, strerror(err));
 		else
-			fcntl(newfd, F_SETFD, FD_CLOEXEC);
+			fcntl_setfd_cloexec(newfd);
 	}
 
 	return newfd;

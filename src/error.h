@@ -38,7 +38,8 @@
 #define ERROR_H
 
 #include <setjmp.h>
-#include <signal.h>
+
+#include "system.h"
 
 /*
  * Types of operations (passed to the errmsg routine).
@@ -84,11 +85,6 @@ extern volatile sig_atomic_t intpending;
 
 void onint(void);
 
-static inline void barrier()
-{
-	__asm__ __volatile__ ("": : :"memory");
-}
-
 static inline void intoff()
 {
 	suppressint ++;
@@ -127,10 +123,16 @@ static inline sig_atomic_t int_pending()
 	return intpending;
 }
 
+#ifdef _MSC_VER
+__declspec(noreturn) void exraise(int);
+__declspec(noreturn) void sh_error(const char *, ...);
+__declspec(noreturn) void exerror(int, const char *, ...);
+#else
 void exraise(int) __attribute__((__noreturn__));
-extern int errlinno;
 void sh_error(const char *, ...) __attribute__((__noreturn__));
 void exerror(int, const char *, ...) __attribute__((__noreturn__));
+#endif
+extern int errlinno;
 const char *errmsg(int, int);
 
 void sh_warnx(const char *, ...);

@@ -141,7 +141,6 @@ struct localvar_list {
 
 extern struct localvar_list *localvar_stack;
 extern char defoptindvar[];
-extern char **environ;
 
 void initvar(void);
 struct var *setvar(const char *name, const char *val, int flags);
