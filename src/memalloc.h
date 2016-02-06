@@ -51,6 +51,8 @@ extern char *stacknxt;
 extern size_t stacknleft;
 extern char *sstrend;
 
+typedef void * pointer;
+
 pointer ckmalloc(size_t);
 pointer ckrealloc(pointer, size_t);
 char *savestr(const char *);

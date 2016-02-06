@@ -33,10 +33,7 @@
  */
 
 #include <sys/types.h>
-#include <sys/time.h>
 #include <sys/stat.h>
-#include <dirent.h>
-#include <unistd.h>
 #ifdef HAVE_GETPWNAM
 #include <pwd.h>
 #endif
@@ -45,7 +42,6 @@
 #include <inttypes.h>
 #include <limits.h>
 #include <string.h>
-#include <fnmatch.h>
 #ifdef HAVE_GLOB
 #include <glob.h>
 #endif
@@ -136,8 +132,7 @@ static int cvtnum(intmax_t);
 static size_t esclen(const char *, const char *);
 static char *scanleft(char *, char *, char *, char *, int, int);
 static char *scanright(char *, char *, char *, char *, int, int);
-static void varunset(const char *, const char *, const char *, int)
-	__attribute__((__noreturn__));
+static void varunset(const char *, const char *, const char *, int);
 
 
 /*
@@ -1250,6 +1245,7 @@ nometa:
 static void
 expmeta(char *enddir, char *name)
 {
+#ifndef _MSC_VER
 	char *p;
 	const char *cp;
 	char *start;
@@ -1357,6 +1353,7 @@ expmeta(char *enddir, char *name)
 	closedir(dirp);
 	if (! atend)
 		endname[-esc - 1] = esc ? '\\' : '/';
+#endif
 }
 #endif	/* HAVE_GLOB */
 

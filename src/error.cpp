@@ -39,7 +39,6 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -65,8 +64,7 @@ volatile sig_atomic_t intpending;
 int errlinno;
 
 
-static void exverror(int, const char *, va_list)
-    __attribute__((__noreturn__));
+static void exverror(int, const char *, va_list);
 
 /*
  * Called to raise an exception.  Since C doesn't include exceptions, we

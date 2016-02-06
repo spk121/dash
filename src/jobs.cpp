@@ -34,23 +34,19 @@
 
 #include <fcntl.h>
 #include <signal.h>
-#include <unistd.h>
 #include <stdlib.h>
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif
 #include <sys/types.h>
-#include <sys/param.h>
 #ifdef BSD
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
-#include <sys/ioctl.h>
 
 #include "shell.h"
 #if JOBS
-#include <termios.h>
 #undef CEOF			/* syntax.h redefines this */
 #endif
 #include "redir.h"
@@ -193,6 +189,7 @@ setjobctl(int on)
 		return;
 	if (on) {
 		int ofd;
+
 		ofd = fd = open(_PATH_TTY, O_RDWR);
 		if (fd < 0) {
 			fd += 3;
@@ -257,7 +254,8 @@ usage:
 	}
 
 	if (**++argv == '-') {
-		signo = decode_signal(*argv + 1, 1);
+		// signo = decode_signal(*argv + 1, 1);
+		signo = -1;
 		if (signo < 0) {
 			int c;
 
@@ -271,7 +269,8 @@ usage:
 					list = 1;
 					break;
 				case 's':
-					signo = decode_signal(optionarg, 1);
+					// signo = decode_signal(optionarg, 1);
+					signo = -1;
 					if (signo < 0) {
 						sh_error(
 							"invalid signal number or name: %s",
@@ -372,6 +371,7 @@ int bgcmd(int argc, char **argv)
 static int
 restartjob(struct job *jp, int mode)
 {
+#ifndef _MSC_VER
 	struct procstat *ps;
 	int i;
 	int status;
@@ -396,6 +396,8 @@ out:
 	status = (mode == FORK_FG) ? waitforjob(jp) : 0;
 	inton();
 	return status;
+#endif
+	return 0;
 }
 #endif
 
@@ -406,6 +408,7 @@ sprint_status(char *s, int status, int sigonly)
 	int st;
 
 	col = 0;
+#ifndef _MSC_VER
 	st = WEXITSTATUS(status);
 	if (!WIFEXITED(status)) {
 #if JOBS
@@ -433,6 +436,9 @@ sprint_status(char *s, int status, int sigonly)
 		else
 			col = fmtstr(s, 16, "Done");
 	}
+#else
+	col = fmtstr(s, 16, "Done");
+#endif
 
 out:
 	return col;
@@ -646,7 +652,7 @@ out:
 	return retval;
 
 sigout:
-	retval = 128 + pendingsigs;
+	retval = 128 /* + pendingsigs */;
 	goto out;
 }
 
@@ -851,7 +857,7 @@ forkchild(struct job *jp, union node *n, int mode)
 	shlvl++;
 
 	closescript();
-	clear_traps();
+	// clear_traps();
 #if JOBS
 	/* do job control only in root shell */
 	jobctl = 0;
@@ -871,8 +877,8 @@ forkchild(struct job *jp, union node *n, int mode)
 	} else
 #endif
 	if (mode == FORK_BG) {
-		ignoresig(SIGINT);
-		ignoresig(SIGQUIT);
+		// ignoresig(SIGINT);
+		// ignoresig(SIGQUIT);
 		if (jp->nprocs == 0) {
 			close(0);
 			if (open(_PATH_DEVNULL, O_RDONLY) != 0)
@@ -930,7 +936,11 @@ forkshell(struct job *jp, union node *n, int mode)
 	int pid;
 
 	TRACE(("forkshell(%%%d, %p, %d) called\n", jobno(jp), n, mode));
+#ifdef _MSC_VER
+	pid = -1;
+#else
 	pid = fork();
+#endif
 	if (pid < 0) {
 		TRACE(("Fork failed, errno=%d", errno));
 		if (jp)
@@ -1033,6 +1043,7 @@ dowait(int block, struct job *job)
 			}
 			if (sp->status == -1)
 				state = JOBRUNNING;
+#ifndef _MSC_VER
 #if JOBS
 			if (state == JOBRUNNING)
 				continue;
@@ -1041,12 +1052,15 @@ dowait(int block, struct job *job)
 				state = JOBSTOPPED;
 			}
 #endif
+#endif
 		} while (++sp < spend);
 		if (thisjob)
 			goto gotjob;
 	}
+#ifndef _MSC_VER
 	if (!JOBS || !WIFSTOPPED(status))
 		jobless--;
+#endif
 	goto out;
 
 gotjob:
@@ -1124,6 +1138,7 @@ static int onsigchild() {
 static int
 waitproc(int block, int *status)
 {
+#ifndef _MSC_VER
 	sigset_t mask, oldmask;
 	int flags = block == DOWAIT_BLOCK ? 0 : WNOHANG;
 	int err;
@@ -1151,6 +1166,9 @@ waitproc(int block, int *status)
 	} while (gotsigchld);
 
 	return err;
+#else
+	return 0;
+#endif
 }
 
 /*
@@ -1473,8 +1491,12 @@ showpipe(struct job *jp, struct output *out)
 static void
 xtcsetpgrp(int fd, pid_t pgrp)
 {
+#ifdef _MSC_VER
+	sh_error("Cannot set tty process group");
+#else
 	if (tcsetpgrp(fd, pgrp))
 		sh_error("Cannot set tty process group (%s)", strerror(errno));
+#endif
 }
 #endif
 
@@ -1484,6 +1506,9 @@ getstatus(struct job *job) {
 	int status;
 	int retval;
 
+#ifdef _MSC_VER
+	retval = 0;
+#else
 	status = job->ps[job->nprocs - 1].status;
 	retval = WEXITSTATUS(status);
 	if (!WIFEXITED(status)) {
@@ -1501,6 +1526,7 @@ getstatus(struct job *job) {
 		}
 		retval += 128;
 	}
+#endif
 	TRACE(("getstatus: job %d, nproc %d, status %x, retval %x\n",
 		jobno(job), job->nprocs, status, retval));
 	return retval;

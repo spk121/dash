@@ -37,11 +37,8 @@
  */
 
 #include <sys/types.h>		/* quad_t */
-#include <sys/param.h>		/* BSD4_4 */
+// #include <sys/param.h>		/* BSD4_4 */
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <inttypes.h>
@@ -174,7 +171,7 @@ readcmd(int argc, char **argv)
 		case 1:
 			break;
 		default:
-			if (errno == EINTR && !pendingsigs)
+			if (errno == EINTR /* && !pendingsigs */)
 				continue;
 				/* fall through */
 		case 0:

@@ -51,7 +51,7 @@ void ignoresig(int);
 void onsig(int);
 void dotrap(void);
 void setinteractive(int);
-void exitshell(void) __attribute__((__noreturn__));
+void exitshell(void);
 int decode_signal(const char *, int);
 
 static inline int have_traps(void)

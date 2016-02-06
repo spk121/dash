@@ -34,7 +34,6 @@
 
 #include <stdlib.h>
 #include <signal.h>
-#include <unistd.h>
 #include <sys/types.h>
 
 /*
@@ -64,6 +63,7 @@
 #include "myhistedit.h"
 #endif
 
+int trapcnt = 0;
 
 int evalskip;			/* set if we are skipping commands */
 static int skipcount;		/* number of levels to skip */
@@ -80,7 +80,7 @@ int savestatus = -1;		/* exit status of last command outside traps */
 #if !defined(__alpha__) || (defined(__GNUC__) && __GNUC__ >= 3)
 static
 #endif
-void evaltreenr(union node *, int) __attribute__ ((__noreturn__));
+void evaltreenr(union node *, int);
 static void evalloop(union node *, int);
 static void evalfor(union node *, int);
 static void evalcase(union node *, int);
@@ -191,10 +191,12 @@ evaltree(union node *n, int flags)
 		goto out;
 	}
 
-	dotrap();
+	// dotrap();
 
+#ifndef _MSC_VER
 #ifndef SMALL
 	displayhist = 1;	/* show history substitutions done with fc */
+#endif
 #endif
 	TRACE(("pid %d, evaltree(%p: %d, %d) called\n",
 	    getpid(), n, n->type, flags));
@@ -297,7 +299,7 @@ out:
 	if (checkexit & exitstatus)
 		goto exexit;
 
-	dotrap();
+	// dotrap();
 
 	if (flags & EV_EXIT) {
 exexit:
@@ -310,14 +312,11 @@ exexit:
 static
 #endif
 void evaltreenr(union node *n, int flags)
-#ifdef HAVE_ATTRIBUTE_ALIAS
-	__attribute__ ((alias("evaltree")));
-#else
 {
 	evaltree(n, flags);
 	abort();
 }
-#endif
+
 
 
 static int skiploop(void)

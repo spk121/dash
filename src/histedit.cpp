@@ -32,13 +32,11 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/param.h>
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 /*
  * Editline and history functions (and glue).
  */
@@ -59,8 +57,10 @@
 #define MAXHISTLOOPS	4	/* max recursions through fc */
 #define DEFEDITOR	"ed"	/* default editor *should* be $EDITOR */
 
+#ifndef _MSC_VER
 History *hist;	/* history cookie */
 EditLine *el;	/* editline cookie */
+#endif
 int displayhist;
 static FILE *el_in, *el_out;
 
@@ -73,6 +73,7 @@ static const char *fc_replace(const char *, char *, char *);
 void
 histedit(void)
 {
+#ifndef _MSC_VER
 	FILE *el_err;
 
 #define editing (Eflag || Vflag)
@@ -142,12 +143,14 @@ bad:
 		}
 		inton();
 	}
+#endif
 }
 
 
 void
 sethistsize(const char *hs)
 {
+#ifndef _MSC_VER
 	int histsize;
 	HistEvent he;
 
@@ -157,16 +160,19 @@ sethistsize(const char *hs)
 			histsize = 100;
 		history(hist, &he, H_SETSIZE, histsize);
 	}
+#endif
 }
 
 void
 setterm(const char *term)
 {
+#ifndef _MSC_VER
 	if (el != NULL && term != NULL)
 		if (el_set(el, EL_TERMINAL, term) != 0) {
 			outfmt(out2, "sh: Can't set terminal type %s\n", term);
 			outfmt(out2, "sh: Using dumb terminal settings.\n");
 		}
+#endif
 }
 
 /*
@@ -176,6 +182,7 @@ setterm(const char *term)
 int
 histcmd(int argc, char **argv)
 {
+#ifndef _MSC_VER
 	int ch;
 	const char *editor = NULL;
 	HistEvent he;
@@ -405,6 +412,8 @@ histcmd(int argc, char **argv)
 	if (displayhist)
 		displayhist = 0;
 	return 0;
+#endif
+	return 0;
 }
 
 static const char *
@@ -442,6 +451,7 @@ not_fcnumber(char *s)
 int
 str_to_event(const char *str, int last)
 {
+#ifndef _MSC_VER
 	HistEvent he;
 	const char *s = str;
 	int relative = 0;
@@ -486,5 +496,7 @@ str_to_event(const char *str, int last)
 			sh_error("history pattern not found: %s", str);
 	}
 	return (he.num);
+#endif
+	return 0;
 }
 #endif

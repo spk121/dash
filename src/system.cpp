@@ -274,6 +274,7 @@ void *mempcpy(void *dest, const void *src, size_t n)
 long sysconf(int name)
 {
 	sh_error("no sysconf for: %d", name);
+	return 0;
 }
 #endif
 

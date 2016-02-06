@@ -33,7 +33,7 @@
  */
 
 #include <signal.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <stdlib.h>
 
 #include "shell.h"
@@ -182,9 +182,9 @@ optschanged(void)
 #ifdef DEBUG
 	opentrace();
 #endif
-	setinteractive(iflag);
+	// setinteractive(iflag);
 #ifndef SMALL
-	histedit();
+	// histedit();
 #endif
 	setjobctl(mflag);
 }

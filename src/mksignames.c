@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with Bash; see the file COPYING.  If not, write to the Free Software
    Foundation, 59 Temple Place, Suite 330, Boston, MA 02111 USA. */
-
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <sys/types.h>
 #include <signal.h>

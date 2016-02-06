@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <sys/stat.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <fcntl.h>
 
 #include "shell.h"
@@ -107,7 +107,8 @@ main(int argc, char **argv)
 
 		s = state;
 		if (e == EXEXIT || s == 0 || iflag == 0 || shlvl)
-			exitshell();
+			//exitshell();
+			;
 
 		if (e == EXINT) {
 			out2c('\n');
@@ -135,7 +136,7 @@ main(int argc, char **argv)
 
 	/* Module initialization */
 	input_init();
-	trap_init();
+	// trap_init();
 	var_init();
 
 	setstackmark(&smark);
@@ -169,7 +170,7 @@ state3:
 state4:	/* XXX ??? - why isn't this before the "if" statement */
 		cmdloop(1);
 	}
-	exitshell();
+	// exitshell();
 	/* NOTREACHED */
 }
 

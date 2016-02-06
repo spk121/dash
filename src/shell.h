@@ -52,7 +52,9 @@
 #ifndef SHELL_H
 #define SHELL_H
 
+#ifndef _MSC_VER
 #include <sys/param.h>
+#endif
 
 #ifndef JOBS
 #define JOBS 1
@@ -68,11 +70,6 @@
 #endif
 
 typedef void *pointer;
-#ifndef NULL
-#define NULL (void *)0
-#endif
-#define MKINIT	/* empty */
-
 extern char nullstr[1];		/* null string */
 
 

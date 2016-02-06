@@ -33,13 +33,34 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
+
 #ifdef _MSC_VER
 #include <Windows.h>
 #include <process.h>
 #include <io.h>
 #include <malloc.h>
+#include <direct.h>
 #else
 #include <unistd.h>
+#endif
+
+ // _PATH_BSHELL
+ // linux: "/dev/tty" in <path.h>
+ // MSC: missing
+#ifdef _MSC_VER
+#define _PATH_BSHELL "/bin/sh"
+#endif
+
+// _PATH_DEVNULL
+#ifdef _MSC_VER
+#define _PATH_DEVNULL "/dev/null"
+#endif
+
+// _PATH_TTY
+// linux: "/dev/tty" in <path.h>
+// MSC: missing
+#ifdef _MSC_VER
+#define _PATH_TTY "CON"
 #endif
 
 // alloca:
@@ -60,16 +81,21 @@ static inline void barrier()
 //   glibc:  char ** environ, in <unistd.h>
 //   msc:    extern char ** environ, in <stdlib.h>
 
+// error
+//
+#define error printf
+
 // fcntl: perform various operations on files
 // LSB: int fcntl(int __fd, int __cmd, ...), in <fcntl.h>
 // MSC: missing
 
 // Duplicate filedescriptor to a number >= MIN
-int fcntl_dupfd(int fd, int min);
+static inline int fcntl_dupfd(int fd, int min) { return fd; }
+//
+static inline int fcntl_getfl(int a, int b) { return 0; }
+static inline int fcntl_setfl(int a, int b) { return 0; }
 // Set file descriptor to close when an exec in invoked
-int fcntl_setfd_cloexec(int fd);
-
-
+static inline int fcntl_setfd_cloexec(int fd) { return 0;  }
 
 // fstat64:
 // LSB: int fstat64(int __fd, struct stat64 * __buf), in <sys/stat.h>
@@ -78,11 +104,32 @@ int fcntl_setfd_cloexec(int fd);
 #define fstat64 _fstat64
 #endif
 
+// getegid,
+// LSB: gid_t getegid(void) in <unistd.h> 
+// MSC: missing
+#ifdef _MSC_VER
+static inline int getegid(void) { return 1000; }
+#endif
+
 // geteuid, returns effective user ID of the process
 // LSB:  uid_t geteuid(void), in <unistd.h>
 // MSC:  missing
 #ifdef _MSC_VER
 int geteuid(void);
+#endif
+
+// getgid,
+// LSB: gid_t getgid(void) in <unistd.h> 
+// MSC: missing
+#ifdef _MSC_VER
+static inline int getgid(void) { return 1000; }
+#endif
+
+// getpgrp
+// LSB: pid_t getpgrp(void) in <unistd.h> 
+// MSC: missing
+#ifdef _MSC_VER
+static inline int getpgrp(void) { return 1000; }
 #endif
 
 // getpid
@@ -93,21 +140,49 @@ int geteuid(void);
 // LSB:  pid_t getppid(void), in <unistd.h>
 // MSC:  missing
 #ifdef _MSC_VER
-int getppid(void)
+static inline int getppid(void)
 {
 	return 0;
 }
 #endif
 
+// getuid
+// LSB:  uid_t getuid(void), in <unistd.h>
+// MSC:  missing
+#ifdef _MSC_VER
+static inline int getuid(void) { return 1000; }
+#endif
+
+// gid_t
+#ifdef _MSC_VER
+typedef int gid_t;
+#endif
+
 // kill
 // LSB: int kill(pid_t __pid, int __sig), in <signal.h>
 // msc:  missing
+#ifdef _MSC_VER
+static inline int kill(int a, int b) {
+	return 0;
+}
+#endif
 
+// O_NONBLOCK
+// LSB: octal 04000 in <fcntl.h>
+// MSC:missing
+#ifdef _MSC_VER
+#define O_NONBLOCK 0x0800
+#endif
 // pid_t: the type returned by getpid()
 // glibc: int, in <sys/types.h>
 // msc:   undefined, but, getpid() returns an int
 #ifdef _MSC_VER
 typedef  int pid_t;
+#endif
+
+// PATH_MAX
+#ifdef _MSC_VER
+#define PATH_MAX MAX_PATH
 #endif
 
 // pipe:
@@ -124,12 +199,30 @@ int pipe(int p[2]);
 #define open64 _open
 #endif
 
+// S_ISDIR:
+// LSB: macro, in <sys/stat.h>
+// MSC: missing
+#ifdef _MSC_VER
+#define S_ISDIR(m) (((m)&_S_IFMT) == _S_IFDIR)
+#endif
+
 // S_ISREG:
 // LSB: macro, in <sys/stat.h>
 // MSC: missing
 #ifdef _MSC_VER
 #define S_ISREG(m) (((m)&_S_IFMT) == _S_IFREG)
 #endif
+
+// setpgid
+// LSB: int setpgid(pid_t __pid, pid_t __pgid) in <unistd.h> 
+// MSC: missing
+#ifdef _MSC_VER
+static inline int setpgid(int pid, int pgid) { return 0;  }
+#endif
+
+// setsignal
+static inline void setsignal(int x) {}
+
 
 // sig_atomic_t:
 // glibc: int, in <signal.h>
@@ -151,6 +244,48 @@ static inline void sigclearmask(void)
 // msc: void (__cdecl *signal(int sig, void (__cdecl *func) (int[, int])))(int), in <signal.h>
 #ifdef _MSC_VER
 typedef void(__cdecl *sighandler_t) (int);
+#endif
+
+// SIGCONT
+#ifdef _MSC_VER
+#define SIGCONT 19 /* continue a stopped process */
+#endif
+
+// SIGPIPE
+#ifdef _MSC_VER
+#define SIGPIPE 13 /* write on a pipe with no one to read it */
+#endif
+
+// SIGQUIT
+#ifdef _MSC_VER
+#define SIGQUIT 3       /* quit */
+#endif
+
+// SIGTTIN
+#ifdef _MSC_VER
+#define SIGTTIN 21      /* to readers pgrp upon background tty read */
+#endif
+
+// SIGTSTP
+#ifdef _MSC_VER
+#define SIGTSTP 18      /* stop signal from tty */
+#endif
+
+// SIGTTOU
+#ifdef _MSC_VER
+#define SIGTTOU 22      /* like TTIN for output if (tp->t_local<OSTOP) */
+#endif
+
+// SIGTTIN
+#ifdef _MSC_VER
+#define SIGTTIN 21      /* to readers pgrp upon background tty read */
+#endif
+
+// ssize_t
+// glibc:
+// MSC: missing
+#ifdef _MSC_VER
+typedef __int64 ssize_t;
 #endif
 
 #ifndef SSIZE_MAX
@@ -184,6 +319,32 @@ char *strchrnul(const char *s, int c);
 // MSC: missing
 #ifdef _MSCVER
 char *strsignal(int sig);
+#endif
+
+// tcgetpgrp
+// LSB: pid_t tcgetpgrp(int __fd) in <unistd.h> 
+// MSC: missing
+#ifdef _MSC_VER
+static inline int tcgetpgrp(int fd) { return 1000; }
+#endif
+
+// times
+// LSB: clock_t times(struct tms * __buffer) in <sys/times.h> 
+// MSC: missing
+#ifdef _MSC_VER
+static inline long times(struct tms *_buf) { return 0; }
+#endif
+
+// struct tms:
+// LSB: in <sys/times.h>
+// MSC: missing
+#ifdef _MSC_VER
+struct tms {
+	long tms_utime;
+	long tms_stime;
+	long tms_cutime;
+	long tms_cstime;
+};
 #endif
 
 #ifndef HAVE_MEMPCPY

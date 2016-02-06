@@ -39,6 +39,7 @@
 
 #include <inttypes.h>
 #include <sys/types.h>
+#include "system.h"
 
 /* Mode argument to forkshell.  Don't change FORK_FG or FORK_BG. */
 #define FORK_FG 0
@@ -59,7 +60,11 @@
  */
 
 struct procstat {
+#ifdef _MSC_VER
+	int	pid;		/* process id */
+#else
 	pid_t	pid;		/* process id */
+#endif
  	int	status;		/* last process status from wait() */
  	char	*cmd;		/* text of command being run */
 };

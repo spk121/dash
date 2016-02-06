@@ -44,12 +44,12 @@
  */
 
 #include <sys/types.h>		/* quad_t */
-#include <sys/param.h>		/* BSD4_4 */
-#include <sys/ioctl.h>
+// #include <sys/param.h>		/* BSD4_4 */
+// #include <sys/ioctl.h>
 
 #include <stdio.h>	/* defines BUFSIZ */
 #include <string.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <stdlib.h>
 #ifdef USE_GLIBC_STDIO
 #include <fcntl.h>
@@ -78,10 +78,12 @@ struct output errout = {
 };
 #else
 struct output output = {
-	nextc: 0, end: 0, buf: 0, bufsize: OUTBUFSIZ, fd: 1, flags: 0
+//	nextc: 0, end: 0, buf: 0, bufsize: OUTBUFSIZ, fd: 1, flags: 0
+	0, 0, 0, OUTBUFSIZ, 1, 0
 };
 struct output errout = {
-	nextc: 0, end: 0, buf: 0, bufsize: 0, fd: 2, flags: 0
+//	nextc: 0, end: 0, buf: 0, bufsize: 0, fd: 2, flags: 0
+	0, 0, 0, 0, 2, 0
 };
 #endif
 struct output preverrout;

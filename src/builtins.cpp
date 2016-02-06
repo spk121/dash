@@ -28,7 +28,7 @@ int returncmd(int, char **);
 int setcmd(int, char **);
 int shiftcmd(int, char **);
 int timescmd(int, char **);
-int trapcmd(int, char **);
+static inline int trapcmd(int, char **) { return 0; }
 int truecmd(int, char **);
 int typecmd(int, char **);
 int umaskcmd(int, char **);
@@ -36,7 +36,7 @@ int unaliascmd(int, char **);
 int unsetcmd(int, char **);
 int waitcmd(int, char **);
 int aliascmd(int, char **);
-int ulimitcmd(int, char **);
+static inline int ulimitcmd(int, char **) { return 0; }
 int testcmd(int, char **);
 int killcmd(int, char **);
 
@@ -52,7 +52,7 @@ const struct builtincmd builtincmd[] = {
 	{ "command", commandcmd, 2 },
 	{ "continue", breakcmd, 3 },
 	{ "echo", echocmd, 0 },
-	{ "eval", (int (*)(int, char **))NULL, 3 },
+	{ "eval", (int (*)(int, char **))0, 3 },
 	{ "exec", execcmd, 3 },
 	{ "exit", exitcmd, 3 },
 	{ "export", exportcmd, 7 },

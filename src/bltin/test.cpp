@@ -15,9 +15,14 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdarg.h>
-#include "bltin.h"
+#include <stdio.h>
+
+
+
+//#include "bltin.h"
+#include "../system.h"
+#include "../mystring.h"
 
 /* test(1) accepts the following grammar:
 	oexpr	::= aexpr | aexpr "-o" oexpr ;
@@ -390,11 +395,16 @@ static int
 filstat(char *nm, enum token mode)
 {
 	struct stat64 s;
-
+#ifdef _MSC_VER
+	if (stat64(nm, &s))
+		return 0;
+#else
 	if (mode == FILSYM ? lstat64(nm, &s) : stat64(nm, &s))
 		return 0;
+#endif
 
 	switch (mode) {
+#ifndef _MSC_VER
 #ifndef HAVE_FACCESSAT
 	case FILRD:
 		return test_st_mode(&s, R_OK);
@@ -403,12 +413,15 @@ filstat(char *nm, enum token mode)
 	case FILEX:
 		return test_st_mode(&s, X_OK);
 #endif
+#endif
 	case FILEXIST:
 		return 1;
 	case FILREG:
 		return S_ISREG(s.st_mode);
 	case FILDIR:
 		return S_ISDIR(s.st_mode);
+
+#ifndef _MSC_VER
 	case FILCDEV:
 		return S_ISCHR(s.st_mode);
 	case FILBDEV:
@@ -431,6 +444,7 @@ filstat(char *nm, enum token mode)
 		return s.st_uid == geteuid();
 	case FILGID:
 		return s.st_gid == getegid();
+#endif
 	default:
 		return 1;
 	}
@@ -532,12 +546,14 @@ test_st_mode(const struct stat64 *st, int mode)
 
 	if (euid == 0) {
 		/* Root can read or write any file. */
+#ifndef _MSC_VER
 		if (mode != X_OK)
 			return 1;
 
 		/* Root can execute any file that has any one of the execute
 		   bits set. */
 		mode = S_IXUSR | S_IXGRP | S_IXOTH;
+#endif
 	} else if (st->st_uid == euid)
 		mode <<= 6;
 	else if (bash_group_member(st->st_gid))
@@ -558,10 +574,14 @@ bash_group_member(gid_t gid)
 	if (gid == getgid() || gid == getegid())
 		return (1);
 
+#ifdef _MSC_VER
+	return 0;
+#else
 	ngroups = getgroups(0, NULL);
 	group_array = stalloc(ngroups * sizeof(gid_t));
 	if ((getgroups(ngroups, group_array)) != ngroups)
 		return (0);
+#endif
 
 	/* Search through the list looking for GID. */
 	for (i = 0; i < ngroups; i++)

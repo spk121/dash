@@ -34,6 +34,7 @@
 #ifndef MYHISTEDIT_H
 #define MYHISTEDIT_H
 
+#if 0
 #include <histedit.h>
 
 extern History *hist;
@@ -46,5 +47,6 @@ void setterm(const char *);
 int histcmd(int, char **);
 int not_fcnumber(char *);
 int str_to_event(const char *, int);
+#endif
 
 #endif /* MYHISTEDIT_H */

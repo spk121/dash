@@ -34,7 +34,6 @@
 
 #include <stdio.h>	/* defines BUFSIZ */
 #include <fcntl.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -57,6 +56,7 @@
 #ifndef SMALL
 #include "myhistedit.h"
 #endif
+#include "system.h"
 
 #define EOF_NLEFT -99		/* value of parsenleft when EOF pushed back */
 
@@ -66,8 +66,10 @@ char basebuf[IBUFSIZ];	/* buffer for top level input file */
 struct parsefile *parsefile = &basepf;	/* current input file */
 int whichprompt;		/* 1 == PS1, 2 == PS2 */
 
+#ifndef _MSC_VER
 #ifndef SMALL
 EditLine *el;			/* cookie for editline package */
+#endif
 #endif
 
 static void pushfile(void);
@@ -138,6 +140,7 @@ preadfd(void)
 	parsefile->nextc = buf;
 
 retry:
+#ifndef _MSC_VER
 #ifndef SMALL
 	if (parsefile->fd == 0 && el) {
 		static const char *rl_cp;
@@ -161,6 +164,7 @@ retry:
 
 	} else
 #endif
+#endif
 		nr = read(parsefile->fd, buf, IBUFSIZ - 1);
 
 
@@ -168,10 +172,10 @@ retry:
 		if (errno == EINTR)
 			goto retry;
 		if (parsefile->fd == 0 && errno == EWOULDBLOCK) {
-			int flags = fcntl(0, F_GETFL, 0);
+			int flags = fcntl_getfl(0, 0);
 			if (flags >= 0 && flags & O_NONBLOCK) {
 				flags &=~ O_NONBLOCK;
-				if (fcntl(0, F_SETFL, flags) >= 0) {
+				if (fcntl_setfl(0, flags) >= 0) {
 					out2str("sh: turning off NDELAY mode\n");
 					goto retry;
 				}
@@ -272,6 +276,7 @@ again:
 	savec = *q;
 	*q = '\0';
 
+#ifndef _MSC_VER
 #ifndef SMALL
 	if (parsefile->fd == 0 && hist && something) {
 		HistEvent he;
@@ -280,6 +285,7 @@ again:
 			parsefile->nextc);
 		inton();
 	}
+#endif
 #endif
 
 	if (vflag) {

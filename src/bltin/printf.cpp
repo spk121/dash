@@ -38,7 +38,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <stdio.h>
 
 static int	 conv_escape_str(char *, char **);
 static char	*conv_escape(char *, int *);
@@ -55,8 +55,15 @@ static char  **gargv;
 #define isodigit(c)	((c) >= '0' && (c) <= '7')
 #define octtobin(c)	((c) - '0')
 
-#include "bltin.h"
-#include "system.h"
+//#include "bltin.h"
+#include "../system.h"
+#include "../memalloc.h"
+#include "../output.h"
+#include "../error.h"
+#include "../mystring.h"
+#include "../shell.h"
+#include "../options.h"
+#define warnx sh_warnx
 
 #define PF(f, func) { \
 	switch ((char *)param - (char *)array) { \
@@ -91,6 +98,7 @@ static char  **gargv;
 
 static int print_escape_str(const char *f, int *param, int *array, char *s)
 {
+#ifndef _MSC_VER
 	struct stackmark smark;
 	char *p, *q;
 	int done;
@@ -116,10 +124,12 @@ static int print_escape_str(const char *f, int *param, int *array, char *s)
 
 	popstackmark(&smark);
 	return done;
+#endif
+	return 0;
 }
 
 
-int printfcmd(int argc, char *argv[])
+int printfcmd(int argc, char **argv)
 {
 	char *fmt;
 	char *format;
@@ -450,7 +460,7 @@ echocmd(int argc, char **argv)
 	do {
 		int c;
 
-		if (likely(*argv))
+		if (*argv)
 			nonl += print_escape_str("%s", NULL, NULL, *argv++);
 		if (nonl > 0)
 			break;

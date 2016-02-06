@@ -3,14 +3,17 @@
  * This file contains code for the times builtin.
  */
 
-#include <sys/times.h>
+#ifdef _MSC_VER
+#else
 #include <unistd.h>
+#endif
+
 #ifdef USE_GLIBC_STDIO
 #include <stdio.h>
 #else
 #include "bltin.h"
 #endif
-#include "system.h"
+#include "../system.h"
 
 int timescmd(int argc, char **argv) {
 	struct tms buf;

@@ -77,9 +77,7 @@
 #define getenv(p) bltinlookup((p),0)
 
 #else
-#undef NULL
 #include <stdio.h>
-#undef main
 #define INITARGS(argv)	if ((commandname = argv[0]) == NULL) {fputs("Argc is zero\n", stderr); exit(2);} else
 #endif
 
