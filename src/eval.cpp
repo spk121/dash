@@ -63,8 +63,6 @@
 #include "myhistedit.h"
 #endif
 
-int trapcnt = 0;
-
 int evalskip;			/* set if we are skipping commands */
 static int skipcount;		/* number of levels to skip */
 int loopnest;			/* current loop nesting level */

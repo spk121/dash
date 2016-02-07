@@ -201,7 +201,14 @@ setjobctl(int on)
 		do { /* while we are in the background */
 			if ((pgrp = tcgetpgrp(fd)) < 0) {
 out:
-				sh_warnx("can't access tty; job control turned off");
+				if (errno == EBADF)
+					sh_warnx("the tty file descriptor is invalid: job control disabled");
+				else if (errno == ENOSYS)
+					sh_warnx("system doesn't support job control: job control disabled");
+				else if (errno == ENOTTY)
+					sh_warnx("tty isn't the controlling terminal of this process: jobs control disabled");
+				else
+					sh_warnx("can't access tty; job control turned off");
 				mflag = on = 0;
 				goto close;
 			}
@@ -254,7 +261,7 @@ usage:
 	}
 
 	if (**++argv == '-') {
-		// signo = decode_signal(*argv + 1, 1);
+		signo = decode_signal(*argv + 1, 1);
 		signo = -1;
 		if (signo < 0) {
 			int c;
@@ -269,7 +276,7 @@ usage:
 					list = 1;
 					break;
 				case 's':
-					// signo = decode_signal(optionarg, 1);
+					signo = decode_signal(optionarg, 1);
 					signo = -1;
 					if (signo < 0) {
 						sh_error(
@@ -652,7 +659,7 @@ out:
 	return retval;
 
 sigout:
-	retval = 128 /* + pendingsigs */;
+	retval = 128 + pendingsigs;
 	goto out;
 }
 
@@ -857,7 +864,7 @@ forkchild(struct job *jp, union node *n, int mode)
 	shlvl++;
 
 	closescript();
-	// clear_traps();
+	clear_traps();
 #if JOBS
 	/* do job control only in root shell */
 	jobctl = 0;
@@ -877,8 +884,10 @@ forkchild(struct job *jp, union node *n, int mode)
 	} else
 #endif
 	if (mode == FORK_BG) {
-		// ignoresig(SIGINT);
-		// ignoresig(SIGQUIT);
+#ifndef _MSC_VER	  
+		ignoresig(SIGINT);
+		ignoresig(SIGQUIT);
+#endif		
 		if (jp->nprocs == 0) {
 			close(0);
 			if (open(_PATH_DEVNULL, O_RDONLY) != 0)

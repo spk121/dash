@@ -136,7 +136,7 @@ main(int argc, char **argv)
 
 	/* Module initialization */
 	input_init();
-	// trap_init();
+	trap_init();
 	var_init();
 
 	setstackmark(&smark);
@@ -170,7 +170,7 @@ state3:
 state4:	/* XXX ??? - why isn't this before the "if" statement */
 		cmdloop(1);
 	}
-	// exitshell();
+	exitshell();
 	/* NOTREACHED */
 }
 

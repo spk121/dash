@@ -42,6 +42,12 @@
 #include <direct.h>
 #else
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <sys/resource.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <paths.h>
 #endif
 
  // _PATH_BSHELL
@@ -57,7 +63,7 @@
 #endif
 
 // _PATH_TTY
-// linux: "/dev/tty" in <path.h>
+// linux: "/dev/tty" in <paths.h>
 // MSC: missing
 #ifdef _MSC_VER
 #define _PATH_TTY "CON"
@@ -90,12 +96,41 @@ static inline void barrier()
 // MSC: missing
 
 // Duplicate filedescriptor to a number >= MIN
-static inline int fcntl_dupfd(int fd, int min) { return fd; }
+static inline int fcntl_dupfd(int fd, int min)
+{
+	#ifdef _MSC_VER
+	return fd;
+	#else
+	return fcntl(fd, F_DUPFD, min);
+	#endif
+}
 //
-static inline int fcntl_getfl(int a, int b) { return 0; }
-static inline int fcntl_setfl(int a, int b) { return 0; }
+static inline int fcntl_getfl(int a, int b)
+{
+	#ifdef _MSC_VER
+	return 0;
+	#else
+	return fcntl (a, F_GETFL, b);
+	#endif
+}
+
+static inline int fcntl_setfl(int a, int b)
+{
+	#ifdef _MSC_VER
+	return fcntl(a, F_SETFL, b);
+	#else
+	return 0;
+	#endif
+}
 // Set file descriptor to close when an exec in invoked
-static inline int fcntl_setfd_cloexec(int fd) { return 0;  }
+static inline int fcntl_setfd_cloexec(int fd)
+{
+	#ifdef _MSC_VER
+	return 0;
+	#else
+	return fcntl(fd, F_SETFD, FD_CLOEXEC);
+	#endif
+}
 
 // fstat64:
 // LSB: int fstat64(int __fd, struct stat64 * __buf), in <sys/stat.h>
@@ -221,7 +256,6 @@ static inline int setpgid(int pid, int pgid) { return 0;  }
 #endif
 
 // setsignal
-static inline void setsignal(int x) {}
 
 
 // sig_atomic_t:

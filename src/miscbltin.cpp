@@ -171,7 +171,7 @@ readcmd(int argc, char **argv)
 		case 1:
 			break;
 		default:
-			if (errno == EINTR /* && !pendingsigs */)
+			if (errno == EINTR && !pendingsigs)
 				continue;
 				/* fall through */
 		case 0:

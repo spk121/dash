@@ -351,5 +351,5 @@ void
 freefunc(struct funcnode *f)
 {
 	if (f && --f->count < 0)
-		ckfree((char *)f);
+	  ckfree((char *)f);
 }
