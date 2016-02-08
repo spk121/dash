@@ -42,6 +42,10 @@
 #include <direct.h>
 #else
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <sys/resource.h>
+#include <dirent.h>
 #endif
 
  // _PATH_BSHELL
@@ -221,7 +225,6 @@ static inline int setpgid(int pid, int pgid) { return 0;  }
 #endif
 
 // setsignal
-static inline void setsignal(int x) {}
 
 
 // sig_atomic_t:
