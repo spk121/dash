@@ -66,6 +66,33 @@
 #include "system.h"
 #include "signames.h"
 
+const char *const signal_names[NSIG + 1]
+{
+	"sig1",
+	"sig2",
+	"sig3",
+	"sig4",
+	"sig5",
+	"sig6",
+	"sig7",
+	"sig8",
+	"sig9",
+	"sig10",
+	"sig11",
+	"sig12",
+	"sig13",
+	"sig14",
+	"sig15",
+	"sig16",
+	"sig17",
+	"sig18",
+	"sig19",
+	"sig20",
+	"sig21",
+	"sig22",
+	"sig23",
+};
+
 /* mode flags for set_curjob */
 #define CUR_DELETE 2
 #define CUR_RUNNING 1

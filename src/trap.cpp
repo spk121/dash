@@ -33,7 +33,6 @@
  */
 
 #include <signal.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -81,8 +80,10 @@ int gotsigchld;
 void
 trap_init()
 {
+#ifndef _MSC_VER
 	sigmode[SIGCHLD - 1] = S_DFL;
 	setsignal(SIGCHLD);
+#endif
 }
 
 /*
@@ -177,6 +178,7 @@ clear_traps(void)
 void
 setsignal(int signo)
 {
+#ifndef _MSC_VER
 	int action;
 	char *t, tsig;
 	struct sigaction act;
@@ -256,6 +258,7 @@ setsignal(int signo)
 	act.sa_flags = 0;
 	sigfillset(&act.sa_mask);
 	sigaction(signo, &act, 0);
+#endif
 }
 
 /*
@@ -280,11 +283,13 @@ ignoresig(int signo)
 void
 onsig(int signo)
 {
+#ifndef _MSC_VER
 	if (signo == SIGCHLD) {
 		gotsigchld = 1;
 		if (!trap[SIGCHLD])
 			return;
 	}
+#endif
 
 	gotsig[signo - 1] = 1;
 	pendingsigs = signo;
