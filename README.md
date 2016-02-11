@@ -1,5 +1,10 @@
 # dash
-A modified version of the Debian Almquest Shell (dash).
+This Dash is modified version of the Debian Almquest Shell.  Unlike vanilla dash,
+it will use C++ containers algorithms when possible, and will run on Windows 10
+and POSIX.
+
+This hack *doesn't work*, and will probably never work.  This is just a bit of fun
+for me, and I don't care if I complete it.  *Don't use it*.
 
 ## What is this project
 This is Mike Gran's hack of the Debian Almquest Shell (dash).
@@ -19,9 +24,6 @@ low-level functionality.
 
 So suddenly this little exercise became somewhat more interesting, and now I'm
 playing with it.
-
-Will I finish it?  I don't know.  I've never finished anything before, so chances
-are low.
 
 ## Status
 It builds and runs on GNU/Linux.  It builds and can be launched on Windows 7/10.
