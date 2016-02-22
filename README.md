@@ -29,15 +29,4 @@ playing with it.
 It builds and runs on GNU/Linux.  It builds and can be launched on Windows 7/10.
 But on Windows, virtually all functionality is broken.
 
-## TODO
-### Environment Variables
-Vanilla dash has a hand-coded singly-linked list to store the environment variables.
-It has a manual memory management scheme.
 
-POSIX expects the environ variables names to be in a 7-bit portable character set,
-with the values in 8-bit-clean character set of unspecified encoding.
-
-Windows has environment variables encoded in wchar_t.
-
-Plan: store env vars in a map<wstring,...>.  For POSIX, convert
-locale encoding to wchar_t using codecvt.
