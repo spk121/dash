@@ -9,7 +9,15 @@ and it will do the right thing.  When it finds a dllexport, it also sets the vis
 Note that on GCC, all inlined functions are dllexport by default, so it is best not to
 inline any functions in a DLL to be built with GCC.
 
-### 
+### Nmake files
+
+Aren't many good examples in the wild.
+
+https://svn.apache.org/repos/asf/activemq/activemq-cpp/branches/activemq-cpp-2.x/Makefile.win
+
+https://github.com/eel3/lua_nmake_template/blob/master/Makefile.nmake
+
+
 
 ## TODO
 ### Environment Variables
