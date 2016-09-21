@@ -188,15 +188,37 @@ setjobctl(int on)
 	if (on == jobctl || rootshell == 0)
 		return;
 	if (on) {
+#ifdef WIN32
+		// Disable job control.
+		fd = -1;
+		pgrp = initialpgrp;
+		// xtcsetpgrp(fd, pgrp);
+		setpgid(0, pgrp);
+		setsignal(SIGTSTP);
+		setsignal(SIGTTOU);
+		setsignal(SIGTTIN);
+
+#else
 		int ofd;
 
+		// Here, unix-like systems are trying to open "/dev/tty"
+		// which is a synonym of the controlling terminal of a process.
+		// On BSD, ctermid() is the correct way to get the controlling
+		// terminal.  There is no analog for Windows, so we'll open
+		// an FD to the current console.
 		ofd = fd = open(_PATH_TTY, O_RDWR);
+
+		// This code block seems wrong.  If we can't open "/dev/tty",
+		// open returns a -1. So then, it checks if fd=2 aka stderr
+		// is a tty.  Why?
 		if (fd < 0) {
 			fd += 3;
 			while (!isatty(fd))
 				if (--fd < 0)
 					goto out;
 		}
+
+		// This code block seems wrong
 		fd = savefd(fd, ofd);
 		do { /* while we are in the background */
 			if ((pgrp = tcgetpgrp(fd)) < 0) {
@@ -208,6 +230,7 @@ out:
 				else if (errno == ENOTTY)
 					sh_warnx("tty isn't the controlling terminal of this process: jobs control disabled");
 				else
+	
 					sh_warnx("can't access tty; job control turned off");
 				mflag = on = 0;
 				goto close;
@@ -236,6 +259,7 @@ out:
 close:
 		close(fd);
 		fd = -1;
+#endif
 	}
 	ttyfd = fd;
 	jobctl = on;
@@ -946,7 +970,7 @@ forkshell(struct job *jp, union node *n, int mode)
 
 	TRACE(("forkshell(%%%d, %p, %d) called\n", jobno(jp), n, mode));
 #ifdef _MSC_VER
-	pid = -1;
+	pid = 0;
 #else
 	pid = fork();
 #endif

@@ -399,7 +399,7 @@ opentrace(void)
 	if ((flags = fcntl(fileno(tracefile), F_GETFL, 0)) >= 0)
 		fcntl(fileno(tracefile), F_SETFL, flags | O_APPEND);
 #endif
-#ifndef __KLIBC__
+#if !defined(__KLIBC__) && !defined(_MSC_VER)
 	setlinebuf(tracefile);
 #endif /* __KLIBC__ */
 	fputs("\nTracing started.\n", tracefile);

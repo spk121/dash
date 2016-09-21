@@ -523,4 +523,11 @@ ulimitcmd(int argc, char **argv)
 	}
 	return 0;
 }
+#else
+int
+ulimitcmd(int argc, char **argv)
+{
+	sh_error("ulimit is unimplemented");
+	return 0;
+}
 #endif

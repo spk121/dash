@@ -40,6 +40,7 @@
 #include <io.h>
 #include <malloc.h>
 #include <direct.h>
+#include <string.h>
 #else
 #include <unistd.h>
 #include <sys/time.h>
@@ -48,6 +49,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <paths.h>
+#include <strings.h>
 #endif
 
  // _PATH_BSHELL
@@ -129,9 +131,9 @@ static inline int fcntl_getfl(int a, int b)
 static inline int fcntl_setfl(int a, int b)
 {
 	#ifdef _MSC_VER
-	return fcntl(a, F_SETFL, b);
-	#else
 	return 0;
+	#else
+	return fcntl(a, F_SETFL, b);
 	#endif
 }
 // Set file descriptor to close when an exec in invoked
@@ -358,6 +360,13 @@ typedef __int64 ssize_t;
 // MSC: missing
 #ifdef _MSC_VER
 char *stpcpy(char *dest, const char *src);
+#endif
+
+// strcasecmp
+// LSB: int strcasecmp(const char * __s1, const char * __s2) in <strings.h> 
+// MSC: missing. int _stricmp(const char *string1, const char *string2) in <string.h>
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
 #endif
 
 // strchrnul

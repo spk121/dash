@@ -157,7 +157,8 @@ repeat:
 		execve(cmd, argv, envp);
 	} while (errno == EINTR);
 #else
-	execve(cmd, argv, envp);
+	_spawnve(_P_WAIT, cmd, argv, envp);
+	// CreateProcess
 #endif
 	if (cmd != path_bshell && errno == ENOEXEC) {
 		*argv-- = cmd;
