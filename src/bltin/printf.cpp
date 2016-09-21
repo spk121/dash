@@ -79,26 +79,8 @@ static char  **gargv;
 	} \
 }
 
-#define ASPF(sp, f, func) ({ \
-	int ret; \
-	switch ((char *)param - (char *)array) { \
-	default: \
-		ret = xasprintf(sp, f, array[0], array[1], func); \
-		break; \
-	case sizeof(*param): \
-		ret = xasprintf(sp, f, array[0], func); \
-		break; \
-	case 0: \
-		ret = xasprintf(sp, f, func); \
-		break; \
-	} \
-	ret; \
-})
-
-
 static int print_escape_str(const char *f, int *param, int *array, char *s)
 {
-#ifndef _MSC_VER
 	struct stackmark smark;
 	char *p, *q;
 	int done;
@@ -115,7 +97,18 @@ static int print_escape_str(const char *f, int *param, int *array, char *s)
 	p[len - 1] = 0;
 
 	q = (char *)stackblock();
-	total = ASPF(&p, f, p);
+
+	switch ((char *)param - (char *)array) {
+	default:
+		total = xasprintf(&p, f, array[0], array[1], p);
+		break;
+	case sizeof(*param) :
+		total = xasprintf(&p, f, array[0], p);
+		break;
+	case 0:
+		total = xasprintf(&p, f, p);
+		break;
+	}
 
 	len = strchrnul(p, 'X') - p;
 	memcpy(p + len, q, strchrnul(p + len, ' ') - (p + len));
@@ -124,7 +117,6 @@ static int print_escape_str(const char *f, int *param, int *array, char *s)
 
 	popstackmark(&smark);
 	return done;
-#endif
 	return 0;
 }
 
