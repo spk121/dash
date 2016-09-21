@@ -38,9 +38,10 @@
 #define MAIN_H
 
 #include <errno.h>
+#include "system.h"
 
 /* pid of main shell */
-extern int rootpid;
+extern sys_process_id_t rootpid;
 /* shell level: 0 for the main shell, 1 for its children, and so on */
 extern int shlvl;
 #define rootshell (!shlvl)

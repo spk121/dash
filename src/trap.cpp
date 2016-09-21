@@ -377,7 +377,7 @@ exitshell(void)
 	char *p;
 
 	savestatus = exitstatus;
-	TRACE(("pid %d, exitshell(%d)\n", getpid(), savestatus));
+	TRACE(("pid " SYS_PROCESS_ID_FORMAT ", exitshell(%d)\n", sys_get_process_id(), savestatus));
 	if (setjmp(loc.loc))
 		goto out;
 	handler = &loc;

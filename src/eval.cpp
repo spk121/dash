@@ -197,7 +197,7 @@ evaltree(union node *n, int flags)
 #endif
 #endif
 	TRACE(("pid %d, evaltree(%p: %d, %d) called\n",
-	    getpid(), n, n->type, flags));
+	    sys_get_process_id(), n, n->type, flags));
 	switch (n->type) {
 	default:
 #ifdef DEBUG

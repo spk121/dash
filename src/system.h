@@ -170,6 +170,14 @@ static inline int getpgrp(void) { return 1000; }
 // getpid
 // glibc: pid_t getpid(void), in <unistd.h>
 // msc:   int _getpid(void), in <process.h>
+#ifdef _MSC_VER
+typedef DWORD sys_process_id_t;
+#define SYS_PROCESS_ID_FORMAT "%lu"
+#else
+typedef pid_t sys_process_id_t;
+#define SYS_PROCESS_ID_FORMAT "%d"
+#endif
+sys_process_id_t sys_get_process_id();
 
 // getppid: return process ID of parent
 // LSB:  pid_t getppid(void), in <unistd.h>

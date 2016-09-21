@@ -46,6 +46,7 @@ dnl Checks for header files.
 AC_CHECK_HEADERS(alloca.h paths.h)
 
 dnl Check for declarations
+AC_TYPE_PID_T
 AC_CHECK_DECL([_PATH_BSHELL],,AC_DEFINE_UNQUOTED([_PATH_BSHELL], "/bin/sh", [Define to system shell path]),[
 #ifdef HAVE_PATHS_H
 #include <paths.h>

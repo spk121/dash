@@ -183,7 +183,7 @@ void
 setjobctl(int on)
 {
 	int fd;
-	int pgrp;
+	sys_process_id_t pgrp;
 
 	if (on == jobctl || rootshell == 0)
 		return;
@@ -859,7 +859,7 @@ forkchild(struct job *jp, union node *n, int mode)
 {
 	int oldlvl;
 
-	TRACE(("Child shell %d\n", getpid()));
+	TRACE(("Child shell " SYS_PROCESS_ID_FORMAT "\n", sys_get_process_id()));
 	oldlvl = shlvl;
 	shlvl++;
 
@@ -869,10 +869,10 @@ forkchild(struct job *jp, union node *n, int mode)
 	/* do job control only in root shell */
 	jobctl = 0;
 	if (mode != FORK_NOJOB && jp->jobctl && !oldlvl) {
-		pid_t pgrp;
+		sys_process_id_t pgrp;
 
 		if (jp->nprocs == 0)
-			pgrp = getpid();
+			pgrp = sys_get_process_id();
 		else
 			pgrp = jp->ps[0].pid;
 		/* This can fail because we are doing it in the parent also */

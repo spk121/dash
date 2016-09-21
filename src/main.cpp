@@ -59,7 +59,7 @@
 #include "cd.h"
 #include "redir.h"
 
-int rootpid;
+sys_process_id_t rootpid;
 int shlvl;
 #ifdef __GLIBC__
 int *dash_errno;
@@ -132,7 +132,7 @@ main(int argc, char **argv)
 	opentrace();
 	trputs("Shell args:  ");  trargs(argv);
 #endif
-	rootpid = getpid();
+	rootpid = sys_get_process_id();
 
 	/* Module initialization */
 	input_init();

@@ -278,3 +278,11 @@ long sysconf(int name)
 }
 #endif
 
+sys_process_id_t sys_get_process_id()
+{
+#ifdef _MSC_VER
+	return GetCurrentProcessId();
+#else
+	return getpid();
+#endif
+}
