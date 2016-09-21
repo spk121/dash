@@ -40,7 +40,6 @@
 
 #include "shell.h"
 #include "main.h"
-#include "mail.h"
 #include "options.h"
 #include "output.h"
 #include "parser.h"
@@ -199,7 +198,6 @@ cmdloop(int top)
 		inter = 0;
 		if (iflag && top) {
 			inter++;
-			chkmail();
 		}
 		n = parsecmd(inter);
 		/* showtree(n); DEBUG */

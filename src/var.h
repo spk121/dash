@@ -79,8 +79,6 @@ extern struct localvar *localvars;
 extern struct var varinit[];
 
 #define vifs varinit[0]
-#define vmail varinit[1]
-#define vmpath varinit[2]
 #define vpath varinit[3]
 #define vps1 varinit[4]
 #define vps2 varinit[5]
@@ -118,8 +116,6 @@ extern char linenovar[];
 
 #define ifsval()	(vifs.text + 4)
 #define ifsset()	((vifs.flags & VUNSET) == 0)
-#define mailval()	(vmail.text + 5)
-#define mpathval()	(vmpath.text + 9)
 #define pathval()	(vpath.text + 5)
 #define ps1val()	(vps1.text + 4)
 #define ps2val()	(vps2.text + 4)

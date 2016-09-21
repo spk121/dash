@@ -66,6 +66,7 @@
 #include "system.h"
 #include "signames.h"
 
+#if 0
 const char *const signal_names[NSIG + 1]
 {
 	"sig1",
@@ -92,6 +93,7 @@ const char *const signal_names[NSIG + 1]
 	"sig22",
 	"sig23",
 };
+#endif
 
 /* mode flags for set_curjob */
 #define CUR_DELETE 2
