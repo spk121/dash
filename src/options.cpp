@@ -186,7 +186,9 @@ optschanged(void)
 #ifndef SMALL
 	// histedit();
 #endif
+#ifndef _MSC_VER
 	setjobctl(mflag);
+#endif
 }
 
 /*
