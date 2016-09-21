@@ -69,6 +69,18 @@
 #define _PATH_TTY "CON"
 #endif
 
+#ifdef _MSC_VER
+#define DIR_SEPARATOR '\\'
+#else
+#define DIR_SEPARATOR '/'
+#endif
+
+#ifdef _MSC_VER
+#define SEARCHPATH_SEPARATOR ';'
+#else
+#define SEARCHPATH_SEPARATOR ':'
+#endif
+
 // alloca:
 // LSB: missing
 // glibc: void *alloca(size_t size), in <stdlib.h>

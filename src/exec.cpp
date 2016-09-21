@@ -191,7 +191,8 @@ padvance(const char **path, const char *name)
 	if (*path == NULL)
 		return NULL;
 	start = *path;
-	for (p = start ; *p && *p != ':' && *p != '%' ; p++);
+
+	for (p = start ; *p && *p != SEARCHPATH_SEPARATOR && *p != '%' ; p++);
 	len = p - start + strlen(name) + 2;	/* "2" is for '/' and '\0' */
 	while (stackblocksize() < len)
 		growstackblock();
@@ -199,15 +200,15 @@ padvance(const char **path, const char *name)
 	if (p != start) {
 		memcpy(q, start, p - start);
 		q += p - start;
-		*q++ = '/';
+		*q++ = DIR_SEPARATOR;
 	}
 	strcpy(q, name);
 	pathopt = NULL;
 	if (*p == '%') {
 		pathopt = ++p;
-		while (*p && *p != ':')  p++;
+		while (*p && *p != SEARCHPATH_SEPARATOR)  p++;
 	}
-	if (*p == ':')
+	if (*p == SEARCHPATH_SEPARATOR)
 		*path = p + 1;
 	else
 		*path = NULL;
@@ -531,8 +532,8 @@ changepath(const char *newval)
 	for (;;) {
 		if (*old_path != *new_path) {
 			firstchange = idx;
-			if ((*old_path == '\0' && *new_path == ':')
-			 || (*old_path == ':' && *new_path == '\0'))
+			if ((*old_path == '\0' && *new_path == SEARCHPATH_SEPARATOR)
+			 || (*old_path == SEARCHPATH_SEPARATOR && *new_path == '\0'))
 				firstchange++;
 			old_path = new_path;	/* ignore subsequent differences */
 		}
@@ -540,7 +541,7 @@ changepath(const char *newval)
 			break;
 		if (*new_path == '%' && bltin < 0 && prefix(new_path + 1, "builtin"))
 			bltin = idx;
-		if (*new_path == ':') {
+		if (*new_path == SEARCHPATH_SEPARATOR) {
 			idx++;
 		}
 		new_path++, old_path++;
