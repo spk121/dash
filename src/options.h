@@ -37,6 +37,10 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include <vector>
+#include <string>
+
+
 struct shparam {
 	int nparam;		/* # of positional parameters (without $0) */
 	unsigned char malloc;	/* if parameter list dynamically allocated */
@@ -74,9 +78,24 @@ extern char optlist[NOPTS];
 extern char *minusc;		/* argument to -c option */
 extern char *arg0;		/* $0 */
 extern struct shparam shellparam;  /* $@ */
-extern char **argptr;		/* argument list for builtin commands */
-extern char *optionarg;		/* set by nextopt */
-extern char *optptr;		/* used by nextopt */
+// extern char **argptr;		/* argument list for builtin commands */
+// extern char *optionarg;		/* set by nextopt */
+// extern char *optptr;		/* used by nextopt */
+extern std::vector<std::string> argptrv; /* argument list for builtin commands */
+
+class Opt_args {
+	std::vector<std::string> args;  // List of strings of the arguments
+	size_t i;             // Index of the current argument
+	std::string optionarg;        // If the current argument has a required option after the flag
+
+	int nextopt(const std::string&);
+	void init(int argc, char **argv);
+	Opt_args() : args{}, i{ 0 }, optionarg{} {};
+};
+
+// char **argptr;			/* argument list for builtin commands */
+// char *optionarg;		/* set by nextopt (like getopt) */
+// char *optptr;			/* used by nextopt */
 
 int procargs(int, char **);
 void optschanged(void);
@@ -85,7 +104,8 @@ void freeparam(volatile struct shparam *);
 int shiftcmd(int, char **);
 int setcmd(int, char **);
 int getoptscmd(int, char **);
-int nextopt(const char *);
+// int nextopt(const char *);
+int nextopt(const std::string&);
 void getoptsreset(const char *);
 
 #endif /* OPTIONS_H */

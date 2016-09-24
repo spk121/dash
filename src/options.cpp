@@ -32,6 +32,10 @@
  * SUCH DAMAGE.
  */
 
+#include <string>
+#include <vector>
+using namespace std;
+
 #include <signal.h>
 // #include <unistd.h>
 #include <stdlib.h>
@@ -57,9 +61,10 @@
 
 char *arg0;			/* value of $0 */
 struct shparam shellparam;	/* current positional parameters */
-char **argptr;			/* argument list for builtin commands */
-char *optionarg;		/* set by nextopt (like getopt) */
-char *optptr;			/* used by nextopt */
+vector<string> argptrv{};
+// char **argptr;			/* argument list for builtin commands */
+// char *optionarg;		/* set by nextopt (like getopt) */
+// char *optptr;			/* used by nextopt */
 
 char *minusc;			/* argument to -c option */
 
@@ -123,6 +128,7 @@ procargs(int argc, char **argv)
 	const char *xminusc;
 	char **xargv;
 	int login;
+	int xargv_len = 0;
 
 	xargv = argv;
 	login = xargv[0] && xargv[0][0] == '-';
@@ -131,6 +137,11 @@ procargs(int argc, char **argv)
 		xargv++;
 	for (i = 0; i < NOPTS; i++)
 		optlist[i] = 2;
+
+	while (xargv[xargv_len] != nullptr)
+		xargv_len++;
+	vector<string>(xargv, xargv + xargv_len).swap(argptrv);
+
 	argptr = xargv;
 	login |= options(1);
 	xargv = argptr;
@@ -529,11 +540,21 @@ out:
  * end of input.
  */
 
+
+/* Checks the current string in the list of strings stored in argptr looking
+   for an option that matches one of the options in OPTSTRING.
+   All options begin with '-' followed by a single letter option
+   from optstring.  If the option in optstring has a ':', 
+   */
+
+// externals: optptr, argptr, 
+#if 0
 int
-nextopt(const char *optstring)
+nextopt(string const& optstring)
+// nextopt(const char * optstring)
 {
 	char *p;
-	const char *q;
+	auto q = optstring.cbegin();
 	char c;
 
 	if ((p = optptr) == NULL || *p == '\0') {
@@ -545,7 +566,7 @@ nextopt(const char *optstring)
 			return '\0';
 	}
 	c = *p++;
-	for (q = optstring ; *q != c ; ) {
+	for ( ; *q != c ; ) {
 		if (*q == '\0')
 			sh_error("Illegal option -%c", c);
 		if (*++q == ':')
@@ -557,6 +578,60 @@ nextopt(const char *optstring)
 		optionarg = p;
 		p = NULL;
 	}
+	
 	optptr = p;
+	return c;
+}
+#endif
+
+void Opt_args::init(int argc, char **argv)
+{
+	vector<string>(argv, argv + argc).swap(args);
+	i = 0;
+}
+
+int Opt_args::nextopt(const string& optstring)
+{
+	if (i >= args.size() || args[i].length() == 0 || args[i] == "-" || args[i][0] != '-')
+		// No option arguments detected. So this is the 1st non-option argument.
+		// Weirdly, a single hyphen by itself isn't interpreted as the beginning of a
+		// option.
+		return '\0';
+
+	// Double-hyphen is its own special token. It means the next argument
+	// is the 1st non-option argument.
+	if (args[i] == "--") {
+		i++;
+		return '\0';
+	}
+
+	// Check to see if the single letter after the hyphen is an option
+	// in the OPTSTRING.
+	char c = args[i][1];
+	size_t pos = optstring.find(c);
+	if (pos == string::npos)
+		sh_error("Illegal option -%c", c);
+
+	if (optstring.length() > pos + 1 && optstring[pos + 1] == ':')
+	{
+		// If the option in the OPTSTRING is followed by a colon, then this
+		// option is supposed to have an argument following.
+		if (args[i].length() > 2)
+			// If there is text just after the flag, it is used as this argument.
+			optionarg = args[i].substr(2);
+		else
+		{
+			// There was a space just after the flag,
+			// so the next entry must be the argument.
+			++i;
+			if (args.size() > i)
+				optionarg = args[i];
+			else
+				sh_error("No arg for -%c options", c);
+		}
+	}
+
+	// Move to the next entry
+	++i;
 	return c;
 }

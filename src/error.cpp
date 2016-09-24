@@ -58,7 +58,7 @@
  */
 
 struct jmploc *handler;
-int exception;
+int exception_;
 int suppressint;
 volatile sig_atomic_t intpending;
 int errlinno;
@@ -69,7 +69,7 @@ static void exverror(int, const char *, va_list);
 /*
  * Called to raise an exception.  Since C doesn't include exceptions, we
  * just do a longjmp to the exception handler.  The type of exception is
- * stored in the global variable "exception".
+ * stored in the global variable "exception_".
  */
 
 void
@@ -81,7 +81,7 @@ exraise(int e)
 #endif
 	intoff();
 
-	exception = e;
+	exception_ = e;
 	longjmp(handler->loc, 1);
 }
 

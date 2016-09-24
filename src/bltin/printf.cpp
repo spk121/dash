@@ -446,6 +446,9 @@ echocmd(int argc, char **argv)
 {
 	int nonl;
 
+	// Unnecessarily tricky code: if argv[1] is "-n",
+	// set nonl to TRUE and set argv to point to argv[2].
+	// Otherwise set nonl to FALSE argv to point to argv[1].
 	nonl = *++argv ? strequal(*argv, "-n") : 0;
 	argv += nonl;
 

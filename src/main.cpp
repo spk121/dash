@@ -102,7 +102,7 @@ main(int argc, char **argv)
 		redir_reset();
 		var_reset();
 
-		e = exception;
+		e = exception_;
 
 		s = state;
 		if (e == EXEXIT || s == 0 || iflag == 0 || shlvl)

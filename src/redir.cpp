@@ -375,7 +375,7 @@ redirectsafe(union node *redir, int flags)
 		redirect(redir, flags);
 	}
 	handler = savehandler;
-	if (err && exception != EXERROR)
+	if (err && exception_ != EXERROR)
 		longjmp(handler->loc, 1);
 	restoreint(saveint);
 	return err;

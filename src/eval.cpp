@@ -32,6 +32,10 @@
  * SUCH DAMAGE.
  */
 
+#include <string>
+#include <vector>
+using namespace std;
+
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/types.h>
@@ -840,7 +844,7 @@ bail:
 				listsetvar(varlist.list, VEXPORT);
 		}
 		if (evalbltin(cmdentry.u.cmd, argc, argv, flags)) {
-			if (exception == EXERROR && spclbltin <= 0) {
+			if (exception_ == EXERROR && spclbltin <= 0) {
 				forceinton();
 				break;
 			}
@@ -885,6 +889,12 @@ evalbltin(const struct builtincmd *cmd, int argc, char **argv, int flags)
 		goto cmddone;
 	handler = &jmploc;
 	commandname = argv[0];
+
+	int argv_len = 1;
+	while (argv[argv_len] != nullptr)
+		argv_len++;
+	vector<string>(argv + 1, argv + argv_len).swap(argptrv);
+
 	argptr = argv + 1;
 	optptr = NULL;			/* initialize nextopt */
 	if (cmd == EVALCMD)
