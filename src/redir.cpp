@@ -55,6 +55,7 @@
 #include "output.h"
 #include "memalloc.h"
 #include "error.h"
+#include "Opt_list.h"
 
 
 #define REALLY_CLOSED -3	/* fd that was closed and still is */
@@ -157,7 +158,7 @@ openredirect(union node *redir)
 		break;
 	case NTO:
 		/* Take care of noclobber mode. */
-		if (Cflag) {
+		if (optlist["noclobber"]) {
 			fname = redir->nfile.expfname;
 			if (stat64(fname, &sb) < 0) {
 				if ((f = open64(fname, O_WRONLY|O_CREAT|O_EXCL, 0666)) < 0)

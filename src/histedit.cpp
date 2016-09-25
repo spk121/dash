@@ -78,7 +78,7 @@ histedit(void)
 
 #define editing (Eflag || Vflag)
 
-	if (iflag) {
+	if (optlist["interactive"]) {
 		if (!hist) {
 			/*
 			 * turn history on

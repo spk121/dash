@@ -66,6 +66,7 @@ using namespace std;
 #ifndef SMALL
 #include "myhistedit.h"
 #endif
+#include "Opt_list.h"
 
 int evalskip;			/* set if we are skipping commands */
 static int skipcount;		/* number of levels to skip */
@@ -232,7 +233,7 @@ evaltree(union node *n, int flags)
 	case NCMD:
 		evalfn = evalcommand;
 checkexit:
-		if (eflag && !(flags & EV_TESTED))
+		if (optlist["errexit"] && !(flags & EV_TESTED))
 			checkexit = ~0;
 		goto calleval;
 	case NFOR:
@@ -718,7 +719,7 @@ evalcommand(union node *cmd, int flags)
 	*nargv = NULL;
 
 	lastarg = NULL;
-	if (iflag && funcline == 0 && argc > 0)
+	if (optlist["interactive"] && funcline == 0 && argc > 0)
 		lastarg = nargv[-1];
 
 	preverrout.fd = 2;
@@ -746,7 +747,7 @@ evalcommand(union node *cmd, int flags)
 	}
 
 	/* Print the command if xflag is set. */
-	if (xflag) {
+	if (optlist["xtrace"]) {
 		struct output *out;
 		int sep;
 
@@ -1082,8 +1083,8 @@ int
 execcmd(int argc, char **argv)
 {
 	if (argc > 1) {
-		iflag = 0;		/* exit on error */
-		mflag = 0;
+		optlist["interactive"] = Opt_list::DISABLED;		/* exit on error */
+		optlist["monitor"] = Opt_list::DISABLED;
 		optschanged();
 		shellexec(argv + 1, pathval(), 0);
 	}

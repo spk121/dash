@@ -42,6 +42,7 @@
 #include "mystring.h"
 #include "show.h"
 #include "options.h"
+#include "Opt_list.h"
 
 
 #ifdef DEBUG
@@ -261,7 +262,7 @@ FILE *tracefile;
 void
 trputc(int c)
 {
-	if (debug != 1)
+	if (optlist["debug"] != Opt_list::ENABLED)
 		return;
 	putc(c, tracefile);
 }
@@ -271,7 +272,7 @@ trace(const char *fmt, ...)
 {
 	va_list va;
 
-	if (debug != 1)
+	if (optlist["debug"] != Opt_list::ENABLED)
 		return;
 	va_start(va, fmt);
 	(void) vfprintf(tracefile, fmt, va);
@@ -281,7 +282,7 @@ trace(const char *fmt, ...)
 void
 tracev(const char *fmt, va_list va)
 {
-	if (debug != 1)
+	if (optlist["debug"] != Opt_list::ENABLED)
 		return;
 	(void) vfprintf(tracefile, fmt, va);
 }
@@ -290,7 +291,7 @@ tracev(const char *fmt, va_list va)
 void
 trputs(const char *s)
 {
-	if (debug != 1)
+	if (optlist["debug"] != Opt_list::ENABLED)
 		return;
 	fputs(s, tracefile);
 }
@@ -302,7 +303,7 @@ trstring(char *s)
 	char *p;
 	char c;
 
-	if (debug != 1)
+	if (optlist["debug"] != Opt_list::ENABLED)
 		return;
 	putc('"', tracefile);
 	for (p = s ; *p ; p++) {
@@ -337,7 +338,7 @@ backslash:	  putc('\\', tracefile);
 void
 trargs(char **ap)
 {
-	if (debug != 1)
+	if (optlist["debug"] != Opt_list::ENABLED)
 		return;
 	while (*ap) {
 		trstring(*ap++);
@@ -357,7 +358,7 @@ opentrace(void)
 	int flags;
 #endif
 
-	if (debug != 1) {
+	if (optlist["debug"] != Opt_list::ENABLED) {
 		if (tracefile)
 			fflush(tracefile);
 		/* leave open because libedit might be using it */
@@ -385,13 +386,13 @@ opentrace(void)
 		if (!(!fclose(tracefile) && (tracefile = fopen(s, "a")))) {
 #endif /* __KLIBC__ */
 			fprintf(stderr, "Can't re-open %s\n", s);
-			debug = 0;
+			optlist["debug"] = Opt_list::DISABLED;
 			return;
 		}
 	} else {
 		if ((tracefile = fopen(s, "a")) == NULL) {
 			fprintf(stderr, "Can't open %s\n", s);
-			debug = 0;
+			optlist["debug"] = Opt_list::DISABLED;
 			return;
 		}
 	}
