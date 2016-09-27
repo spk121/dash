@@ -947,7 +947,7 @@ forkchild(struct job *jp, union node *n, int mode)
 				sh_error("Can't open %s", _PATH_DEVNULL);
 		}
 	}
-	if (!oldlvl && iflag) {
+	if (!oldlvl && optlist["interactive"]) {
 		setsignal(SIGINT);
 		setsignal(SIGQUIT);
 		setsignal(SIGTERM);

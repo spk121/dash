@@ -39,6 +39,7 @@
 
 #include <vector>
 #include <string>
+#include "Opt_args.h"
 
 
 struct shparam {
@@ -50,31 +51,6 @@ struct shparam {
 };
 
 
-
-#define eflag optlist[0]
-#define fflag optlist[1]
-#define Iflag optlist[2]
-#define iflag optlist[3]
-#define mflag optlist[4]
-#define nflag optlist[5]
-#define sflag optlist[6]
-#define xflag optlist[7]
-#define vflag optlist[8]
-#define Vflag optlist[9]
-#define	Eflag optlist[10]
-#define	Cflag optlist[11]
-#define	aflag optlist[12]
-#define	bflag optlist[13]
-#define	uflag optlist[14]
-#define	nolog optlist[15]
-#define	debug optlist[16]
-
-#define NOPTS	17
-
-extern const char optletters[NOPTS];
-extern char optlist[NOPTS];
-
-
 extern char *minusc;		/* argument to -c option */
 extern char *arg0;		/* $0 */
 extern struct shparam shellparam;  /* $@ */
@@ -82,20 +58,7 @@ extern struct shparam shellparam;  /* $@ */
 // extern char *optionarg;		/* set by nextopt */
 // extern char *optptr;		/* used by nextopt */
 extern std::vector<std::string> argptrv; /* argument list for builtin commands */
-
-class Opt_args {
-	std::vector<std::string> args;  // List of strings of the arguments
-	size_t i;             // Index of the current argument
-	std::string optionarg;        // If the current argument has a required option after the flag
-
-	int nextopt(const std::string&);
-	void init(int argc, char **argv);
-	Opt_args() : args{}, i{ 0 }, optionarg{} {};
-};
-
-// char **argptr;			/* argument list for builtin commands */
-// char *optionarg;		/* set by nextopt (like getopt) */
-// char *optptr;			/* used by nextopt */
+extern Opt_args opt_args;
 
 int procargs(int, char **);
 void optschanged(void);

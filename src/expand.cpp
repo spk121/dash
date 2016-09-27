@@ -68,6 +68,7 @@
 #include "mystring.h"
 #include "show.h"
 #include "system.h"
+#include "Opt_list.h"
 
 /*
  * _rmescape() flags
@@ -764,7 +765,7 @@ vsplus:
 		goto again;
 	}
 
-	if (varlen < 0 && uflag)
+	if (varlen < 0 && optlist["nounset"])
 		varunset(p, var, 0, 0);
 
 	if (subtype == VSLENGTH) {
@@ -914,14 +915,12 @@ numvar:
 		len = cvtnum(num);
 		break;
 	case '-':
-		p = makestrspace(NOPTS, expdest);
-		for (i = NOPTS - 1; i >= 0; i--) {
-			if (optlist[i]) {
-				ustputc(optletters[i], &p);
-				len++;
-			}
-		}
+	{
+		string str = optlist.makestr();
+		p = makestrspace(str.size(), expdest);
+		memcpy(p, str.c_str(), str.size());
 		expdest = p;
+	}
 		break;
 	case '@':
 		if (quoted && sep)
@@ -1135,7 +1134,7 @@ expandmeta(str, flag)
 		glob_t pglob;
 		int i;
 
-		if (fflag)
+		if (optlist["noglob"])
 			goto nometa;
 		intoff();
 		p = preglob(str->text, RMESCAPE_ALLOC | RMESCAPE_HEAP);
@@ -1200,7 +1199,7 @@ expandmeta(struct strlist *str, int flag)
 		struct strlist *sp;
 		char *p;
 
-		if (fflag)
+		if (optlist["noglob"])
 			goto nometa;
 		if (!strpbrk(str->text, metachars))
 			goto nometa;

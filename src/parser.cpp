@@ -92,7 +92,7 @@ char *wordtext;			/* text of last word returned by readtoken */
 int checkkwd;
 struct nodelist *backquotelist;
 union node *redirnode;
-struct heredoc *heredoc;
+struct heredoc *_heredoc;
 int quoteflag;			/* set if (part of) last token was quoted */
 
 
@@ -617,7 +617,7 @@ parsefname(void)
 	if (readtoken() != TWORD)
 		synexpect(-1);
 	if (n->type == NHERE) {
-		struct heredoc *here = heredoc;
+		struct heredoc *here = _heredoc;
 		struct heredoc *p;
 
 		if (quoteflag == 0)
@@ -1143,12 +1143,12 @@ parseredir: {
 				np->nfile.fd = 0;
 			}
 			np->type = NHERE;
-			heredoc = (struct heredoc *)stalloc(sizeof (struct heredoc));
-			heredoc->here = np;
+			_heredoc = (struct heredoc *)stalloc(sizeof (struct heredoc));
+			_heredoc->here = np;
 			if ((c = pgetc()) == '-') {
-				heredoc->striptabs = 1;
+				_heredoc->striptabs = 1;
 			} else {
-				heredoc->striptabs = 0;
+				_heredoc->striptabs = 0;
 				pungetc();
 			}
 			break;

@@ -57,6 +57,7 @@
 #include "exec.h"
 #include "cd.h"
 #include "redir.h"
+#include "Opt_list.h"
 
 sys_process_id_t rootpid;
 int shlvl;
@@ -105,7 +106,7 @@ main(int argc, char **argv)
 		e = exception_;
 
 		s = state;
-		if (e == EXEXIT || s == 0 || iflag == 0 || shlvl)
+		if (e == EXEXIT || s == 0 || optlist["interactive"] == Opt_list::DISABLED || shlvl)
 			//exitshell();
 			;
 
@@ -153,7 +154,7 @@ state2:
 #ifndef linux
 		getuid() == geteuid() && getgid() == getegid() &&
 #endif
-		iflag
+		optlist["interactive"]
 	) {
 		if ((shinit = lookupvar("ENV")) != NULL && *shinit != '\0') {
 			read_profile(shinit);
@@ -163,9 +164,9 @@ state2:
 state3:
 	state = 4;
 	if (minusc)
-		evalstring(minusc, sflag ? 0 : EV_EXIT);
+		evalstring(minusc, optlist["stdin"] ? 0 : EV_EXIT);
 
-	if (sflag || minusc == NULL) {
+	if (optlist["stdin"] || minusc == NULL) {
 state4:	/* XXX ??? - why isn't this before the "if" statement */
 		cmdloop(1);
 	}
@@ -196,7 +197,7 @@ cmdloop(int top)
 		if (jobctl)
 			showjobs(out2, SHOW_CHANGED);
 		inter = 0;
-		if (iflag && top) {
+		if (optlist["interactive"] && top) {
 			inter++;
 		}
 		n = parsecmd(inter);
@@ -205,12 +206,12 @@ cmdloop(int top)
 			if (!top || numeof >= 50)
 				break;
 			if (!stoppedjobs()) {
-				if (!Iflag)
+				if (!optlist["ignoreeof"])
 					break;
 				out2str("\nUse \"exit\" to leave shell.\n");
 			}
 			numeof++;
-		} else if (nflag == 0) {
+		} else if (optlist["noexec"] == 0) {
 			job_warning = (job_warning == 2) ? 1 : 0;
 			numeof = 0;
 			evaltree(n, 0);

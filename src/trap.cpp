@@ -193,7 +193,7 @@ setsignal(int signo)
 	if (rootshell && action == S_DFL) {
 		switch (signo) {
 		case SIGINT:
-			if (iflag || minusc || sflag == 0)
+			if (optlist["interactive"] || minusc || sflag == 0)
 				action = S_CATCH;
 			break;
 		case SIGQUIT:
@@ -203,7 +203,7 @@ setsignal(int signo)
 #endif
 			/* FALLTHROUGH */
 		case SIGTERM:
-			if (iflag)
+			if (optlist["interactive"])
 				action = S_IGN;
 			break;
 #if JOBS

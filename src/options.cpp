@@ -58,6 +58,7 @@ using namespace std;
 #include "myhistedit.h"
 #endif
 #include "show.h"
+#include "Opt_list.h"
 
 char *arg0;			/* value of $0 */
 struct shparam shellparam;	/* current positional parameters */
@@ -65,51 +66,9 @@ vector<string> argptrv{};
 // char **argptr;			/* argument list for builtin commands */
 // char *optionarg;		/* set by nextopt (like getopt) */
 // char *optptr;			/* used by nextopt */
+Opt_args opt_args{};
 
 char *minusc;			/* argument to -c option */
-
-static const char *const optnames[NOPTS] = {
-	"errexit",
-	"noglob",
-	"ignoreeof",
-	"interactive",
-	"monitor",
-	"noexec",
-	"stdin",
-	"xtrace",
-	"verbose",
-	"vi",
-	"emacs",
-	"noclobber",
-	"allexport",
-	"notify",
-	"nounset",
-	"nolog",
-	"debug",
-};
-
-const char optletters[NOPTS] = {
-	'e',
-	'f',
-	'I',
-	'i',
-	'm',
-	'n',
-	's',
-	'x',
-	'v',
-	'V',
-	'E',
-	'C',
-	'a',
-	'b',
-	'u',
-	0,
-	0,
-};
-
-char optlist[NOPTS];
-
 
 static int options(int);
 static void minus_o(char *, int);
@@ -135,8 +94,8 @@ procargs(int argc, char **argv)
 	arg0 = xargv[0];
 	if (argc > 0)
 		xargv++;
-	for (i = 0; i < NOPTS; i++)
-		optlist[i] = 2;
+
+	optlist.set_all_to_unspecified();
 
 	while (xargv[xargv_len] != nullptr)
 		xargv_len++;
@@ -149,24 +108,23 @@ procargs(int argc, char **argv)
 	if (*xargv == NULL) {
 		if (xminusc)
 			sh_error("-c requires an argument");
-		sflag = 1;
+		optlist["stdin"] = 1;
 	}
-	if (iflag == 2 && sflag == 1 && isatty(0) && isatty(1))
-		iflag = 1;
-	if (mflag == 2)
-		mflag = iflag;
-	for (i = 0; i < NOPTS; i++)
-		if (optlist[i] == 2)
-			optlist[i] = 0;
+	if (optlist["interactive"] == Opt_list::UNSPECIFIED && optlist["stdin"] == Opt_list::ENABLED && isatty(0) && isatty(1))
+		optlist["interactive"] = Opt_list::ENABLED;
+	if (optlist["monitor"] == Opt_list::UNSPECIFIED)
+		optlist["monitor"] = optlist["interactive"];
+	optlist.set_unspecified_to_disabled();
+
 #if DEBUG == 2
-	debug = 1;
+	optlist["debug"] = Opt_list::ENABLED;
 #endif
 	/* POSIX 1003.2: first arg after -c cmd is $0, remainder $1... */
 	if (xminusc) {
 		minusc = *xargv++;
 		if (*xargv)
 			goto setarg0;
-	} else if (!sflag) {
+	} else if (!optlist["stdin"]) {
 		setinputfile(*xargv, 0);
 setarg0:
 		arg0 = *xargv++;
@@ -193,12 +151,12 @@ optschanged(void)
 #ifdef DEBUG
 	opentrace();
 #endif
-	// setinteractive(iflag);
+	// setinteractive(optlist["interactive"]);
 #ifndef SMALL
 	// histedit();
 #endif
 #ifndef _MSC_VER
-	setjobctl(mflag);
+	setjobctl(optlist["monitor"]);
 #endif
 }
 
@@ -225,7 +183,7 @@ options(int cmdline)
                                 if (!cmdline) {
                                         /* "-" means turn off -x and -v */
                                         if (p[0] == '\0')
-                                                xflag = vflag = 0;
+                                                optlist["xtrace"] = optlist["verbose"] = 0;
                                         /* "--" means reset params */
                                         else if (*argptr == NULL)
 						setparam(argptr);
@@ -256,6 +214,7 @@ options(int cmdline)
 	return login;
 }
 
+#if 0
 static void
 minus_o(char *name, int val)
 {
@@ -296,16 +255,16 @@ setoption(int flag, int val)
 			if (val) {
 				/* #%$ hack for ksh semantics */
 				if (flag == 'V')
-					Eflag = 0;
+					optlist["emacs"] = 0;
 				else if (flag == 'E')
-					Vflag = 0;
+					optlist["vi"] = 0;
 			}
 			return;
 		}
 	sh_error("Illegal option -%c", flag);
 	/* NOTREACHED */
 }
-
+#endif
 
 
 /*
@@ -584,54 +543,3 @@ nextopt(string const& optstring)
 }
 #endif
 
-void Opt_args::init(int argc, char **argv)
-{
-	vector<string>(argv, argv + argc).swap(args);
-	i = 0;
-}
-
-int Opt_args::nextopt(const string& optstring)
-{
-	if (i >= args.size() || args[i].length() == 0 || args[i] == "-" || args[i][0] != '-')
-		// No option arguments detected. So this is the 1st non-option argument.
-		// Weirdly, a single hyphen by itself isn't interpreted as the beginning of a
-		// option.
-		return '\0';
-
-	// Double-hyphen is its own special token. It means the next argument
-	// is the 1st non-option argument.
-	if (args[i] == "--") {
-		i++;
-		return '\0';
-	}
-
-	// Check to see if the single letter after the hyphen is an option
-	// in the OPTSTRING.
-	char c = args[i][1];
-	size_t pos = optstring.find(c);
-	if (pos == string::npos)
-		sh_error("Illegal option -%c", c);
-
-	if (optstring.length() > pos + 1 && optstring[pos + 1] == ':')
-	{
-		// If the option in the OPTSTRING is followed by a colon, then this
-		// option is supposed to have an argument following.
-		if (args[i].length() > 2)
-			// If there is text just after the flag, it is used as this argument.
-			optionarg = args[i].substr(2);
-		else
-		{
-			// There was a space just after the flag,
-			// so the next entry must be the argument.
-			++i;
-			if (args.size() > i)
-				optionarg = args[i];
-			else
-				sh_error("No arg for -%c options", c);
-		}
-	}
-
-	// Move to the next entry
-	++i;
-	return c;
-}

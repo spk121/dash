@@ -288,7 +288,7 @@ again:
 #endif
 #endif
 
-	if (vflag) {
+	if (optlist["verbose"]) {
 		out2str(parsefile->nextc);
 #ifdef FLUSHERR
 		flushout(out2);

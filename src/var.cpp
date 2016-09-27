@@ -65,6 +65,7 @@
 #include "system.h"
 #include "cd.h"
 
+#include "Opt_list.h"
 
 #define VTABSIZE 39
 
@@ -248,7 +249,7 @@ struct var *setvareq(char *s, int flags)
 	struct var *vp, **vpp;
 
 	vpp = hashvar(s);
-	flags |= (VEXPORT & (((unsigned) (1 - aflag)) - 1));
+	flags |= (VEXPORT & (((unsigned) (1 - optlist["allexport"])) - 1));
 	vpp = findvar(vpp, s);
 	vp = *vpp;
 	if (vp) {
@@ -493,7 +494,7 @@ void mklocal(char *name)
 	if (name[0] == '-' && name[1] == '\0') {
 		char *p;
 		p = (char *)ckmalloc(sizeof(optlist));
-		lvp->text = (const char *)memcpy(p, optlist, sizeof(optlist));
+		lvp->text = (const char *)memcpy(p, optlist.serialize().c_str(), sizeof(optlist));
 		vp = NULL;
 	} else {
 		char *eq;
@@ -562,7 +563,7 @@ poplocalvars(int keep)
 			     (VEXPORT|VREADONLY|VSTRFIXED|VUNSET)) == VUNSET)
 				unsetvar(vp->text);
 		} else if (vp == NULL) {	/* $- saved */
-			memcpy(optlist, lvp->text, sizeof(optlist));
+			optlist.deserialize(string(lvp->text));
 			ckfree((char *)(lvp->text));
 			optschanged();
 		} else if (lvp->flags == VUNSET) {

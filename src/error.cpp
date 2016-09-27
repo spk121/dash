@@ -51,6 +51,7 @@
 #include "eval.h"
 #include "parser.h"
 #include "system.h"
+#include "Opt_list.h"
 
 
 /*
@@ -91,7 +92,7 @@ exraise(int e)
  * specifies that SIGINT is to be trapped or ignored using the trap
  * builtin, then this routine is not called.)  Suppressint is nonzero
  * when interrupts are held using the static inline intoff procedure.
- * (The test for iflag is just defensive programming.)
+ * (The test for optlist["interactive"] is just defensive programming.)
  */
 
 void
@@ -99,7 +100,7 @@ onint(void) {
 
 	intpending = 0;
 	sigclearmask();
-	if (!(rootshell && iflag)) {
+	if (!(rootshell && optlist["interactive"])) {
 		signal(SIGINT, SIG_DFL);
 		raise(SIGINT);
 	}
