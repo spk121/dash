@@ -1,4 +1,5 @@
 #include "Trace.h"
+#include "parser.h"
 
 void Trace::trace(const char *fmt, ...)
 {
