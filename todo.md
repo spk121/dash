@@ -31,3 +31,4 @@ Windows has environment variables encoded in wchar_t.
 
 Plan: store env vars in a map<wstring,...>.  For POSIX, convert
 locale encoding to wchar_t using codecvt.
+
